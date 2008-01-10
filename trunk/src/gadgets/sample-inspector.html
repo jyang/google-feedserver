@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Projects</title>
+
+<!-- inspector -->
+<link rel="stylesheet" href="http://palmtree.corp.google.com/gdata-inspector/main.css">
+<link rel="stylesheet" href="http://palmtree.corp.google.com/gdata-inspector/InspectorWidget.css">
+<style>
+#inspector {
+  border: solid 1px #47a;
+}
+</style>
+<script type="text/javascript" src="http://palmtree.corp.google.com/gdata-inspector/cornerstone/util.js"></script>
+<script type="text/javascript" src="http://palmtree.corp.google.com/gdata-inspector/cornerstone/modelChanges.js"></script>
+<script type="text/javascript" src="http://palmtree.corp.google.com/gdata-inspector/cornerstone/BaseObject.js"></script>
+<script type="text/javascript" src="http://palmtree.corp.google.com/gdata-inspector/cornerstone/Widget.js"></script>
+<script type="text/javascript" src="http://palmtree.corp.google.com/gdata-inspector/InspectorWidget.js"></script>
+
+<script type="text/javascript" src="gdata-min-test.js"></script>
+<script type="text/javascript" src="force-xd2-authenticator.js"></script>
+<script type="text/javascript">
+function run() {
+  window.start = new Date();
+  var service = new google.gdata.client.GoogleService('lr', 'contacts',
+      ForceXd2Authenticator);
+  service.setAltSupport('json', false);
+  service.setAltSupport('json-xd', false);
+  service.setAltSupport('atom-xd', true);
+  service.getFeed('http://qwer.corp.google.com:9090/test/Project',
+      handleResponse, handleError);
+};
+
+function handleResponse(resourceRoot) {
+  inspectorWidget.inspect(resourceRoot);
+  inspectorWidget.renderIntoElement();
+};
+
+function handleError(error) {
+  alert(error);
+};
+
+var inspectorWidget = new InspectorWidget('inspector');
+</script>
+</head>
+<body>
+
+<h3>Projects</h3>
+<p>This sample uses the FeedServer Server and GData JavaScript Client Library (a version modified for FeedServer) to get a list of projects.  It works on Firefox and IE.</p>
+<a href="javascript:run()">Get Projects</a>
+
+<p></p>
+<div id="inspector"></div>
+
+<img src="Logo_25wht.gif" style="display: none">
+</body>
+</html>
