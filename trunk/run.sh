@@ -1,8 +1,4 @@
 #!/bin/bash
-#
-# Copyright 2007 Google Inc. All Rights Reserved.
-# Author: cva@google.com (Chris Anderson)
-
 # build up a classpath containing all the jars in lib/ and dist/
 cd `dirname $0`
 for jar in lib/*.jar build/jar/*.jar dist/*.jar; do
