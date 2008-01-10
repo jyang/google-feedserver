@@ -1,0 +1,52 @@
+# This page is an intro to the source code for developers looking to work with the FeedServer.
+
+= High-Level Design Goals =
+
+ # To build a server based on Apache's Abdera framework to handle atom protocol
+ # To build an extensible mechanism to convert data from any datasource into an "atom" feed without having to write any code to handle the atom protocol details.
+ # To separate the above two concerns; i.e., build a server with no dependence between atom protocol handling and the mechanism of getting data into/out of datasources. This  is very important goal of this project.
+ # To make it easy and quick to add adapters for new datasources.
+
+
+There are two main parts to the !FeedServer:
+
+ # Abdera-based "Atom" server
+   * Apache Abdera provides a framework to build servers to handle atom protocol. Google !FeedServer used this framework to build an "Atom" server. This is a very thin layer of code which uses Abdera framework to make sure data into & out of the server satisfies Atom protocol.
+ # A Data Adapter framework
+   * Adapters interface with the datasources to perform CRUD (Create Retrieve Update Delete) operations on data. For example, a !JdbcAdapter (included in the distribution) deals with the mechanism of data from/into databases. Adapters against any new datasources can be written simply by implementing the Adapter interface. Two example implementations are provided with the distribution: !JdbcAdapter and !SampleAdapter.
+
+
+= How to build an adapter =
+
+ # Implement Adapter Interface (Adapter.java). !SampleAdapter.java is a reference adapter implementation and can be looked at while you write the adapter for your particular datasource.
+ # Create an adapter properties file in conf/feedserver/adapter/ dir. For example, this directory should contain the adapter properties files for !JdbcAdapter and !SampleAdapter.
+ # Make sure your adapter class is in the CLASSPATH, so it can be loaded at runtime by the classloader.
+ # !AbstractAdapter.java contains many of the common methods used by the adapters. This is still an evolving class. If you find some methods which could be useful for other adapter writers, please include them in this class.
+
+
+= Code Structure and a mini code Walk-through =
+
+ * Package com.google.feedserver.server  (under src/java/ dir)
+  * Contains the Abdera-based server code. At this point in time, we are handling the following URL patterns (specified in !FeedServerTargetResolver.java)
+   * http://host:port/«feedname»  for feeds
+   * http://host:port/«feedname»/«entryId» for entries
+  * !FeedServerProvider.java contains the integral part of the server code. It is based on the example server code from abdera.
+
+ * Package com.google.feedserver.adapter (under src/java/ dir)
+  * Contains all the code required to define adapter interfaces and common methods, to build new adapters AND two sample adapters.  This package deals with all the data aspects of the feedserver. If the users of this server mostly deal with writing new adapters for new datasources, then this package contains the most useful/"interesting" code.
+  * Adapter.java is the interface to which all adapters are to be written
+  * !AbstractAdapter.java is the abstract class containing all methods useful for all adapters
+  * !AdapterManager.java. It loads the adapter properties file for a given feed (adapter properties file = conf/feedserver/adapter/«feed».properties) and instantiates the class instance to service the specified feed.
+  * !JdbcAdapter.java  adapter to database datasource. It looks for conf/feedserver/sqlmap.xml file to load the database specific info(such as connect string etc.). within this sqlmap.xml file, it also finds reference to all table-mapping related xml files used by iBatis. for example, at the bottom of the file, you should see reference to sqlmap/contact.xml. That file refers to the Contact table in the database and its mappings. All table-mapping xml files should be placed under conf/feedserver/sqlmap/ dir.
+ * Package com.google.feedserver.Jetty (under src/java/ dir)
+  * runtime main class to start the application on Jetty server
+ * Package com.google.sqlmap.type (under src/java/ dir)
+  * used by iBatis mapping.
+
+
+= Request flow =
+Incoming request 
+  ---» to Abdera servlet 
+    ---» to com.google.feedserver.server.!FeedServerProvider 
+      ----» calls the corresponding adapter in com.google.feedserver.adapter to get/put data 
+
