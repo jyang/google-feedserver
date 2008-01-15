@@ -14,7 +14,7 @@
         <servlet-class>org.apache.abdera.protocol.server.servlet.AbderaServlet</servlet-class>
         <init-param>
           <param-name>org.apache.abdera.protocol.server.ServiceContext</param-name>
-          <param-value>com.google.feedserver.server.FeedServerContext</param-value>
+          <param-value>com.google.feedserver.server.FeedServerServiceContext</param-value>
         </init-param>
     </servlet>
 
