@@ -24,6 +24,7 @@ import java.io.Reader;
 import java.util.Properties;
 
 /**
+ * Base configuration file for all the feed server related configurations.
  * 
  * @author abhinavk@gmail.com (Abhinav Khandelwal)
  *
@@ -37,7 +38,7 @@ public class Configuration {
     return props;
   }
 
-  public static String getProperty(Properties prop, String key) {
+  static String getProperty(Properties prop, String key) {
     String val = prop.getProperty(key);
     if (val == null) {
       throw new RuntimeException();
@@ -45,12 +46,11 @@ public class Configuration {
     return val;
   }
 
-  public Reader loadConfigFileAsReader(String fileLocation)
+  Reader loadConfigFileAsReader(String fileLocation)
       throws IOException {
     return Resources.getResourceAsReader(fileLocation);
   }
   
-  public Configuration() {
-  }
+  public Configuration() {}
 
 }

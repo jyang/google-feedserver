@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
+ * Configuration for feeds
  *
  * @author abhinavk@gmail.com (Abhinav Khandelwal)
  *
@@ -44,6 +45,7 @@ public class FeedConfiguration extends Configuration {
   private String feedTitle = "unknown";
   private String feedAuthor = "unknown";
   private Map<Object, Object> optionalProperties;
+  private final AdapterConfiguration adapterConfiguration;
 
   public FeedConfiguration(String feedId, String subUri,
       String adapterClassName, String feedConfigLocation) {
@@ -51,6 +53,7 @@ public class FeedConfiguration extends Configuration {
     this.subUri = subUri;
     this.adapterClassName = adapterClassName;
     this.feedConfigLocation = feedConfigLocation;
+    this.adapterConfiguration = new AdapterConfiguration(feedConfigLocation);
   }
   
   public static FeedConfiguration getFeedConfiguration(String feedId,
@@ -63,7 +66,7 @@ public class FeedConfiguration extends Configuration {
       feedConfiguration.setFeedAuthor(
           Configuration.getProperty(properties, PROP_AUTHOR_NAME));      
     }
-    
+
     if (properties.containsKey(PROP_TITLE_NAME)) {
       feedConfiguration.setFeedTitle(
           Configuration.getProperty(properties, PROP_TITLE_NAME));      
@@ -123,5 +126,9 @@ public class FeedConfiguration extends Configuration {
 
   public Object getProperty(String key) {
     return optionalProperties.get(key);
+  }
+  
+  public AdapterConfiguration getAdapterConfiguration() {
+    return adapterConfiguration;
   }
 }

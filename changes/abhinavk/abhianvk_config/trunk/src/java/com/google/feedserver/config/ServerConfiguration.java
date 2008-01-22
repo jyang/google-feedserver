@@ -19,25 +19,30 @@ package com.google.feedserver.config;
 import com.google.sample.util.SimpleCommandLineParser;
 
 /**
- * 
+ * Configuration for feed server.
+ *
  * @author abhinavk@gmail.com (Abhinav Khandelwal)
  *
  */
 public class ServerConfiguration extends Configuration {
   private static final String OPTION_PORT = "port";
-  private static int PORT = 8080;
+  private int port = 8080;
 
   private static final String OPTION_FEED_SERVER_URI = "uri";
-  private static String FEED_SERVER_URI = "http://localhost:8080/";
+  private String uri = "http://localhost:8080/";
 
   private static final String OPTION_FEED_NS = "namespace";
-  private static String FEED_NS = "http://feeds.yourdomain.com/ns/1.0";
+  private String namespace = "http://feeds.yourdomain.com/ns/1.0";
 
   private static final String OPTION_ENTRY_PREFIX = "nsPrefix";
-  private static String FEED_NS_PREFIX = "g";
+  private String nsPrefix = "g";
 
   private static final String OPTION_FEED_CONFIG_LOCATION = "feedConfigLocation";
-  private static String FEED_CONFIG_LOCATION = "conf/feedserver/adapter/";
+  private String feedConfigLocation = "conf/feedserver/adapter/";
+
+  private static final String OPTION_FEED_ADAPTER_CONFIG_LOCATION
+      = "feedAdapterConfigLocation";
+  private String feedAdapterConfigLocation = "conf/feedserver/";
 
   protected static final String PROPERTIES_FILE_SUFFIX = ".properties";
 
@@ -49,19 +54,22 @@ public class ServerConfiguration extends Configuration {
   public void initialize(SimpleCommandLineParser parser) {
     if (null != parser) {
       if (parser.containsKey(OPTION_PORT)) {
-        PORT = Integer.parseInt(parser.getValue(OPTION_PORT));
+        port = Integer.parseInt(parser.getValue(OPTION_PORT));
       }
       if (parser.containsKey(OPTION_FEED_SERVER_URI)) {
-        FEED_SERVER_URI = parser.getValue(OPTION_FEED_SERVER_URI);
+        uri = parser.getValue(OPTION_FEED_SERVER_URI);
       }
       if (parser.containsKey(OPTION_FEED_NS)) {
-        FEED_NS = parser.getValue(OPTION_FEED_NS);
+        namespace = parser.getValue(OPTION_FEED_NS);
       }
       if (parser.containsKey(OPTION_ENTRY_PREFIX)) {
-        FEED_NS_PREFIX = parser.getValue(OPTION_ENTRY_PREFIX);
+        nsPrefix = parser.getValue(OPTION_ENTRY_PREFIX);
       }
       if (parser.containsKey(OPTION_FEED_CONFIG_LOCATION)) {
-        FEED_NS_PREFIX = parser.getValue(OPTION_FEED_CONFIG_LOCATION);
+        nsPrefix = parser.getValue(OPTION_FEED_CONFIG_LOCATION);
+      }
+      if (parser.containsKey(OPTION_FEED_ADAPTER_CONFIG_LOCATION)) {
+        nsPrefix = parser.getValue(OPTION_FEED_ADAPTER_CONFIG_LOCATION);
       }
     }
   }
@@ -71,22 +79,26 @@ public class ServerConfiguration extends Configuration {
   }
 
   public int getPort() {
-    return PORT;
+    return port;
   }
 
   public String getServerUri() {
-    return FEED_SERVER_URI;
+    return uri;
   }
   
   public String getFeedNamespace() {
-    return FEED_NS;
+    return namespace;
   }
 
   public String getFeedNamespacePrefix() {
-    return FEED_NS_PREFIX;
+    return nsPrefix;
   }
   
   public String getFeedConfigLocation() {
-    return FEED_CONFIG_LOCATION;
+    return feedConfigLocation;
+  }
+
+  public String getAdapterConfigLocation() {
+    return feedAdapterConfigLocation;
   }
 }

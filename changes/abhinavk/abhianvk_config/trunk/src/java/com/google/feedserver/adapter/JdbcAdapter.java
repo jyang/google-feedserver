@@ -32,8 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 public class JdbcAdapter extends AbstractAdapter implements Adapter {
-  public static final String CONFIG_FILE_NAME = "sqlMapConfigFile";
-  public static final String ADAPTER_TYPE = "jdbc";
   private static final String ENTRY_AUTHOR = "feedserver";
   private static final String ENTRY_TITLE = "jdbc entry title";
 
@@ -53,8 +51,8 @@ public class JdbcAdapter extends AbstractAdapter implements Adapter {
       return sqlMapClients.get(dataSourceId);      
     } else {
       SqlMapClient client = SqlMapClientBuilder.buildSqlMapClient(
-          feedConfiguration.loadConfigFileAsReader(
-              "feedserver/" + dataSourceId + ".xml"));
+          feedConfiguration.getAdapterConfiguration()
+              .getAdapterConfigAsReader());
       sqlMapClients.put(dataSourceId, client);
       return client;      
     }

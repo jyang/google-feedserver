@@ -16,12 +16,26 @@
 
 package com.google.feedserver.config;
 
+import java.io.IOException;
+import java.io.Reader;
+
 
 /**
- * Configuration for feedserver adapters.
+ * Configuration for feed-server adapters.
  *
  * @author abhinavk@gmail.com (Abhinav Khandelwal)
  *
  */
 public class AdapterConfiguration extends Configuration {
+  private final String fileLocation;
+  public AdapterConfiguration(String fileLocation) {
+    this.fileLocation = fileLocation;
+  }
+
+  public Reader getAdapterConfigAsReader()
+      throws IOException {
+    ServerConfiguration config = ServerConfiguration.getInstance();
+    String filePath = config.getAdapterConfigLocation() + fileLocation;
+    return loadConfigFileAsReader(filePath);
+  }
 }
