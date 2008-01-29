@@ -3,7 +3,7 @@ in conf/feedserver/sqlmap/ dir, create a mapping file for iBatis.
 This mapping file maps Java Object to Database queries on the table/view.
 
 an example:
-<p>
+{{{
      <?xml version="1.0" encoding="UTF-8" ?>
      <!DOCTYPE sqlMap
         PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
@@ -39,12 +39,12 @@ an example:
     </update>
 
    </sqlMap>
-</p>
+}}}
 
 
 = Setup xml file with database connection params =
 example
-<p>
+{{{
    <?xml version="1.0" encoding="UTF-8" ?>
    <!DOCTYPE sqlMapConfig
       PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
@@ -62,17 +62,17 @@ example
    <sqlMap resource="feedserver/sqlmap/the_above_xml_filename"/>
 
   </sqlMapConfig>
-</p>
+}}}
 
 
 = Setup adapter properties file =
 create an adapter properties file in conf/feedserver/adapter/ dir.
 
 example
-<p>
+{{{
    feedUri=http://vnori:8080/perfinfo
    adapterClassName=com.google.feedserver.adapter.JdbcAdapter
    sqlMapConfigFile=sqlmap_perfinfo
    title=PerfInfo Feed
    author=Google QA team
-</p>
+}}}
