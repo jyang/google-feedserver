@@ -42,7 +42,7 @@ public class ServerConfiguration extends Configuration {
 
   private static final String OPTION_FEED_ADAPTER_CONFIG_LOCATION
       = "feedAdapterConfigLocation";
-  private String feedAdapterConfigLocation = "conf/feedserver/";
+  private String feedAdapterConfigLocation = "feedserver/";
 
   protected static final String PROPERTIES_FILE_SUFFIX = ".properties";
 
