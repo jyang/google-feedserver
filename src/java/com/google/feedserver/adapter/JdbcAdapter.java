@@ -16,7 +16,9 @@
 
 package com.google.feedserver.adapter;
 
-import com.ibatis.common.resources.Resources;
+import com.google.feedserver.config.FeedConfiguration;
+import com.google.feedserver.config.ServerConfiguration;
+
 import com.ibatis.sqlmap.client.SqlMapClient;
 import com.ibatis.sqlmap.client.SqlMapClientBuilder;
 
@@ -28,42 +30,42 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 public class JdbcAdapter extends AbstractAdapter implements Adapter {
-  public static final String CONFIG_FILE_NAME = "sqlMapConfigFile";
-  public static final String ADAPTER_TYPE = "jdbc";
   private static final String ENTRY_AUTHOR = "feedserver";
   private static final String ENTRY_TITLE = "jdbc entry title";
 
 
   // this class needs to be public - so that Adapter Manager can invoke it
   // to create an instance of this adapter
-  public JdbcAdapter(Abdera abdera, Properties feedProperties,
-      String feedId) {
-    super(abdera, feedProperties, feedId);
+  public JdbcAdapter(Abdera abdera, FeedConfiguration feedConfiguration) {
+    super(abdera, feedConfiguration);
   }
 
   protected Map<String, SqlMapClient> sqlMapClients =
       new HashMap<String, SqlMapClient>();
 
   protected SqlMapClient getSqlMapClient() throws Exception {
-    String dataSourceId = getProperty(CONFIG_FILE_NAME);
-    SqlMapClient client = sqlMapClients.get(dataSourceId);
-    if (client == null) {
-      client = SqlMapClientBuilder.buildSqlMapClient(
-          Resources.getResourceAsReader("feedserver/" + dataSourceId + ".xml"));
+    String dataSourceId = feedConfiguration.getFeedConfigLocation();
+    if (sqlMapClients.containsKey(dataSourceId)) {
+      return sqlMapClients.get(dataSourceId);      
+    } else {
+      SqlMapClient client = SqlMapClientBuilder.buildSqlMapClient(
+          feedConfiguration.getAdapterConfiguration()
+              .getAdapterConfigAsReader());
       sqlMapClients.put(dataSourceId, client);
+      return client;      
     }
-    return client;
   }
 
+  @SuppressWarnings("unchecked")
   public Feed getFeed() throws Exception {
     SqlMapClient client = getSqlMapClient();
-    String queryId = feedId + "-get-feed";
+    String queryId = feedConfiguration.getFeedId() + "-get-feed";
     List<Map<String, Object>> rows = client.queryForList(queryId);
     Feed feed = createFeed();
-    feed.declareNS(GBASE_NS, GBASE_NS_PREFIX);
+    ServerConfiguration config = ServerConfiguration.getInstance();
+    feed.declareNS(config.getFeedNamespace(), config.getFeedNamespacePrefix());
     for (Map<String, Object> row : rows) {
       Entry entry = createEntryFromRow(row);
       feed.addEntry(entry);
@@ -71,8 +73,9 @@ public class JdbcAdapter extends AbstractAdapter implements Adapter {
     return feed;
   }
 
+  @SuppressWarnings("unchecked")
   public Entry getEntry(Object entryId) throws Exception {
-    String queryId = feedId + "-get-entry";
+    String queryId = feedConfiguration.getFeedId() + "-get-entry";
     SqlMapClient client = getSqlMapClient();
     Map<String, Object> row = (Map<String, Object>)
         client.queryForObject(queryId, entryId);
@@ -85,7 +88,7 @@ public class JdbcAdapter extends AbstractAdapter implements Adapter {
 
   public Entry createEntry(Entry entry) throws Exception {
     SqlMapClient client = getSqlMapClient();
-    String queryId = feedId + "-insert-entry";
+    String queryId = feedConfiguration.getFeedId() + "-insert-entry";
     Object newEntryId = client.insert(queryId, collectColumns(entry));
 
     return getEntry(newEntryId);
@@ -93,13 +96,13 @@ public class JdbcAdapter extends AbstractAdapter implements Adapter {
 
   public Entry updateEntry(Object entryId, Entry entry) throws Exception {
     SqlMapClient client = getSqlMapClient();
-    String queryId = feedId + "-update-entry";
+    String queryId = feedConfiguration.getFeedId() + "-update-entry";
     return client.update(queryId, collectColumns(entry)) > 0
         ? getEntry(entryId) : null;
   }
 
   public boolean deleteEntry(Object entryId) throws Exception {
-    String queryId = feedId + "-delete-entry";
+    String queryId = feedConfiguration.getFeedId() + "-delete-entry";
     SqlMapClient client = getSqlMapClient();
     return client.delete(queryId, entryId) > 0;
   }
@@ -126,8 +129,9 @@ public class JdbcAdapter extends AbstractAdapter implements Adapter {
       } else if ("content".equals(columnName)) {
         entry.setContentAsHtml(value.toString());
       } else {
-        Element ext = entry.addExtension(
-            GBASE_NS, columnName, GBASE_NS_PREFIX);
+        ServerConfiguration config = ServerConfiguration.getInstance();
+        Element ext = entry.addExtension(config.getFeedNamespace(), columnName,
+            config.getFeedNamespacePrefix());
         ext.setText(value.toString());
       }
     }

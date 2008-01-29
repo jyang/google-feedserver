@@ -16,22 +16,18 @@
 
 package com.google.feedserver.adapter;
 
+import com.google.feedserver.config.FeedConfiguration;
+
 import org.apache.abdera.Abdera;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.Properties;
-import java.io.InputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 
 public class AdapterManager {
   public static Logger logger =
     Logger.getLogger(AdapterManager.class.getName());
-
-  protected static final String PROP_NAME_ADAPTER_CLASS = "adapterClassName";
-  protected static final String PROPERTIES_PATH = "/feedserver/adapter/";
-  protected static final String PROPERTIES_FILE_SUFFIX = ".properties";
 
   protected static AdapterManager adapterManager = null;
 
@@ -45,60 +41,67 @@ public class AdapterManager {
     this.abdera = abdera;
   }
 
-  public Adapter getAdapter(String feedId) throws Exception {
-    Adapter adapter = adapterInstanceMap.get(feedId);
+  public Adapter getAdapter(String feedId) throws IOException {
+    if (containsAdapter(feedId)){
+      return adapterInstanceMap.get(feedId);      
+    }
+    FeedConfiguration feedConfiguration
+        = FeedConfiguration.getFeedConfiguration(feedId);
+    if (null == feedConfiguration) {
+      // Configuration for this feed is missing.
+      return null;
+    }
+    return createAdapterInstance(feedConfiguration);
+  }
+
+  public boolean containsAdapter(String feedId) {
+    return adapterInstanceMap.containsKey(feedId);
+  }
+
+  @SuppressWarnings("unchecked")
+  protected synchronized Adapter createAdapterInstance(
+       FeedConfiguration feedConfiguration) {
+    Adapter adapter = adapterInstanceMap.get(feedConfiguration.getFeedId());
     if (adapter != null) {
       return adapter;
     }
 
-    // load the feed properties file
-    Properties properties = loadFeedInfo(feedId);
-    String className = properties.getProperty(PROP_NAME_ADAPTER_CLASS);
-    if (className == null) {
-      logger.warning("property '" + PROP_NAME_ADAPTER_CLASS +
-          "' not found for feed '" + feedId + "'");
-      throw new RuntimeException();
+    ClassLoader cl = Thread.currentThread().getContextClassLoader();
+    Class<?> adapterClass;
+    try {
+      adapterClass = cl.loadClass(
+           feedConfiguration.getAdapterClassName());
+    } catch (ClassNotFoundException e) {
+      // The adapter was not found
+      return null;
     }
-
-    return createAdapterInstance(feedId, className, properties);
-  }
-
-   protected Properties loadFeedInfo(String feedId)
-      throws Exception {
-     String fileName = PROPERTIES_PATH + feedId + PROPERTIES_FILE_SUFFIX;
-     InputStream in = this.getClass().getResourceAsStream(fileName);
-     if (in == null) {
-       throw new FileNotFoundException();
-     }
-     Properties props = new Properties();
-     props.load(in);
-     in.close();
-     return props;
-}
-
-   protected synchronized Adapter createAdapterInstance(String feedId,
-      String className, Properties properties) throws Exception {
-
-     Adapter adapter = adapterInstanceMap.get(feedId);
-     if (adapter != null) {
-       return adapter;
-     }
-
-     ClassLoader cl = Thread.currentThread().getContextClassLoader();
-     Class<?> adapterClass = cl.loadClass(className);
-     Constructor[] ctors = adapterClass.getConstructors();
-     for (Constructor element : ctors) {
-         logger.finest("Public constructor found: " +
-             element.toString());
-     }
-     Constructor<?> c = adapterClass.getConstructor(new Class[] {Abdera.class,
-         Properties.class, String.class});
-     c.setAccessible(true);
-     Adapter adapterInstance = (Adapter) c.newInstance(abdera, properties,
-         feedId);
-
+     
+    Constructor[] ctors = adapterClass.getConstructors();
+    for (Constructor element : ctors) {
+      logger.finest("Public constructor found: " +
+           element.toString());
+    }
+    
+    Constructor<?> c;
+    try {
+      c = adapterClass.getConstructor(new Class[] {Abdera.class,
+           FeedConfiguration.class});
+    } catch (SecurityException e) {
+      return null;
+    } catch (NoSuchMethodException e) {
+      // The adapter does not have a valid constructor
+      return null;
+    }
+    
+    c.setAccessible(true);
+     try {
+      adapter = (Adapter) c.newInstance(abdera, feedConfiguration);
+    } catch (Exception e) {
+      // The adapter does not have a valid constructor
+      return null;
+    }
      // put this adapter instance in adapterInstanceMap
-     adapterInstanceMap.put(feedId, adapterInstance);
-     return adapterInstance;
+     adapterInstanceMap.put(feedConfiguration.getFeedId(), adapter);
+     return adapter;
    }
 }

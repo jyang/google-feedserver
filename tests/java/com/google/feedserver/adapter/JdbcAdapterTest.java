@@ -16,6 +16,8 @@
 
 package com.google.feedserver.adapter;
 
+import com.google.feedserver.config.FeedConfiguration;
+
 import com.ibatis.sqlmap.client.SqlMapClient;
 
 import org.apache.abdera.Abdera;
@@ -34,7 +36,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.logging.Logger;
 
 import junit.framework.TestCase;
@@ -57,19 +58,19 @@ public class JdbcAdapterTest extends TestCase {
   SqlMapClient client = context.mock(SqlMapClient.class);
 
   // data
-  Properties properties = new Properties();
-  JdbcAdapter jdbcAdapter = new JdbcAdapter(abdera, properties, "contact");
+  FeedConfiguration feedConfig;
+  JdbcAdapter jdbcAdapter;
   Map<String, Object> row1;
   List<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
 
   @Override
   @Before
   public void setUp() throws Exception {
-    properties.put(JdbcAdapter.CONFIG_FILE_NAME, "sqlmap");
-    properties.put(AbstractAdapter.PROP_NAME_AUTHOR, "author");
-    properties.put(AbstractAdapter.PROP_NAME_FEED_URI, "http://localhost:8080/");
-    properties.put(AbstractAdapter.PROP_NAME_TITLE, "title");
-
+    feedConfig = new FeedConfiguration("contact", "", "jdbcAdapter", "sqlmap");
+    feedConfig.setFeedAuthor("author");
+    feedConfig.setFeedTitle("title");
+    
+    jdbcAdapter = new JdbcAdapter(abdera, feedConfig);
     jdbcAdapter.sqlMapClients.put("sqlmap", client);
 
     rows.add(createOneRow(0));

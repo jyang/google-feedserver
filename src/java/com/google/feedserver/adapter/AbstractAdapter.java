@@ -16,6 +16,9 @@
 
 package com.google.feedserver.adapter;
 
+import com.google.feedserver.config.FeedConfiguration;
+import com.google.feedserver.config.ServerConfiguration;
+
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Element;
 import org.apache.abdera.model.Entry;
@@ -26,52 +29,26 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.logging.Logger;
 
 public abstract class AbstractAdapter implements Adapter {
   public static Logger logger =
     Logger.getLogger(AbstractAdapter.class.getName());
 
-  protected Properties feedProperties;
-  protected final String feedId;
+  protected FeedConfiguration feedConfiguration;
   protected final Abdera abdera;
 
-  public static final String GBASE_NS = "http://base.google.com/ns/1.0";
-  public static final String GBASE_NS_PREFIX = "g";
-
-  protected static final String PROP_NAME_FEED_URI = "feedUri";
-  protected static final String PROP_NAME_TITLE = "title";
-  protected static final String PROP_NAME_AUTHOR = "author";
-
-  public static final String ENTRY_ELEM_NAME_ID = "id";
-  public static final String ENTRY_ELEM_NAME_TITLE = "title";
-  public static final String ENTRY_ELEM_NAME_AUTHOR = "author";
-  public static final String ENTRY_ELEM_NAME_UPDATED = "updated";
-
-  protected AbstractAdapter(Abdera abdera, Properties feedProperties,
-      String feedId) {
+  protected AbstractAdapter(Abdera abdera, FeedConfiguration feedConfiguration) {
     this.abdera = abdera;
-    this.feedProperties = feedProperties;
-    this.feedId = feedId;
-  }
-
-  public String getProperty(String key) throws Exception {
-    String val = feedProperties.getProperty(key);
-    if (val == null) {
-      logger.warning("Cannot find property " + key +
-          "in Adapter properties file for feed " + feedId);
-      throw new RuntimeException();
-    }
-    return val;
+    this.feedConfiguration = feedConfiguration;
   }
 
   protected Feed createFeed() throws Exception {
     Feed feed = abdera.newFeed();
-    feed.setId(getProperty(PROP_NAME_FEED_URI));
-    feed.setTitle(getProperty(PROP_NAME_TITLE));
+    feed.setId(feedConfiguration.getSubUri());
+    feed.setTitle(feedConfiguration.getFeedTitle());
     feed.setUpdated(new Date());
-    feed.addAuthor(getProperty(PROP_NAME_AUTHOR));
+    feed.addAuthor(feedConfiguration.getFeedAuthor());
     return feed;
   }
 
@@ -115,27 +92,31 @@ public abstract class AbstractAdapter implements Adapter {
   }
 
   protected String createEntryIdUri(String entryId) throws Exception{
-    return getProperty(PROP_NAME_FEED_URI) + "/" + entryId;
+    return feedConfiguration.getFeedUri() + "/" + entryId;
   }
 
   protected Map<String, Object> collectColumns(Entry entry) {
     Map<String, Object> columns = new HashMap<String, Object>();
 
     if (entry.getId() != null) {
-      columns.put(ENTRY_ELEM_NAME_ID, entry.getId().toString());
+      columns.put(FeedConfiguration.ENTRY_ELEM_NAME_ID,
+          entry.getId().toString());
     }
     if (entry.getAuthor() != null) {
-      columns.put(ENTRY_ELEM_NAME_AUTHOR, entry.getAuthor().getText());
+      columns.put(FeedConfiguration.ENTRY_ELEM_NAME_AUTHOR,
+          entry.getAuthor().getText());
     }
     if (entry.getTitle() != null) {
-      columns.put(ENTRY_ELEM_NAME_TITLE, entry.getTitle());
+      columns.put(FeedConfiguration.ENTRY_ELEM_NAME_TITLE, entry.getTitle());
     }
     if (entry.getUpdated() != null) {
-      columns.put(ENTRY_ELEM_NAME_UPDATED, entry.getUpdated());
+      columns.put(FeedConfiguration.ENTRY_ELEM_NAME_UPDATED,
+          entry.getUpdated());
     }
 
     // get all our namespace extension elements
-    List<Element> extElements = entry.getExtensions(GBASE_NS);
+    List<Element> extElements = entry.getExtensions(
+        ServerConfiguration.getInstance().getFeedNamespace());
     if (extElements != null) {
       for (Element element : extElements) {
         String name = element.getQName().getLocalPart();

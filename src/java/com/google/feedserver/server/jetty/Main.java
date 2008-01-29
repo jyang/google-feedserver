@@ -16,9 +16,11 @@
 
 package com.google.feedserver.server.jetty;
 
+import com.google.feedserver.config.ServerConfiguration;
 import com.google.feedserver.server.FeedServerProviderManager;
 import com.google.feedserver.server.FeedServerServiceContext;
 import com.google.feedserver.servlet.MethodOverrideServletFilter;
+import com.google.sample.util.SimpleCommandLineParser;
 import com.google.xdp.XdServletFilter;
 
 import org.apache.abdera.protocol.server.servlet.AbderaServlet;
@@ -33,18 +35,13 @@ import org.mortbay.jetty.servlet.ServletHolder;
  * @author jyang825@gmail.com (Jun Yang)
  */
 public class Main {
-  public static final int DEFAULT_PORT = 8080;
-  public static final String OPTION_PORT = "--port";
-
   public static void main(String[] args) throws Exception {
-    // get port number
-    int port = DEFAULT_PORT;
-    if (args.length == 2 && OPTION_PORT.equals(args[0])) {
-      port = Integer.parseInt(args[1]);
-    }
+    // Get the configuration for the server.
+    ServerConfiguration config = ServerConfiguration.getInstance();
+    config.initialize(new SimpleCommandLineParser(args));
 
     // set up server
-    Server server = new Server(port);
+    Server server = new Server(config.getPort());
     Context context = new Context(server, "/", Context.SESSIONS);
     ServletHolder servletHolder = new ServletHolder(new AbderaServlet());
     servletHolder.setInitParameter(ServerConstants.SERVICE_CONTEXT,
