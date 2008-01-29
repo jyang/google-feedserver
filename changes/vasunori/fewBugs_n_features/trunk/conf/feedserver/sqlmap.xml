@@ -7,17 +7,18 @@
 <sqlMapConfig>
 
   <typeHandler javaType="string" jdbcType="NUMERIC"
-      callback="com.google.feedserver.ibatisCallbackHandlers.StringToNumericCallback" />
+      callback="com.google.sqlmap.type.StringToNumericCallback" />
 
   <!-- Configure a built-in transaction manager.  If you're using an 
        app server, you probably want to use its transaction manager 
        and a managed datasource -->
   <transactionManager type="JDBC" commitRequired="false">
     <dataSource type="SIMPLE">
-      <property name="JDBC.Driver" value="com.mysql.jdbc.Driver"/>
-      <property name="JDBC.ConnectionURL" value="jdbc:mysql://localhost/feedserver"/>
-      <property name="JDBC.Username" value="root"/>
-      <property name="JDBC.Password" value="admin"/>
+      <property name="JDBC.Driver" value="org.postgresql.Driver"/>
+      <property name="JDBC.ConnectionURL"
+          value="jdbc:postgresql://localhost:5432/test"/>
+      <property name="JDBC.Username" value="postgres"/>
+      <property name="JDBC.Password" value="postgres"/>
       <property name="Pool.MaximumActiveConnections" value="10"/>
       <property name="Pool.MaximumIdleConnections" value="5"/>
       <property name="Pool.MaximumCheckoutTime" value="120000"/>
@@ -25,6 +26,6 @@
     </dataSource>
   </transactionManager>
 
-  <sqlMap resource="feedserver/sqlmap/perfinfo.xml"/>
+  <sqlMap resource="feedserver/sqlmap/contact.xml"/>
 
 </sqlMapConfig>
