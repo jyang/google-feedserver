@@ -58,6 +58,7 @@ public class JdbcAdapter extends AbstractAdapter implements Adapter {
     }
   }
 
+  @SuppressWarnings("unchecked")
   public Feed getFeed() throws Exception {
     SqlMapClient client = getSqlMapClient();
     String queryId = feedConfiguration.getFeedId() + "-get-feed";
@@ -72,6 +73,7 @@ public class JdbcAdapter extends AbstractAdapter implements Adapter {
     return feed;
   }
 
+  @SuppressWarnings("unchecked")
   public Entry getEntry(Object entryId) throws Exception {
     String queryId = feedConfiguration.getFeedId() + "-get-entry";
     SqlMapClient client = getSqlMapClient();
