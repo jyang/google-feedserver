@@ -18,6 +18,7 @@ package com.google.feedserver.adapter;
 
 import com.google.feedserver.adapter.Adapter;
 import com.google.feedserver.adapter.AdapterManager;
+import com.google.feedserver.config.FeedConfiguration;
 
 import org.apache.abdera.Abdera;
 import org.jmock.integration.junit4.JMock;
@@ -26,7 +27,6 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Properties;
 import java.util.logging.Logger;
 import junit.framework.TestCase;
 
@@ -45,18 +45,17 @@ public class AdapterManagerTest extends TestCase {
 
   @Test
   public void testLoadFeedInfo() {
-    AdapterManager aObj = new AdapterManager(abdera);
     // try with good feedid
     try {
-      Properties properties = aObj.loadFeedInfo("sample");
-      assertNotNull(properties);
+      FeedConfiguration config = FeedConfiguration.getFeedConfiguration("sample");
+      assertNotNull(config);
     } catch (Exception e) {
       fail("exception while trying to load info for \"sample\" feed");
     }
 
     // try with invalid feedid
     try {
-      Properties properties = aObj.loadFeedInfo("invalidFeed");
+      FeedConfiguration config = FeedConfiguration.getFeedConfiguration("invalidFeed");
       fail("should have raised exception");
     } catch (Exception e) {
       // as expected
@@ -69,12 +68,9 @@ public class AdapterManagerTest extends TestCase {
     String feedId = "sample";
     // try with good feedid
     try {
-      Properties properties = aObj.loadFeedInfo(feedId);
-      assertNotNull(properties);
-      String className =
-          properties.getProperty(AdapterManager.PROP_NAME_ADAPTER_CLASS);
-      Adapter adapter = aObj.createAdapterInstance(feedId, className,
-          properties);
+      FeedConfiguration config = FeedConfiguration.getFeedConfiguration(feedId);
+      assertNotNull(config);
+      Adapter adapter = aObj.createAdapterInstance(config);
       assertNotNull(adapter);
     } catch (Exception e) {
       fail("exception while trying to create adapter instance for \"sample\" feed");
@@ -82,10 +78,11 @@ public class AdapterManagerTest extends TestCase {
 
     // try with invalid feedid
     try {
-      String className = "com.google.feedserver.adapter.InvalidAdapterClass";
-      Adapter adapter = aObj.createAdapterInstance("invalidFeedId", className,
-          null);
-      fail("should have raised exception");
+      FeedConfiguration config = new FeedConfiguration("invalidFeedId",
+          "/invaliduri", "com.google.feedserver.adapter.InvalidAdapterClass",
+          "feedLocation"); 
+      Adapter adapter = aObj.createAdapterInstance(config);
+      assertNull(adapter);
     } catch (Exception e) {
       // as expected
     }

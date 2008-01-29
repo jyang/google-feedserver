@@ -16,6 +16,8 @@
 
 package com.google.feedserver.adapter;
 
+import com.google.feedserver.config.FeedConfiguration;
+
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Element;
@@ -25,7 +27,6 @@ import org.apache.abdera.model.Feed;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
-import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.Date;
@@ -37,9 +38,8 @@ public class SampleAdapter extends AbstractAdapter implements Adapter {
   public static Logger logger = Logger.getLogger(SampleAdapter.class.getName());
   protected HashMap<String, byte[]> entries = new HashMap<String, byte[]>();
 
-  public SampleAdapter(Abdera abdera, Properties feedProperties,
-    String feedId) {
-    super(abdera, feedProperties, feedId);
+  public SampleAdapter(Abdera abdera, FeedConfiguration feedConfiguration) {
+    super(abdera, feedConfiguration);
   }
 
   public Feed getFeed() throws Exception {
