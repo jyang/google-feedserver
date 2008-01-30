@@ -1,6 +1,5 @@
 = Setup a mapping file in iBatis format = 
-in conf/feedserver/sqlmap/ dir, create a mapping file for iBatis.
-This mapping file maps Java Object to Database queries on the table/view.
+In conf/feedserver/sqlmap/ dir, create a mapping file for iBatis to map Java Objects to Database queries (& results) on the table/view.
 
 an example:
 {{{
@@ -42,11 +41,11 @@ an example:
 }}}
 
 NOTE: All the attributes named "id" in the above xml file have a specific naming convention.
-# to get feed, id = <feedname>-get-feed
-# to get an entry, id = <feedname>-get-entry
-# to insert an entry, id = <feedname>-insert-entry
-# to delete an entry, id = <feedname>-delete-entry
-# to update an entry, id = <feedname>-update-entry
+ * to get feed, id = <feedname>-get-feed
+ * to get an entry, id = <feedname>-get-entry
+ * to insert an entry, id = <feedname>-insert-entry
+ * to delete an entry, id = <feedname>-delete-entry
+ * to update an entry, id = <feedname>-update-entry
 
 = Setup xml file with database connection params =
 example
@@ -72,7 +71,7 @@ example
 
 
 = Setup adapter properties file =
-create an adapter properties file in conf/feedserver/adapter/ dir.
+Create an adapter properties file in conf/feedserver/adapter/ dir.
 
 example
 {{{
