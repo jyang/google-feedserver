@@ -41,12 +41,12 @@ an example:
    </sqlMap>
 }}}
 
-NOTE: all the attributes named "id" in the above xml file have a specific naming convention.
-* to get feed, id = <feedname>-get-feed
-* to get an entry, id = <feedname>-get-entry
-* to insert an entry, id = <feedname>-insert-entry
-* to delete an entry, id = <feedname>-delete-entry
-* to update an entry, id = <feedname>-update-entry
+NOTE: All the attributes named "id" in the above xml file have a specific naming convention.
+# to get feed, id = <feedname>-get-feed
+# to get an entry, id = <feedname>-get-entry
+# to insert an entry, id = <feedname>-insert-entry
+# to delete an entry, id = <feedname>-delete-entry
+# to update an entry, id = <feedname>-update-entry
 
 = Setup xml file with database connection params =
 example
