@@ -23,13 +23,23 @@ import com.ibatis.sqlmap.client.SqlMapClient;
 import com.ibatis.sqlmap.client.SqlMapClientBuilder;
 
 import org.apache.abdera.Abdera;
-import org.apache.abdera.model.Element;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 public class JdbcAdapter extends AbstractAdapter implements Adapter {
   private static final String ENTRY_AUTHOR = "feedserver";
@@ -48,13 +58,13 @@ public class JdbcAdapter extends AbstractAdapter implements Adapter {
   protected SqlMapClient getSqlMapClient() throws Exception {
     String dataSourceId = feedConfiguration.getFeedConfigLocation();
     if (sqlMapClients.containsKey(dataSourceId)) {
-      return sqlMapClients.get(dataSourceId);      
+      return sqlMapClients.get(dataSourceId);
     } else {
       SqlMapClient client = SqlMapClientBuilder.buildSqlMapClient(
           feedConfiguration.getAdapterConfiguration()
               .getAdapterConfigAsReader());
       sqlMapClients.put(dataSourceId, client);
-      return client;      
+      return client;
     }
   }
 
@@ -68,6 +78,7 @@ public class JdbcAdapter extends AbstractAdapter implements Adapter {
     feed.declareNS(config.getFeedNamespace(), config.getFeedNamespacePrefix());
     for (Map<String, Object> row : rows) {
       Entry entry = createEntryFromRow(row);
+      addEditLinkToEntry(entry);
       feed.addEntry(entry);
     }
     return feed;
@@ -83,7 +94,9 @@ public class JdbcAdapter extends AbstractAdapter implements Adapter {
       // didn't find the entry.
       return null;
     }
-    return createEntryFromRow(row);
+    Entry entry = createEntryFromRow(row);
+    addEditLinkToEntry(entry);
+    return entry;
   }
 
   public Entry createEntry(Entry entry) throws Exception {
@@ -110,6 +123,11 @@ public class JdbcAdapter extends AbstractAdapter implements Adapter {
   protected Entry createEntryFromRow(Map<String, Object> row)
       throws Exception {
     Entry entry = abdera.newEntry();
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder builder = factory.newDocumentBuilder();
+    Document doc = builder.newDocument();
+    Element entity = doc.createElement("entity");
+    doc.appendChild(entity);
     for (String columnName : row.keySet()) {
       if (row.get(columnName) == null) {
         continue;
@@ -126,13 +144,10 @@ public class JdbcAdapter extends AbstractAdapter implements Adapter {
         entry.setUpdated((Date) value);
       } else if ("link".equals(columnName)) {
         entry.addLink(value.toString());
-      } else if ("content".equals(columnName)) {
-        entry.setContentAsHtml(value.toString());
       } else {
-        ServerConfiguration config = ServerConfiguration.getInstance();
-        Element ext = entry.addExtension(config.getFeedNamespace(), columnName,
-            config.getFeedNamespacePrefix());
-        ext.setText(value.toString());
+        Element node = doc.createElement(columnName);
+        node.appendChild(doc.createTextNode(value.toString()));
+        entity.appendChild(node);
       }
     }
     if (entry.getUpdated() == null) {
@@ -144,6 +159,21 @@ public class JdbcAdapter extends AbstractAdapter implements Adapter {
     if (entry.getTitle() == null) {
       entry.setTitle(ENTRY_TITLE);
     }
+    entry.setContent(getDocumentAsXml(doc),"text/xml");
     return entry;
+  }
+  public static String getDocumentAsXml(Document doc)
+      throws TransformerConfigurationException, TransformerException
+  {
+      DOMSource domSource = new DOMSource(doc);
+      TransformerFactory tf = TransformerFactory.newInstance();
+      Transformer transformer = tf.newTransformer();
+      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+      java.io.StringWriter sw = new java.io.StringWriter();
+      StreamResult sr = new StreamResult(sw);
+      transformer.transform(domSource, sr);
+      String str = sw.toString();
+      logger.finest(str);
+      return str;
   }
 }

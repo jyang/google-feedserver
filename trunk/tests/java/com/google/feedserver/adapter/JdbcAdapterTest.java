@@ -21,6 +21,7 @@ import com.google.feedserver.config.FeedConfiguration;
 import com.ibatis.sqlmap.client.SqlMapClient;
 
 import org.apache.abdera.Abdera;
+import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.jmock.Expectations;
@@ -69,6 +70,7 @@ public class JdbcAdapterTest extends TestCase {
     feedConfig = new FeedConfiguration("contact", "", "jdbcAdapter", "sqlmap");
     feedConfig.setFeedAuthor("author");
     feedConfig.setFeedTitle("title");
+    final IRI id_iri = new IRI("http://localhost:9090/contact/1");
     
     jdbcAdapter = new JdbcAdapter(abdera, feedConfig);
     jdbcAdapter.sqlMapClients.put("sqlmap", client);
@@ -91,7 +93,7 @@ public class JdbcAdapterTest extends TestCase {
       allowing (feed).declareNS(with(any(String.class)),with(any(String.class)));
       allowing (entry).addExtension(with(any(String.class)),
           with(any(String.class)), with(any(String.class)));
-      allowing (entry).setContentAsHtml(with(any(String.class)));
+      allowing (entry).setContent(with(any(String.class)),with(any(String.class)));
       allowing (entry).setId(with(any(String.class)));
       allowing (entry).setTitle(with(any(String.class)));
       allowing (entry).setUpdated(with(any(Date.class)));
@@ -101,8 +103,13 @@ public class JdbcAdapterTest extends TestCase {
       allowing (entry).getTitle(); will(returnValue(null));
       allowing (entry).getUpdated(); will(returnValue(null));
       allowing (entry).getAuthor(); will(returnValue(null));
-      allowing (entry).getId(); will(returnValue(null));
+      allowing (entry).getId(); will(returnValue(id_iri));
       allowing (entry).getExtensions(with(any(String.class)));
+          will(returnValue(null));
+      allowing (entry).getLinks(with(any(String.class)));
+          will(returnValue(null));
+      allowing (entry).addLink(with(any(String.class)),with(any(String.class)));
+      allowing (entry).getContentElement();
           will(returnValue(null));
 
     // for getFeed

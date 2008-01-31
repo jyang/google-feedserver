@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,20 +17,21 @@
 package com.google.feedserver.adapter;
 
 import com.google.feedserver.config.FeedConfiguration;
-import com.google.feedserver.config.ServerConfiguration;
-
 import org.apache.abdera.Abdera;
-import org.apache.abdera.model.Element;
+import org.apache.abdera.model.Content;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Link;
-
+import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
 public abstract class AbstractAdapter implements Adapter {
   public static Logger logger =
     Logger.getLogger(AbstractAdapter.class.getName());
@@ -62,21 +63,23 @@ public abstract class AbstractAdapter implements Adapter {
   public static String getEditUriFromEntry(Entry entry) throws Exception {
     String editUri = null;
     List<Link> editLinks = entry.getLinks("edit");
-    for (Link link : editLinks) {
-      // if there is more than one edit link, we should not automatically
-      // assume that it's always going to point to an Atom document
-      // representation.
-      if (link.getMimeType() != null) {
-        if (link.getMimeType().match("application/atom+xml")) {
+    if (editLinks != null) {
+      for (Link link : editLinks) {
+        // if there is more than one edit link, we should not automatically
+        // assume that it's always going to point to an Atom document
+        // representation.
+        if (link.getMimeType() != null) {
+          if (link.getMimeType().match("application/atom+xml")) {
+            editUri = link.getResolvedHref().toString();
+            break;
+          }
+        } else {
+          // edit link with no type attribute is the right one to use
           editUri = link.getResolvedHref().toString();
           break;
         }
-      } else {
-        // edit link with no type attribute is the right one to use
-        editUri = link.getResolvedHref().toString();
-        break;
       }
-    }
+     }
    return editUri;
   }
 
@@ -95,7 +98,8 @@ public abstract class AbstractAdapter implements Adapter {
     return feedConfiguration.getFeedUri() + "/" + entryId;
   }
 
-  protected Map<String, Object> collectColumns(Entry entry) {
+  protected Map<String, Object> collectColumns(Entry entry)
+      throws Exception {
     Map<String, Object> columns = new HashMap<String, Object>();
 
     if (entry.getId() != null) {
@@ -114,16 +118,36 @@ public abstract class AbstractAdapter implements Adapter {
           entry.getUpdated());
     }
 
-    // get all our namespace extension elements
-    List<Element> extElements = entry.getExtensions(
-        ServerConfiguration.getInstance().getFeedNamespace());
-    if (extElements != null) {
-      for (Element element : extElements) {
-        String name = element.getQName().getLocalPart();
-        String value = element.getText();
-        columns.put(name, value);
-      }
+    Content content = entry.getContentElement();
+    if (content != null) {
+      String contentStr = content.getValue();
+      parseContent(contentStr, columns);
     }
+
     return columns;
   }
+
+  static void parseContent(String str, Map<String, Object> columns)
+      throws Exception {
+    ByteArrayInputStream inStr = new ByteArrayInputStream(str.getBytes());
+    XMLInputFactory factory = XMLInputFactory.newInstance();
+    XMLStreamReader parser = factory.createXMLStreamReader(inStr);
+
+    while (true) {
+      int event = parser.next();
+      if (event == XMLStreamConstants.END_DOCUMENT) {
+         parser.close();
+         break;
+      }
+      if (event == XMLStreamConstants.START_ELEMENT) {
+        String name = parser.getLocalName();
+        int eventType =  parser.next();
+        if (eventType == XMLStreamConstants.CHARACTERS) {
+          String value = parser.getText();
+          columns.put(name, value);
+        }
+      }
+    }
+  }
+
 }
