@@ -51,7 +51,7 @@ public class SampleAdapterFunctionalTest  extends TestCase {
   protected static Logger logger =
     Logger.getLogger(SampleAdapterFunctionalTest.class.getName());
 
-  protected static final int JETTY_PORT = 8080;
+  protected static final int JETTY_PORT = 9090;
   protected static int port = JETTY_PORT;
 
   protected static final String BASE_URL = "http://localhost:" + JETTY_PORT;

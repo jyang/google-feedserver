@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.sqlmap.type;
+package com.google.feedserver.ibatisCallbackHandlers;
 
 import com.ibatis.sqlmap.client.extensions.ParameterSetter;
 import com.ibatis.sqlmap.client.extensions.ResultGetter;

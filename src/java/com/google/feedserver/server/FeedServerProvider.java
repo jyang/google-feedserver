@@ -84,6 +84,7 @@ public class FeedServerProvider extends AbstractProvider {
         return new EmptyResponseContext(404);
       }
     } catch (Exception e) {
+      logger.warning(e.getMessage());
       EmptyResponseContext response = new EmptyResponseContext(500);
       response.setStatusText(e.getMessage());
       return response;
@@ -111,6 +112,7 @@ public class FeedServerProvider extends AbstractProvider {
         return new EmptyResponseContext(404);
       }
     } catch (Exception e) {
+      logger.warning(e.getMessage());
       EmptyResponseContext response = new EmptyResponseContext(500);
       response.setStatusText(e.getMessage());
       return response;
@@ -177,6 +179,7 @@ public class FeedServerProvider extends AbstractProvider {
         return new EmptyResponseContext(404);
       }
     } catch (Exception e) {
+      logger.warning(e.getMessage());
       EmptyResponseContext response = new EmptyResponseContext(500);
       response.setStatusText(e.getMessage());
       return response;
@@ -196,6 +199,7 @@ public class FeedServerProvider extends AbstractProvider {
         return new EmptyResponseContext(404);
       }
     } catch (Exception e) {
+      logger.warning(e.getMessage());
       EmptyResponseContext response = new EmptyResponseContext(500);
       response.setStatusText(e.getMessage());
       return response;
