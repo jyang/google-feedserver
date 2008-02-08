@@ -212,7 +212,7 @@ public class JdbcAdapterFunctionalTest  extends TestCase {
     // set up server
     String[] args = new String[] {"--port=" + JETTY_PORT,
         "--uri=http://localhost:" + JETTY_PORT};
-    com.google.feedserver.server.jetty.Main.runJetty(args);
+    server = com.google.feedserver.server.jetty.Main.runJetty(args);
   }
 
   @Override
