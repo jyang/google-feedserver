@@ -1,4 +1,5 @@
 #!/bin/bash
+# build up a classpath containing all the jars in lib/ and dist/
 for jar in lib/*.jar dist/*.jar; do
   CLASSPATH=${CLASSPATH}:$jar
 done
