@@ -16,7 +16,7 @@
     <dataSource type="SIMPLE">
       <property name="JDBC.Driver" value="org.postgresql.Driver"/>
       <property name="JDBC.ConnectionURL"
-          value="jdbc:postgresql://vnori-corp:5432/test"/>
+          value="jdbc:postgresql://localhost:5432/test"/>
       <property name="JDBC.Username" value="postgres"/>
       <property name="JDBC.Password" value="postgres"/>
       <property name="Pool.MaximumActiveConnections" value="10"/>
