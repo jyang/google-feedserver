@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Contacts</title>
+
+<style>
+* {
+  font-family: Georgia;
+  font-size: small;
+}
+.contact-list table {
+  border: solid 1px #47a;
+  margin-top: 8px;
+}
+.contact-list th {
+  color: white;
+  background-color: #47a;
+  padding: 2px;
+}
+.contact-list td {
+  border-bottom: solid 1px #47a;
+  vertical-align: top;
+  padding: 2px;
+}
+.log-entry {
+  width: 100%;
+}
+</style>
+<script type="text/javascript" src="gdata-core-min-dev.js"></script>
+<script type="text/javascript" src="force-xd2-authenticator.js"></script>
+<script type="text/javascript" src="test.js"></script>
+<script type="text/javascript">
+var SVC_HOST = 'localhost:8080';
+var FEED_URI = 'http://' + SVC_HOST + '/contact';
+var ENTRY_URI = FEED_URI + '/1';
+var INVALID_ENTRY_URI = FEED_URI + '/11111';
+var DELETE_ENTRY_URI = FEED_URI + '/20';
+
+var service = new google.gdata.client.GoogleService('lr', 'contacts');
+service.authenticator_ = new ForceXd2Authenticator(service);
+service.setAltSupport('json', false);
+service.setAltSupport('json-xd', false);
+service.setAltSupport('atom-xd', true);
+
+function getContacts() {
+  service.getFeed(FEED_URI, showFeed, handleError);
+};
+
+function getNonExistentContact() {
+  service.getEntry(INVALID_ENTRY_URI, showEntry, handleError);
+};
+
+function getContact() {
+  service.getEntry(ENTRY_URI, showEntry, handleError);
+};
+
+function deleteContact() {
+  service.deleteEntry(DELETE_ENTRY_URI, getContacts, handleError);
+};
+
+function insertContact() {
+  var contact = {xmlns$g: 'http://base.google.com/ns/1.0', g$lastName:
+      {$t: 'Yang'}, g$firstName: {$t: 'Xinchen'}, g$email: {$t:
+      'xinchen.yang@gmail.com'}, g$rating: {$t: 2}};
+  service.insertEntry(FEED_URI, contact, showEntry, handleError);
+};
+
+function updateContact() {
+  service.getEntry(ENTRY_URI, function(entryRoot) {
+    var entry = entryRoot.entry;
+    entry.g$rating.$t = Number(entry.g$rating.$t) + 1;
+    service.updateEntry(ENTRY_URI, entry, showEntry, handleError);
+  }, handleError);
+};
+
+function showFeed(feedRoot) {
+  showTable(feedRoot.feed.entry);
+};
+
+function showEntry(entryRoot) {
+  showTable([entryRoot.entry]);
+};
+
+function showTable(entries) {
+  var table = '<table><tr><th>Id</th><th>Name</th><th>Email</th>' +
+      '<th>Rating</th>' + '</tr>';
+  for (var i = 0; i < entries.length; i++) {
+    var entry = entries[i];
+    table += '<tr><td>' + entry.id.$t + '</td><td>' +
+        entry.g$firstName.$t + ' ' + entry.g$lastName.$t + '</td><td>' +
+        entry.g$email.$t + '</td><td>' + entry.g$rating.$t + '</td>' +
+        '</tr>';
+  }
+  table += '</table>';
+
+  var tableContainer = document.createElement('div');
+  tableContainer.className = 'contact-list';
+  tableContainer.innerHTML = table;
+  document.body.appendChild(tableContainer);
+};
+
+function handleError(error) {
+  if (console && console.log) {
+    console.log(error);
+  } else {
+    log(error);
+  }
+};
+</script>
+</head>
+<body>
+<a href="javascript:getContacts()">Get ALL Contacts</a> |
+<a href="javascript:getContact()">Get Contact(id=1)</a> |
+<a href="javascript:insertContact()">Insert Contact</a> |
+<a href="javascript:updateContact()">Update Contact(id=1)</a> |
+<a href="javascript:deleteContact()">Delete Contact(id=20)</a> |
+<a href="javascript:getNonExistentContact()">Get Non-existent Contact</a> |
+<img src="Logo_25wht.gif" style="position: absolute; left: -5000px;">
+</body>
+</html>
