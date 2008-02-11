@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,25 +17,14 @@
 package com.google.feedserver;
 
 import com.google.feedserver.adapter.AbstractAdapter;
-import com.google.feedserver.server.FeedServerProviderManager;
-import com.google.feedserver.server.FeedServerServiceContext;
-import com.google.feedserver.servlet.MethodOverrideServletFilter;
-import com.google.xdp.XdServletFilter;
-
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.client.ClientResponse;
 import org.apache.abdera.protocol.client.AbderaClient;
-import org.apache.abdera.protocol.server.servlet.AbderaServlet;
-import org.apache.abdera.protocol.server.util.ServerConstants;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.factory.Factory;
-import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHolder;
-
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -302,21 +291,10 @@ public class SampleAdapterFunctionalTest  extends TestCase {
   @Before
   public void setUp() throws Exception {
     // set up server
-    server = new Server(port);
-    Context context = new Context(server, "/", Context.SESSIONS);
-    ServletHolder servletHolder = new ServletHolder(new AbderaServlet());
-    servletHolder.setInitParameter(ServerConstants.SERVICE_CONTEXT,
-        FeedServerServiceContext.class.getName());
-    servletHolder.setInitParameter(ServerConstants.PROVIDER_MANAGER,
-        FeedServerProviderManager.class.getName());
-    context.addServlet(servletHolder, "/*");
-    context.addFilter(MethodOverrideServletFilter.class, "/*",
-        Handler.DEFAULT);
-    context.addFilter(XdServletFilter.class, "/*", Handler.DEFAULT);
-
-    // start server
-    server.start();
-    logger.info("server started");
+    // set up server
+    String[] args = new String[] {"--port=" + JETTY_PORT,
+        "--uri=http://localhost:" + JETTY_PORT};
+    server = com.google.feedserver.server.jetty.Main.runJetty(args);
   }
 
   @Override

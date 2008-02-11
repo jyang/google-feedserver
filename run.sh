@@ -1,18 +1,23 @@
 #!/bin/bash
 # build up a classpath containing all the jars in lib/ and dist/
-cd `dirname $0`
-for jar in lib/*.jar build/jar/*.jar dist/*.jar; do
-  CLASSPATH=${CLASSPATH}${CLASSPATH:+:}$jar
+for jar in lib/*.jar dist/*.jar; do
+  CLASSPATH=${CLASSPATH}:$jar
 done
 
+#add "conf" dir to CLASSPATH. thats where adapter and feedserver config files are at.
 CLASSPATH=$CLASSPATH:conf
 
+# number of args can be 0 or 2. not 1.
+# because in SimpleCommandLineParser.java file, it sets port, uri separately. For these 2 to be
+# in sync with each other, either the user supplies both or none.
 # and run jetty.Main
-if [ $# -ne 1 ]
+
+if [ $# -eq 1 ]
 then
-  echo "NO port# to start Jetty on is specified."
-  java -classpath $CLASSPATH com.google.feedserver.server.jetty.Main
-else
-  echo "Starting Jetty on port#=$1"
-  java -classpath $CLASSPATH com.google.feedserver.server.jetty.Main --port $1
+   if [ $1 == "help" ]
+   then
+     echo "Usage: $0 --port=<number> --uri=http://host:port/"
+     exit 0
+   fi
 fi
+java -classpath $CLASSPATH com.google.feedserver.server.jetty.Main $*

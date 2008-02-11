@@ -46,7 +46,7 @@ public abstract class AbstractAdapter implements Adapter {
 
   protected Feed createFeed() throws Exception {
     Feed feed = abdera.newFeed();
-    feed.setId(feedConfiguration.getSubUri());
+    feed.setId(feedConfiguration.getFeedUri());
     feed.setTitle(feedConfiguration.getFeedTitle());
     feed.setUpdated(new Date());
     feed.addAuthor(feedConfiguration.getFeedAuthor());
