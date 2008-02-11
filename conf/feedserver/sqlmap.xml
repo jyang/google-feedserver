@@ -7,7 +7,7 @@
 <sqlMapConfig>
 
   <typeHandler javaType="string" jdbcType="NUMERIC"
-      callback="com.google.sqlmap.type.StringToNumericCallback" />
+      callback="com.google.feedserver.ibatisCallbackHandlers.StringToNumericCallback" />
 
   <!-- Configure a built-in transaction manager.  If you're using an 
        app server, you probably want to use its transaction manager 
