@@ -10,6 +10,14 @@ an example:
 
      <sqlMap namespace="compplanning_qa">
        <resultMap id="result-contact" class="java.util.HashMap">
+        <!-- Here is the mapping between column names and the atom elements
+                reserved atom elements are (among many others)
+                     id, author, title, updated
+              for example, if you would like to set the title of an atom entry to
+              a specific column value, then the following line should be included 
+              in this section
+                      <result property="title" column="<column_name>"/> 
+        -->
          <result property="id" column="id"/>
          <result property="name" column="e"/>
        </resultMap>
