@@ -35,11 +35,11 @@ public class ServerConfiguration extends Configuration {
   private String namespace = "http://feeds.yourdomain.com/ns/1.0";
 
   private static final String OPTION_FEED_CONFIG_LOCATION = "feedConfigLocation";
-  private final String feedConfigLocation = "conf/feedserver/adapter/";
+  private String feedConfigLocation = "conf/feedserver/adapter/";
 
   private static final String OPTION_FEED_ADAPTER_CONFIG_LOCATION
       = "feedAdapterConfigLocation";
-  private final String feedAdapterConfigLocation = "feedserver/";
+  private String feedAdapterConfigLocation = "feedserver/";
 
   protected static final String PROPERTIES_FILE_SUFFIX = ".properties";
 
@@ -60,10 +60,10 @@ public class ServerConfiguration extends Configuration {
         namespace = parser.getValue(OPTION_FEED_NS);
       }
       if (parser.containsKey(OPTION_FEED_CONFIG_LOCATION)) {
-        nsPrefix = parser.getValue(OPTION_FEED_CONFIG_LOCATION);
+        feedConfigLocation = parser.getValue(OPTION_FEED_CONFIG_LOCATION);
       }
       if (parser.containsKey(OPTION_FEED_ADAPTER_CONFIG_LOCATION)) {
-        nsPrefix = parser.getValue(OPTION_FEED_ADAPTER_CONFIG_LOCATION);
+        feedAdapterConfigLocation = parser.getValue(OPTION_FEED_ADAPTER_CONFIG_LOCATION);
       }
     }
   }
