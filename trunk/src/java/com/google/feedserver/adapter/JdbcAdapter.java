@@ -75,7 +75,6 @@ public class JdbcAdapter extends AbstractAdapter implements Adapter {
     List<Map<String, Object>> rows = client.queryForList(queryId);
     Feed feed = createFeed();
     ServerConfiguration config = ServerConfiguration.getInstance();
-    feed.declareNS(config.getFeedNamespace(), config.getFeedNamespacePrefix());
     for (Map<String, Object> row : rows) {
       Entry entry = createEntryFromRow(row);
       addEditLinkToEntry(entry);
