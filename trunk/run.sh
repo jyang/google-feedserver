@@ -16,7 +16,7 @@ if [ $# -eq 1 ]
 then
    if [ $1 == "help" ]
    then
-     echo "Usage: $0 --port=<number> --uri=http://host:port/"
+     echo "Usage: $0 --port=<number> --uri=http://host:port"
      exit 0
    fi
 fi
