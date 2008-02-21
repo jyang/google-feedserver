@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+
+import javax.activation.MimeTypeParseException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
@@ -53,9 +55,6 @@ public class AdapterUtil {
    *    (loaded when the adapter is instantiated) and command line input args.
    * TODO: why do we have them in 2 different places. not clean at all
    *
-   * @param abdera
-   * @param feedConfiguration
-   *
    * @return Feed object created
    */
   protected static Feed createFeed(Abdera abdera,
@@ -70,12 +69,8 @@ public class AdapterUtil {
 
   /**
    * Adds the edit link to entry.
-   *
-   * @param entry
-   *
-   * @throws Exception raised by abdera during addition of link.
    */
-  protected static void addEditLinkToEntry(Entry entry) throws Exception {
+  protected static void addEditLinkToEntry(Entry entry) {
     if (getEditUriFromEntry(entry) == null) {
       entry.addLink(entry.getId().toString(), "edit");
     }
@@ -84,13 +79,9 @@ public class AdapterUtil {
   /**
    * Gets the uri from edit link of the specified entry.
    *
-   * @param entry the entry
-   *
    * @return the editUri from entry
-   *
-   * @throws Exception raised by abdera
    */
-  public static String getEditUriFromEntry(Entry entry) throws Exception {
+  public static String getEditUriFromEntry(Entry entry) {
     String editUri = null;
     List<Link> editLinks = entry.getLinks("edit");
     if (editLinks != null) {
@@ -100,9 +91,16 @@ public class AdapterUtil {
          * representation.
          */
         if (link.getMimeType() != null) {
-          if (link.getMimeType().match("application/atom+xml")) {
-            editUri = link.getResolvedHref().toString();
-            break;
+          try {
+            if (link.getMimeType().match("application/atom+xml")) {
+              editUri = link.getResolvedHref().toString();
+              break;
+            }
+          } catch (MimeTypeParseException e) {
+            logger.warning("Exception: " + e.getMessage());
+            e.printStackTrace();
+            // not much we can do about this exception. continue searching
+            // for the link with correct mimetype
           }
         } else {
           // edit link with no type attribute is the right one to use
@@ -117,9 +115,6 @@ public class AdapterUtil {
   /**
    * If entry doesn't have its "id" set, an id is assigned to it.
    *
-   * @param abdera
-   * @param feedConfiguration
-   * @param entry
    */
   protected static void setEntryIdIfNull(Abdera abdera,
       FeedConfiguration feedConfiguration, Entry entry)  {
@@ -137,7 +132,6 @@ public class AdapterUtil {
    * Creates the entry id in uri format, given the entryid
    *     (the last part of uri) and the config info object
    *
-   * @param feedConfiguration
    * @param entryId the entry id
    *
    * @return the uri string created
@@ -235,9 +229,6 @@ public class AdapterUtil {
   /**
    * returns the adapter instance for the given feedid.
    *
-   * @param abdera
-   * @param feedId
-   *
    * @return the adapter instance object
    *
    * @throws IOException Signals that an I/O exception has occurred.
@@ -255,7 +246,6 @@ public class AdapterUtil {
     FeedConfiguration feedConfiguration
         = FeedConfiguration.getFeedConfiguration(feedId);
     if (null == feedConfiguration) {
-      // Configuration for this feed is missing.
       return null;
     }
     return createAdapterInstance(abdera, feedConfiguration);
@@ -265,16 +255,12 @@ public class AdapterUtil {
    * Creates the adapter instance by loading the class and passing in
    * the config info for the adapter.
    *
-   * @param abdera
    * @param feedConfiguration config object
    *
    * @return the adapter instance object created/found
    */
   protected static synchronized Adapter createAdapterInstance(
       Abdera abdera, FeedConfiguration feedConfiguration) {
-
-    // due to a small window, it is possible that an adapter for this
-    // feedid is already created. if so, check and return
     Adapter adapter = adapterInstanceMap.get(feedConfiguration.getFeedId());
     if (adapter != null) {
       return adapter;
@@ -284,18 +270,15 @@ public class AdapterUtil {
     ClassLoader cl = Thread.currentThread().getContextClassLoader();
     Class<?> adapterClass;
     try {
-      adapterClass = cl.loadClass(
-           feedConfiguration.getAdapterClassName());
+      adapterClass = cl.loadClass(feedConfiguration.getAdapterClassName());
     } catch (ClassNotFoundException e) {
-      // The adapter was not found
       return null;
     }
 
     // get its constructor
     Constructor[] ctors = adapterClass.getConstructors();
     for (Constructor element : ctors) {
-      logger.finest("Public constructor found: " +
-           element.toString());
+      logger.finest("Public constructor found: " + element.toString());
     }
 
     // instantiate the adapter, by calling its constructor with
@@ -311,14 +294,14 @@ public class AdapterUtil {
       return null;
     }
     c.setAccessible(true);
-     try {
+    try {
       adapter = (Adapter) c.newInstance(abdera, feedConfiguration);
     } catch (Exception e) {
       // The adapter does not have a valid constructor
       return null;
     }
-     // put this adapter instance in adapterInstanceMap
-     adapterInstanceMap.put(feedConfiguration.getFeedId(), adapter);
-     return adapter;
-   }
+    // put this adapter instance in adapterInstanceMap
+    adapterInstanceMap.put(feedConfiguration.getFeedId(), adapter);
+    return adapter;
+  }
 }
