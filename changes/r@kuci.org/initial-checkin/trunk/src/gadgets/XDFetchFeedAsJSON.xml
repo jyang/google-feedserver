@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+<ModulePrefs title="XDFetchFeedAsJSON Example" title_url="http://groups.google.com/group/Google-Gadgets-API"
+  description="This generic client-side JavaScript feed renderer will use XD2 technology to grab a feed from a differnt domain than the one the gadget is served from." />
+<UserPref name="show_date" display_name="Show Dates?" datatype="bool"/>
+<UserPref name="show_summ" display_name="Show Summaries?" datatype="bool"/>
+<UserPref name="num_entries" display_name="Number of Entries:" />
+<UserPref name="feed_url" display_name="URL of Feed:" datatype="string" required="true" />
+
+<Content type="html">
+<![CDATA[
+<style> #content_div { font-size: 80%; margin: 5px; background-color: #FFFFBF;} </style>
+
+
+<div id=content_div></div>
+
+<script type="text/javascript" src="http://primco.dyndns.org/galleries/lr/gdata-min-test.js"></script>
+<script type="text/javascript" src="http://primco.dyndns.org/galleries/lr/force-xd2-authenticator.js"></script>
+
+<script type="text/javascript">
+
+// Get userprefs
+var prefs = new _IG_Prefs(__MODULE_ID__);
+var showdate = prefs.getBool("show_date");
+var summary = prefs.getBool("show_summ");
+var num_entries = prefs.getInt("num_entries");
+var url = prefs.getString("feed_url");
+
+// If user wants to display more than 9 entries, display an error
+// and set the value to 9, the max allowed.
+if (num_entries > 9) {
+  alert("You cannot display more than 9 entries.");
+  num_entries = 9;
+};
+
+// Use the GData JavaScript client library to retrieve core feed data from
+// the specified URL. Then combine the data with HTML markup for display in
+// the gadget.
+
+var service = new google.gdata.client.GoogleService('lr', 'contacts',
+                                                    ForceXd2Authenticator);
+service.setAltSupport('json', false);
+service.setAltSupport('json-xd', false);
+service.setAltSupport('atom-xd', true);
+service.getFeed(url, handleResponse, handleError);
+
+
+function handleResponse(feedRoot) {
+  // Start building HTML string that will be displayed in gadget.
+  var html = "";
+  // Access the fields in the feed
+  html += "<div><b>" + feedRoot.feed.id.$t + "</b></div>";
+  //html += "<div>" + feed.Description + "</div><br>";
+  
+  var entries = feedRoot.feed.entry;
+  if ((num_entries == 0) || (num_entries > entries.length)) {
+    num_entries = entries.length;
+  }
+  // Access the data for a given entry
+  if (entries) {
+    for (var i = 0; i < num_entries; i++) {
+      var entry = entries[i];
+    
+      html += "<div>"
+      + "<a target='_blank' href='" + entry.Link + "'>" + entry.title.$t + "</a> ";
+      if (showdate==true){
+        html += entry.updated.$t;
+      }
+      if (summary==true) {
+        html += "<br><i>" + entry.summary.$t + "</i>";
+      }
+      html += "</div>";
+    }
+  }
+  _gel("content_div").innerHTML = html;
+};
+
+
+function handleError(error) {
+  alert(error);
+};
+</script>
+
+]]>
+</Content>
+</Module>
