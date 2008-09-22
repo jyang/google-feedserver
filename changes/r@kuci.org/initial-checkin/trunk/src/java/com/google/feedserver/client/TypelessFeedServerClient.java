@@ -307,7 +307,7 @@ public class TypelessFeedServerClient {
    * @param entryMap the "typeless" map to convert.
    * @return a populated gdata entry object.
    */
-  private FeedServerEntry getEntryFromMap(Map<String, List<String>> entryMap) {
+  private Entry getEntryFromMap(Map<String, List<String>> entryMap) {
     // XMLutil expects entries in map form of string -> object.  For repeatable elements
     // the object is really an "object[]" but for single elements its a "String".  
     // This loop prepares this very hacky map representation from the passed in more sane
@@ -327,9 +327,10 @@ public class TypelessFeedServerClient {
     }
     OtherContent content = contentUtil.createXmlContent(
         xmlUtil.convertPropertiesToXml(baseEntryMap));
-    FeedServerEntry feedServerEntry = new FeedServerEntry();
-    feedServerEntry.setContent(content);
-    return feedServerEntry;
+    Entry entry = new Entry();
+    entry.setContent(content);
+    entry.setXmlBlob(content.getXml());
+    return entry;
   }
   
   /**

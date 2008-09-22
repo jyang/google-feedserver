@@ -17,6 +17,7 @@ package com.google.feedserver.client;
 import com.google.gdata.client.GoogleService;
 import com.google.gdata.data.Entry;
 import com.google.gdata.data.Feed;
+import com.google.gdata.data.OtherContent;
 import com.google.gdata.util.ServiceException;
 import com.google.inject.Inject;
 import com.google.feedserver.util.ContentUtil;
@@ -51,26 +52,17 @@ public class FeedServerClient<T> {
   private ContentUtil contentUtil;
   private Class<T> beanClass;
   
-  /**
-   * Creates the client using provided dependencies.
-   * 
-   * @param service the configured Gdata service.
-   * @param contentUtil a created ContentUtil.
-   */
-  @Inject
-  public FeedServerClient(GoogleService service, ContentUtil contentUtil, Class<T> beanClass) {
-    this.service = service;
-    this.contentUtil = contentUtil;
-    this.beanClass = beanClass;
-  }
   
   /**
    * Creates client using supplied service in a non dependency-injection way.
    * 
    * @param service the configured Gdata service.
    */
+  @Inject
   public FeedServerClient(GoogleService service, Class<T> beanClass) {
-    this(service, new ContentUtil(), beanClass);
+    this.service = service;
+    this.beanClass = beanClass;
+    this.contentUtil = new ContentUtil(); // this class does not have external deps.
   }
   
   /**
@@ -218,10 +210,10 @@ public class FeedServerClient<T> {
    */
   public void updateEntry(URL baseUrl, T beanEntry) throws FeedServerClientException {
     String name = (String) getBeanProperty("name", beanEntry, new String());
-    FeedServerEntry feedServerEntry = createEntryFromBean(beanEntry);
+    Entry entry = createEntryFromBean(beanEntry);
     try {
       LOG.info("updating entry at feed " + baseUrl + "/" + name);
-      updateEntry(new URL(baseUrl.toString() + "/" + name), feedServerEntry);
+      updateEntry(new URL(baseUrl.toString() + "/" + name), entry);
     } catch (MalformedURLException e) {
       throw new FeedServerClientException("invalid base URL", e);
     }
@@ -251,10 +243,10 @@ public class FeedServerClient<T> {
    */
   public void insertEntry(URL baseUrl, T beanEntry) throws FeedServerClientException {
     String name = (String) getBeanProperty("name", beanEntry, new String());
-    FeedServerEntry feedServerEntry = createEntryFromBean(beanEntry);
+    Entry entry = createEntryFromBean(beanEntry);
     try {
       LOG.info("inserting entry at feed " + baseUrl);
-      service.insert(baseUrl, feedServerEntry);
+      service.insert(baseUrl, entry);
     } catch (IOException e) {
       throw new FeedServerClientException(e);
     } catch (ServiceException e) {
@@ -315,7 +307,7 @@ public class FeedServerClient<T> {
    * @param entry populated entry object.
    * @throws FeedServerClientException if any feed communication errors occur.
    */
-  private void updateEntry(URL feedUrl, FeedServerEntry entry) throws FeedServerClientException {
+  private void updateEntry(URL feedUrl, Entry entry) throws FeedServerClientException {
     try {
       service.update(feedUrl, entry);
     } catch (IOException e) {
@@ -352,11 +344,13 @@ public class FeedServerClient<T> {
    * @param bean representing an entry's content.
    * @return FeedServerEntry with populated content.
    */
-  private FeedServerEntry createEntryFromBean(T bean) {
+  private Entry createEntryFromBean(T bean) {
     try {
-      FeedServerEntry feedServerEntry = new FeedServerEntry();
-      feedServerEntry.setContent(contentUtil.createXmlContent(bean));
-      return feedServerEntry;
+      Entry entry = new Entry();
+      OtherContent content = contentUtil.createXmlContent(bean);
+      entry.setXmlBlob(content.getXml());
+      entry.setContent(content);
+      return entry;
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid bean " + bean.getClass().getName(), e);
     } catch (IntrospectionException e) {
