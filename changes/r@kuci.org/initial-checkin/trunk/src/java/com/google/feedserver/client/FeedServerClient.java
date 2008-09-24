@@ -15,27 +15,18 @@
 package com.google.feedserver.client;
 
 import com.google.gdata.client.GoogleService;
-import com.google.gdata.data.Entry;
-import com.google.gdata.data.Feed;
-import com.google.gdata.data.OtherContent;
 import com.google.gdata.util.ServiceException;
 import com.google.inject.Inject;
-import com.google.feedserver.util.ContentUtil;
 import com.google.feedserver.util.FeedServerClientException;
 
 import org.apache.commons.beanutils.BeanMap;
 import org.apache.log4j.Logger;
-import org.xml.sax.SAXException;
 
-import java.beans.IntrospectionException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Implements a Gdata feed client that represents feeds as generic maps of String->String pairs.
@@ -49,24 +40,43 @@ public class FeedServerClient<T> {
   
   // Dependencies
   private GoogleService service; 
-  private ContentUtil contentUtil;
-  private Class<T> beanClass;
+  private Class<T> entityClass; // java bean
   
   
   /**
-   * Creates client using supplied service in a non dependency-injection way.
+   * Creates client using supplied service and entityClass
    * 
    * @param service the configured Gdata service.
    */
   @Inject
-  public FeedServerClient(GoogleService service, Class<T> beanClass) {
+  public FeedServerClient(GoogleService service, Class<T> entityClass) {
     this.service = service;
-    this.beanClass = beanClass;
-    this.contentUtil = new ContentUtil(); // this class does not have external deps.
+    this.entityClass = entityClass;
   }
   
+
   /**
-   * Fetches generic "payload-in-content" entry into a predefined java bean.  This bean should
+   * Fetches generic "payload-in-content" entry into a {@link FeedServerEntry}.   The
+   * FeedServerEntry allows you to return the content of the entry as a java bean.
+   * 
+   * @param feedUrl the feed URL which can contain any valid ATOM "query"
+   * @return the populated entry.
+   * @throws FeedServerClientException if we cannot contact the feedserver, fetch the URL, or 
+   * parse the XML.
+   * @throws RuntimeException if the bean is not constructed properly and is missing fields.
+   */
+  public FeedServerEntry getEntry(URL feedUrl) throws FeedServerClientException {
+    try {
+      return service.getEntry(feedUrl, FeedServerEntry.class);
+    } catch (IOException e) {
+      throw new FeedServerClientException("Error while fetching " + feedUrl, e);
+    } catch (ServiceException e) {
+      throw new FeedServerClientException(e);
+    }
+  }
+    
+  /**
+   * Fetches generic "payload-in-content" entity into a predefined java bean.  This bean should
    * have fields necessary to receive all the elements of the feed.  Using a bean, requires you
    * know the schema of your feed ahead of time, but gives you the convenience of having first
    * class object access. 
@@ -77,79 +87,57 @@ public class FeedServerClient<T> {
    * parse the XML.
    * @throws RuntimeException if the bean is not constructed properly and is missing fields.
    */
-  public T getEntry(URL feedUrl) throws FeedServerClientException {
-    try {
-      Entry entry = service.getEntry(feedUrl, Entry.class);
-      T bean = beanClass.newInstance();
-      contentUtil.fillBean(entry, bean);
-      return bean;
-    } catch (IOException e) { // holy exception list batman!
-      throw new FeedServerClientException("Error while fetching " + feedUrl, e);
-    } catch (ServiceException e) {
-      throw new FeedServerClientException(e);
-    } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid bean " + beanClass.getName(), e);
-    } catch (SAXException e) {
-      throw new FeedServerClientException(e);
-    } catch (ParserConfigurationException e) {
-      throw new RuntimeException("Invalid XML handler", e);
-    } catch (IntrospectionException e) {
-      throw new RuntimeException("Invalid bean " + beanClass.getName(), e);
-    } catch (IllegalAccessException e) {
-      throw new RuntimeException("Invalid bean " + beanClass.getName(), e);
-    } catch (InvocationTargetException e) {
-      throw new RuntimeException("Invalid bean " + beanClass.getName(), e);
-    } catch (InstantiationException e) {
-      throw new RuntimeException("Could not instantiate bean class" + beanClass.getName());
-    }
+  public T getEntity(URL feedUrl) throws FeedServerClientException {
+    return getEntry(feedUrl).getEntity(entityClass);
   }
-
+  
   /**
-   * Fetches generic "payload-in-content" feed into a list of the supplied predefined java bean.  
-   * This bean should have fields necessary to receive all the elements of the feed.  Using a bean
-   * requires you know the schema of your feed ahead of time, but gives you the convenience of 
-   * having first-class object representation. 
+   * Fetches generic "payload-in-content" entry into a list of {@link FeedServerEntry}.   The
+   * FeedServerEntry allows you to return the content of the entry as a java bean.
    * 
    * @param feedUrl the feed URL which can contain any valid ATOM "query"
-   * @return the list of populated bean.
+   * @return the list of populated entries.
    * @throws FeedServerClientException if we cannot contact the feedserver, fetch the URL, or 
    * parse the XML.
    * @throws RuntimeException if the bean is not constructed properly and is missing fields.
    */
-  @SuppressWarnings("cast")
-  public List<T> getFeed(URL feedUrl) throws FeedServerClientException {
+  public List<FeedServerEntry> getEntries(URL feedUrl) throws FeedServerClientException {
     try {
-      Feed feed = service.getFeed(feedUrl, Feed.class);
-      ArrayList<T> beanEntries = new ArrayList<T>();
-      for (Entry entry : feed.getEntries()) {
-        T beanEntry = (T) beanClass.newInstance();
-        contentUtil.fillBean(entry, beanEntry);
-        beanEntries.add(beanEntry);
-      }
-    return beanEntries;
-    } catch (IOException e) { // holy exception list batman!
+      FeedServerFeed feed = service.getFeed(feedUrl, FeedServerFeed.class);
+      return feed.getEntries();
+    } catch (IOException e) {
       throw new FeedServerClientException("Error while fetching " + feedUrl, e);
     } catch (ServiceException e) {
       throw new FeedServerClientException(e);
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid bean " + beanClass.getName(), e);
-    } catch (SAXException e) {
-      throw new FeedServerClientException(e);
-    } catch (ParserConfigurationException e) {
-      throw new RuntimeException("Invalid XML handler", e);
-    } catch (IntrospectionException e) {
-      throw new RuntimeException("Invalid bean " + beanClass.getName(), e);
-    } catch (IllegalAccessException e) {
-      throw new RuntimeException("Invalid bean " + beanClass.getName(), e);
-    } catch (InvocationTargetException e) {
-      throw new RuntimeException("Invalid bean " + beanClass.getName(), e);
-    } catch (InstantiationException e) {
-      throw new RuntimeException("Invalid bean " + beanClass.getName(), e);
+      throw new RuntimeException("Invalid bean " + entityClass.getName(), e);
     }
   }
   
   /**
-   * Deletes entry specified by supplied URL.  This URL must include the full path.
+   * Fetches generic "payload-in-content" entity into a list of predefined java bean.  This 
+   * bean should have fields necessary to receive all the elements of the feed.  Using a bean, 
+   * requires you know the schema of your feed ahead of time, but gives you the convenience of 
+   * having first class object access. 
+   * 
+   * @param feedUrl the feed URL which can contain any valid ATOM "query"
+   * @return a list of populated beans representing an entry's entity.
+   * @throws FeedServerClientException if we cannot contact the feedserver, fetch the URL, or 
+   * parse the XML.
+   * @throws RuntimeException if the bean is not constructed properly and is missing fields.
+   */
+  public List<T> getEntities(URL feedUrl) throws FeedServerClientException {
+    
+    List<FeedServerEntry> entries = getEntries(feedUrl);
+    List<T> entities = new ArrayList<T>();
+    for (FeedServerEntry entry : entries) {
+      entities.add(entry.getEntity(entityClass));  
+    }
+    return entities;
+  }
+  
+  /**
+   * Deletes entry specified by supplied URL.  This URL must include the ID.
    * 
    * @param feedUrl the full URL to the entry in this feed.
    * @throws FeedServerClientException if any communication issues occur with the feed or the
@@ -166,15 +154,15 @@ public class FeedServerClient<T> {
   }
   
   /**
-   * Deletes specified entry using "name" property contained in the bean.
+   * Deletes specified entry using "name" property contained in the entry's entity.
    * 
    * @param baseUrl Feed url not including ID
-   * @param entry valid entry bean.
+   * @param entry valid entry containing an entity bean.
    * @throws FeedServerClientException if any communication issues occur with the feed or the
    * feed ID is invalid or malformed.
    */
-  public void deleteEntry(URL baseUrl, T entry) throws FeedServerClientException {
-    String name = (String) getBeanProperty("name", entry, new String());
+  public void deleteEntry(URL baseUrl, FeedServerEntry entry) throws FeedServerClientException {
+    String name = (String) getBeanProperty("name", entry.getEntity(entityClass), new String());
     try {
       URL feedUrl = new URL(baseUrl.toString() + "/" + name);
       LOG.info("deleting entry at feed " + feedUrl);
@@ -185,65 +173,144 @@ public class FeedServerClient<T> {
   }
   
   /**
-   * Deletes specified entries using "name" property contained in the bean.  This makes one
-   * request per entry.
+   * Deletes specified entry using "name" property contained in the supplied entity bean.
    * 
    * @param baseUrl Feed url not including ID
-   * @param entries list of valid entry beans.
+   * @param entity valid entry bean.
    * @throws FeedServerClientException if any communication issues occur with the feed or the
    * feed ID is invalid or malformed.
    */
-  public void deleteEntries(URL baseUrl, List<T> entries) throws FeedServerClientException {
-    for (T entry : entries) {
-      deleteEntry(baseUrl, entry);
-    }
-  }
-  
-  
-  /**
-   * Updates the entry using the baseUrl plus the ID contained in the entry.
-   * 
-   * @param baseUrl feed URL without an ID.
-   * @param beanEntry a bean representing a feed entry.
-   * @throws FeedServerClientException if any feed communication issues occur or the URL is 
-   * malformed.
-   */
-  public void updateEntry(URL baseUrl, T beanEntry) throws FeedServerClientException {
-    String name = (String) getBeanProperty("name", beanEntry, new String());
-    Entry entry = createEntryFromBean(beanEntry);
+  public void deleteEntity(URL baseUrl, T entity) throws FeedServerClientException {
+    String name = (String) getBeanProperty("name", entity, new String());
     try {
-      LOG.info("updating entry at feed " + baseUrl + "/" + name);
-      updateEntry(new URL(baseUrl.toString() + "/" + name), entry);
+      URL feedUrl = new URL(baseUrl.toString() + "/" + name);
+      LOG.info("deleting entry at feed " + feedUrl);
+      deleteEntry(feedUrl);
     } catch (MalformedURLException e) {
       throw new FeedServerClientException("invalid base URL", e);
     }
   }
-
+  
   /**
-   * Updates the entries using the baseUrl plus the ID contained in each entry.
+   * Deletes specified entries using "name" property contained in the entry's entity.  This 
+   * makes one request per entry.
    * 
-   * @param baseUrl feed URL without an ID.
-   * @param beanEntries a list of beans representing feed entries.
-   * @throws FeedServerClientException if any feed communication issues occur or the URL is 
-   * malformed.
+   * @param baseUrl Feed url not including ID
+   * @param entries list of valid populated entries.
+   * @throws FeedServerClientException if any communication issues occur with the feed or the
+   * feed ID is invalid or malformed.
    */
-  public void updateEntries(URL baseUrl, List<T> beanEntries) throws FeedServerClientException {
-    for (T entry : beanEntries) {
-      updateEntry(baseUrl, entry);
+  public void deleteEntries(URL baseUrl, List<FeedServerEntry> entries) 
+      throws FeedServerClientException {
+    for (FeedServerEntry entry : entries) {
+      deleteEntry(baseUrl, entry);
+    }
+  }
+  
+  /**
+   * Deletes specified entries using "name" property contained in the entity bean.  This makes one
+   * request per entry.
+   * 
+   * @param baseUrl Feed url not including ID
+   * @param entities list of valid entity beans.
+   * @throws FeedServerClientException if any communication issues occur with the feed or the
+   * feed ID is invalid or malformed.
+   */
+  public void deleteEntities(URL baseUrl, List<T> entities) throws FeedServerClientException {
+    for (T entity : entities) {
+      deleteEntity(baseUrl, entity);
     }
   }
 
   /**
-   * Inserts the entry using the baseUrl provided.
+   * Updates the entry using the baseUrl plus the ID contained in the entry's entity.
+   * 
+   * @param baseUrl fully qualified feed URL.
+   * @param entry populated entry object.
+   * @throws FeedServerClientException if any feed communication errors occur.
+   */
+  public void updateEntry(URL baseUrl, FeedServerEntry entry) throws FeedServerClientException {
+    String name = (String) getBeanProperty("name", entry.getEntity(entityClass), new String());
+    try {
+      LOG.info("updating entry at feed " + baseUrl + "/" + name);
+      service.update(new URL(baseUrl + "/" + name), entry);
+    } catch (IOException e) {
+      throw new FeedServerClientException(e);
+    } catch (ServiceException e) {
+      throw new FeedServerClientException(e);
+    }
+  }
+  
+  /**
+   * Updates the entry using the baseUrl plus the ID contained in the entity.
    * 
    * @param baseUrl feed URL without an ID.
-   * @param beanEntry a bean representing a feed entry.
+   * @param entity a bean representing a feed entry.
    * @throws FeedServerClientException if any feed communication issues occur or the URL is 
    * malformed.
    */
-  public void insertEntry(URL baseUrl, T beanEntry) throws FeedServerClientException {
-    String name = (String) getBeanProperty("name", beanEntry, new String());
-    Entry entry = createEntryFromBean(beanEntry);
+  public void updateEntity(URL baseUrl, T entity) throws FeedServerClientException {
+    FeedServerEntry entry = new FeedServerEntry(entity);
+    updateEntry(baseUrl, entry);
+  }
+
+  /**
+   * Updates the entries using the baseUrl plus the ID contained in each entry's entity.
+   * 
+   * @param baseUrl feed URL without an ID.
+   * @param entries a list of entries
+   * @throws FeedServerClientException if any feed communication issues occur or the URL is 
+   * malformed.
+   */
+  public void updateEntries(URL baseUrl, List<FeedServerEntry> entries) throws FeedServerClientException {
+    for (FeedServerEntry entry : entries) {
+      updateEntry(baseUrl, entry);
+    }
+  }
+  
+  /**
+   * Updates the entries using the baseUrl plus the ID contained in each entity.
+   * 
+   * @param baseUrl feed URL without an ID.
+   * @param entities a list of beans representing feed entries.
+   * @throws FeedServerClientException if any feed communication issues occur or the URL is 
+   * malformed.
+   */
+  public void updateEntities(URL baseUrl, List<T> entities) throws FeedServerClientException {
+    for (T entity : entities) {
+      updateEntity(baseUrl, entity);
+    }
+  }
+  
+  /**
+   * Creates a new entry from the given entity and inserts it.
+   * 
+   * @param baseUrl feed URL without an ID.
+   * @param entity a bean representing a feed entry.
+   * @throws FeedServerClientException if any feed communication issues occur or the URL is 
+   * malformed.
+   */
+  public void insertEntity(URL baseUrl, T entity) throws FeedServerClientException {
+    FeedServerEntry entry = new FeedServerEntry(entity);
+    try {
+      LOG.info("inserting entry at feed " + baseUrl);
+      service.insert(baseUrl, entry);
+    } catch (IOException e) {
+      throw new FeedServerClientException(e);
+    } catch (ServiceException e) {
+      throw new FeedServerClientException(e);
+    }
+  }
+    
+  /**
+   * Inserts the entry using the baseUrl provided.
+   * 
+   * @param baseUrl feed URL without an ID.
+   * @param entry a populated feed entry.
+   * @throws FeedServerClientException if any feed communication issues occur or the URL is 
+   * malformed.
+   */
+  public void insertEntry(URL baseUrl, FeedServerEntry entry) throws FeedServerClientException {
     try {
       LOG.info("inserting entry at feed " + baseUrl);
       service.insert(baseUrl, entry);
@@ -255,65 +322,33 @@ public class FeedServerClient<T> {
   }
   
   /**
-   * Inserts the entries using the baseUrl provided.
+   * Creates an entry for each provided entity and inserts this.  This results in one request
+   * for each given entity.
    * 
    * @param baseUrl feed URL without an ID.
-   * @param beanEntries a list of beans each representing a feed entry.
+   * @param entities a list of entity beans each representing a feed entry.
    * @throws FeedServerClientException if any feed communication issues occur or the URL is 
    * malformed.
    */
-  public void insertEntries(URL baseUrl, List<T> beanEntries) throws FeedServerClientException {
-    for (T entry : beanEntries) {
-      insertEntry(baseUrl, entry);
+  public void insertEntities(URL baseUrl, List<T> entities) throws FeedServerClientException {
+    for (T entity : entities) {
+      insertEntity(baseUrl, entity);
     }
   }
   
   /**
-   * Utility method that given XML source for a feed entry, creates a bean.
+   * Inserts the entries provided using the baseUrl provided. This results in one request for
+   * each given entry.
    * 
-   * @param xmlText XML source for the associated feed entry.
-   * @return a populated bean.
-   * @throws FeedServerClientException if any conversion errors occur parsing the XML.
+   * @param baseUrl feed URL without an ID.
+   * @param entries a list of feed entries.
+   * @throws FeedServerClientException if any feed communication issues occur or the URL is 
+   * malformed.
    */
-  public T fillBeanFromXml(String xmlText) throws FeedServerClientException {
-    
-    try {
-      T bean = beanClass.newInstance();
-      contentUtil.fillBean(contentUtil.createXmlContent(xmlText), bean);
-      return bean;
-    } catch (InstantiationException e) {
-      throw new RuntimeException("Could not create new bean " + beanClass.getName());
-    } catch (IllegalAccessException e) {
-      throw new RuntimeException("Could not construct new bean " + beanClass.getName());
-    } catch (IOException e) { // holy exception list batman!
-      throw new FeedServerClientException("Error while converting XML to bean.", e);
-    } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid bean " + beanClass.getName(), e);
-    } catch (SAXException e) {
-      throw new FeedServerClientException(e);
-    } catch (ParserConfigurationException e) {
-      throw new RuntimeException("Invalid XML handler", e);
-    } catch (IntrospectionException e) {
-      throw new RuntimeException("Invalid bean " + beanClass.getName(), e);
-    } catch (InvocationTargetException e) {
-      throw new RuntimeException("Invalid bean " + beanClass.getName(), e);
-    }
-  }
-
-  /**
-   * Helper function to update gdata feed using native {@link Entry}.
-   * 
-   * @param feedUrl fully qualified feed URL.
-   * @param entry populated entry object.
-   * @throws FeedServerClientException if any feed communication errors occur.
-   */
-  private void updateEntry(URL feedUrl, Entry entry) throws FeedServerClientException {
-    try {
-      service.update(feedUrl, entry);
-    } catch (IOException e) {
-      throw new FeedServerClientException(e);
-    } catch (ServiceException e) {
-      throw new FeedServerClientException(e);
+  public void insertEntries(URL baseUrl, List<FeedServerEntry> entries) 
+      throws FeedServerClientException {
+    for (FeedServerEntry entry : entries) {
+      insertEntry(baseUrl, entry);
     }
   }
   
@@ -337,28 +372,4 @@ public class FeedServerClient<T> {
       throw new RuntimeException("Invalid bean " + bean.getClass().getName(), e);
     }
   }
-  
-  /**
-   * Helper function that creates an Gdata Entry object from the supplied bean.
-   * 
-   * @param bean representing an entry's content.
-   * @return FeedServerEntry with populated content.
-   */
-  private Entry createEntryFromBean(T bean) {
-    try {
-      Entry entry = new Entry();
-      OtherContent content = contentUtil.createXmlContent(bean);
-      entry.setXmlBlob(content.getXml());
-      entry.setContent(content);
-      return entry;
-    } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Invalid bean " + bean.getClass().getName(), e);
-    } catch (IntrospectionException e) {
-      throw new RuntimeException("Invalid bean " + bean.getClass().getName(), e);
-    } catch (IllegalAccessException e) {
-      throw new RuntimeException("Invalid bean " + bean.getClass().getName(), e);
-    } catch (InvocationTargetException e) {
-      throw new RuntimeException("Invalid bean " + bean.getClass().getName(), e);
-    }
-  } 
 }

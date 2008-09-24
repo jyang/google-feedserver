@@ -70,25 +70,31 @@ public class TypelessSampleFeedTool {
     
     if (task_FLAG.equals("get")) {
       URL feedUrl = new URL(feedUrl_FLAG);
-      for (Map<String, List<String>> vehicleMap : feedClient.getFeed(feedUrl)) {
-        for (String key : vehicleMap.keySet()) {
-          for (String value : vehicleMap.get(key)) {
-	        log.info("key " + key + " value " + value); 
+      for (Map<String, Object> vehicleMap : feedClient.getEntries(feedUrl)) {
+        for (String key : vehicleMap.keySet()) { 
+          if (vehicleMap.get(key) instanceof String) {
+	        log.info("key " + key + " value " + vehicleMap.get(key)); 
+          } else if (vehicleMap.get(key) instanceof Object[]) {
+            for (Object value : (Object[]) vehicleMap.get(key)) {
+              log.info("repeated key" + key + " value " + vehicleMap.get(key)); 
+            }
+          } else {
+            log.warn("Invalid object in typeless map " + key);
           }
         }
       }
     } else if (task_FLAG.equals("insert")) {
       String entryXml = readFileIntoString(entry_FLAG);
-      feedClient.insertEntry(new URL(feedUrl_FLAG), feedClient.getEntryMapFromXml(entryXml));
+      feedClient.insertEntry(new URL(feedUrl_FLAG), feedClient.getTypelessMapFromXml(entryXml));
     } else if (task_FLAG.equals("update")) {
       String entryXml = readFileIntoString(entry_FLAG);
-      feedClient.updateEntry(new URL(feedUrl_FLAG), feedClient.getEntryMapFromXml(entryXml));
+      feedClient.updateEntry(new URL(feedUrl_FLAG), feedClient.getTypelessMapFromXml(entryXml));
     } else if (task_FLAG.equals("delete")) {
       if (entry_FLAG == null) {
         feedClient.deleteEntry(new URL(feedUrl_FLAG));
       } else {
         String entryXml = readFileIntoString(entry_FLAG);
-        feedClient.deleteEntry(new URL(feedUrl_FLAG), feedClient.getEntryMapFromXml(entryXml));
+        feedClient.deleteEntry(new URL(feedUrl_FLAG), feedClient.getTypelessMapFromXml(entryXml));
       }
     } else {
       log.fatal("Incorrect target specified.  Must use 'get', 'insert', 'delete', 'update'");

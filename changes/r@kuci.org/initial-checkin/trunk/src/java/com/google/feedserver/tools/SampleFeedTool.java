@@ -15,6 +15,7 @@
 package com.google.feedserver.tools;
 
 import com.google.feedserver.client.FeedServerClient;
+import com.google.feedserver.client.FeedServerEntry;
 import com.google.feedserver.util.FeedServerClientException;
 import com.google.feedserver.util.CommonsCliHelper;
 import com.google.gdata.client.GoogleService;
@@ -69,7 +70,7 @@ public class SampleFeedTool {
     
     if (task_FLAG.equals("get")) {
       URL feedUrl = new URL(feedUrl_FLAG);
-      for (VehicleBean vehicleBean : feedClient.getFeed(feedUrl)) {
+      for (VehicleBean vehicleBean : feedClient.getEntities(feedUrl)) {
         BeanMap beanMap = new BeanMap(vehicleBean);
         for (Object key : beanMap.keySet()) {
           if (beanMap.get(key) instanceof String[]) {
@@ -83,19 +84,19 @@ public class SampleFeedTool {
       }
     } else if (task_FLAG.equals("insert")) {
       String entryXml = readFileIntoString(entry_FLAG);
-      VehicleBean vehicleBean = feedClient.fillBeanFromXml(entryXml);
-      feedClient.insertEntry(new URL(feedUrl_FLAG), vehicleBean);
+      FeedServerEntry vehicleEntry = new FeedServerEntry(entryXml);
+      feedClient.insertEntry(new URL(feedUrl_FLAG), vehicleEntry);
     } else if (task_FLAG.equals("update")) {
       String entryXml = readFileIntoString(entry_FLAG);
-      VehicleBean vehicleBean = feedClient.fillBeanFromXml(entryXml);
-      feedClient.updateEntry(new URL(feedUrl_FLAG), vehicleBean);
+      FeedServerEntry vehicleEntry = new FeedServerEntry(entryXml);
+      feedClient.updateEntry(new URL(feedUrl_FLAG), vehicleEntry);
     } else if (task_FLAG.equals("delete")) {
       if (entry_FLAG == null) {
         feedClient.deleteEntry(new URL(feedUrl_FLAG));
       } else {
         String entryXml = readFileIntoString(entry_FLAG);
-        VehicleBean vehicleBean = feedClient.fillBeanFromXml(entryXml);
-        feedClient.deleteEntry(new URL(feedUrl_FLAG), vehicleBean);
+        FeedServerEntry vehicleEntry = new FeedServerEntry(entryXml);
+        feedClient.deleteEntry(new URL(feedUrl_FLAG), vehicleEntry);
       }
     } else {
       LOG.fatal("Incorrect target specified.  Must use 'get', 'insert', 'delete', 'update'");

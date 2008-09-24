@@ -61,12 +61,12 @@ public class TypelessFeedServerClientTest extends TestCase {
   public void testGetEntry() throws Exception {
     // Setup
     URL testUrl = new URL(TEST_FEED_URL);
-    EasyMock.expect(mockService.getEntry(testUrl, Entry.class)).andReturn(
+    EasyMock.expect(mockService.getEntry(testUrl, FeedServerEntry.class)).andReturn(
         testUtil.getVehicleEntry());
     EasyMock.replay(mockService);
     
     // Perform Test
-    Map<String, List<String>> fetchedMap = feedServerClient.getEntry(testUrl);
+    Map<String, Object> fetchedMap = feedServerClient.getEntry(testUrl);
     
     // Check results
     assertTrue("Maps are not equal", testUtil.isEqual(testUtil.getSampleVehicleMap(), fetchedMap));
@@ -77,13 +77,13 @@ public class TypelessFeedServerClientTest extends TestCase {
     // Setup
     URL badUrl = new URL("http://badUrl");
     String errorMsg = "invalid URL";
-    EasyMock.expect(mockService.getEntry(badUrl, Entry.class))
+    EasyMock.expect(mockService.getEntry(badUrl, FeedServerEntry.class))
         .andThrow(new IOException(errorMsg));
     EasyMock.replay(mockService);
     
     // Perform Test
     try {
-      Map<String, List<String>> fetchedMap = feedServerClient.getEntry(badUrl);
+      Map<String, Object> fetchedMap = feedServerClient.getEntry(badUrl);
     } catch (FeedServerClientException e) {
       assertTrue(e.getCause().getMessage().equals(errorMsg));
       EasyMock.verify(mockService);
@@ -134,7 +134,7 @@ public class TypelessFeedServerClientTest extends TestCase {
   }
   
  public void testFillMapFromXml() throws Exception {
-   Map<String, List<String>> map = feedServerClient.getEntryMapFromXml(
+   Map<String, Object> map = feedServerClient.getTypelessMapFromXml(
        FeedServerClientTestUtil.ENTRY_XML);
    assertTrue(testUtil.isEqual(testUtil.getSampleVehicleMap(), map));
  }

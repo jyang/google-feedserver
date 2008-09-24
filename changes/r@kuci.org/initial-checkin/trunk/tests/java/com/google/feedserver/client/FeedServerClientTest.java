@@ -16,15 +16,11 @@ package com.google.feedserver.client;
 
 import com.google.feedserver.testing.FeedServerClientTestUtil;
 import com.google.feedserver.tools.SampleFeedTool.VehicleBean;
-import com.google.feedserver.util.ContentUtil;
 import com.google.feedserver.util.FeedServerClientException;
 import com.google.gdata.client.GoogleService;
-import com.google.gdata.data.Entry;
-import com.google.gdata.data.OtherContent;
 
 import junit.framework.TestCase;
 
-import org.easymock.IArgumentMatcher;
 import org.easymock.classextension.EasyMock;
 
 import java.io.IOException;
@@ -64,12 +60,12 @@ public class FeedServerClientTest extends TestCase {
   public void testGetEntry() throws Exception {
     // Setup
     URL testUrl = new URL(TEST_FEED_URL);
-    EasyMock.expect(mockService.getEntry(testUrl, Entry.class)).andReturn(
+    EasyMock.expect(mockService.getEntry(testUrl, FeedServerEntry.class)).andReturn(
         testUtil.getVehicleEntry());
     EasyMock.replay(mockService);
     
     // Perform Test
-    VehicleBean fetchedBean = feedServerClient.getEntry(testUrl);
+    VehicleBean fetchedBean = feedServerClient.getEntity(testUrl);
     
     // Check results
     assertTrue(testUtil.isEqual(testUtil.getSampleVehicleBean(), fetchedBean));
@@ -80,13 +76,13 @@ public class FeedServerClientTest extends TestCase {
     // Setup
     URL badUrl = new URL("http://badUrl");
     String errorMsg = "invalid URL";
-    EasyMock.expect(mockService.getEntry(badUrl, Entry.class))
+    EasyMock.expect(mockService.getEntry(badUrl, FeedServerEntry.class))
         .andThrow(new IOException(errorMsg));
     EasyMock.replay(mockService);
     
     // Perform Test
     try {
-      VehicleBean fetchedBean = feedServerClient.getEntry(badUrl);
+      VehicleBean fetchedBean = feedServerClient.getEntity(badUrl);
     } catch (FeedServerClientException e) {
       assertTrue(e.getCause().getMessage().equals(errorMsg));
       EasyMock.verify(mockService);
@@ -102,7 +98,7 @@ public class FeedServerClientTest extends TestCase {
     EasyMock.replay(mockService);
     
     // Perform Test
-    feedServerClient.deleteEntry(new URL(BASE_URL), testUtil.getSampleVehicleBean());
+    feedServerClient.deleteEntity(new URL(BASE_URL), testUtil.getSampleVehicleBean());
     
     // Verify
     EasyMock.verify(mockService);
@@ -116,7 +112,7 @@ public class FeedServerClientTest extends TestCase {
     EasyMock.replay(mockService);
     
     // Perform Test
-    feedServerClient.insertEntry((new URL(BASE_URL)), testUtil.getSampleVehicleBean());
+    feedServerClient.insertEntity((new URL(BASE_URL)), testUtil.getSampleVehicleBean());
     
     // Verify
     EasyMock.verify(mockService);
@@ -130,14 +126,9 @@ public class FeedServerClientTest extends TestCase {
     EasyMock.replay(mockService);
     
     // Perform Test
-    feedServerClient.updateEntry(new URL(BASE_URL), testUtil.getSampleVehicleBean());
+    feedServerClient.updateEntity(new URL(BASE_URL), testUtil.getSampleVehicleBean());
     
     // Verify
     EasyMock.verify(mockService);
   }
-  
- public void testFillBeanFromXml() throws Exception {
-   VehicleBean bean = feedServerClient.fillBeanFromXml(FeedServerClientTestUtil.ENTRY_XML);
-   assertTrue(testUtil.isEqual(testUtil.getSampleVehicleBean(), bean));
- }
 }

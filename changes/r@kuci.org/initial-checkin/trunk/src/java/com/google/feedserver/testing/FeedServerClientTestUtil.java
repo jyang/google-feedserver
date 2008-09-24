@@ -14,8 +14,10 @@
  */
 package com.google.feedserver.testing;
 
+import com.google.feedserver.client.FeedServerEntry;
 import com.google.feedserver.tools.SampleFeedTool.VehicleBean;
 import com.google.feedserver.util.ContentUtil;
+import com.google.feedserver.util.FeedServerClientException;
 import com.google.gdata.data.Entry;
 import com.google.gdata.data.OtherContent;
 import com.google.gdata.util.XmlBlob;
@@ -23,9 +25,7 @@ import com.google.gdata.util.XmlBlob;
 import org.easymock.IArgumentMatcher;
 import org.easymock.classextension.EasyMock;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,21 +42,21 @@ public class FeedServerClientTestUtil {
   public static final String[] PROPERTY_VALUES = { "Honda", "Civic Hybrid", "2007" };
   
   public static final String ENTRY_XML = 
-	  "<entity>\n" +
-	  "  <name>vehicle0</name>\n" +
-	  "  <owner>Joe</owner>\n" +
-	  "  <price>23000</price>\n" +
-	  "  <propertyName repeatable='true'>make</propertyName>\n" +
-	  "  <propertyName>model</propertyName>\n" +
-	  "  <propertyName>year</propertyName>\n" +
-	  "  <propertyValue repeatable='true'>Honda</propertyValue>\n" +
-	  "  <propertyValue>Civic Hybrid</propertyValue>\n" +
-	  "  <propertyValue>2007</propertyValue>\n" +
-	  "</entity>\n";
+    "<entity>\n" +
+    "  <name>vehicle0</name>\n" +
+    "  <owner>Joe</owner>\n" +
+    "  <price>23000</price>\n" +
+    "  <propertyName repeatable='true'>make</propertyName>\n" +
+    "  <propertyName>model</propertyName>\n" +
+    "  <propertyName>year</propertyName>\n" +
+    "  <propertyValue repeatable='true'>Honda</propertyValue>\n" +
+    "  <propertyValue>Civic Hybrid</propertyValue>\n" +
+    "  <propertyValue>2007</propertyValue>\n" +
+    "</entity>\n";
   
   private VehicleBean sampleVehicleBean;
-  private Map<String, List<String>> sampleVehicleMap;
-  private Entry vehicleEntry;
+  private Map<String, Object> sampleVehicleMap;
+  private FeedServerEntry vehicleEntry;
   
   /**
    * Populates bean with static info to match XML.  The XML and the bean should
@@ -72,26 +72,12 @@ public class FeedServerClientTestUtil {
     sampleVehicleBean.setPropertyValue(PROPERTY_VALUES);
     
     // Setup sample map.
-    sampleVehicleMap = new HashMap<String, List<String>>();
-    List<String> nameValue = new ArrayList<String>();
-    nameValue.add(NAME);
-    sampleVehicleMap.put("name", nameValue);
-    List<String> ownerValue = new ArrayList<String>();
-    ownerValue.add(OWNER);
-    sampleVehicleMap.put("owner", ownerValue);
-    List<String> priceValue = new ArrayList<String>();
-    priceValue.add(PRICE);
-    sampleVehicleMap.put("price", priceValue);
-    List<String> propertyNameValue = new ArrayList<String>();
-    for (String name : PROPERTY_NAMES) {
-      propertyNameValue.add(name);
-    }
-    sampleVehicleMap.put("propertyName", propertyNameValue);
-    List<String> propertyValueValue = new ArrayList<String>();
-    for (String name : PROPERTY_VALUES) {
-      propertyValueValue.add(name);
-    }
-    sampleVehicleMap.put("propertyValue", propertyValueValue);
+    sampleVehicleMap = new HashMap<String, Object>();
+    sampleVehicleMap.put("name", NAME);
+    sampleVehicleMap.put("owner", OWNER);
+    sampleVehicleMap.put("price", PRICE);
+    sampleVehicleMap.put("propertyName", PROPERTY_NAMES);
+    sampleVehicleMap.put("propertyValue", PROPERTY_VALUES);
     
     // Create populated gdata entry.
     XmlBlob xmlBlob = new XmlBlob();
@@ -99,7 +85,7 @@ public class FeedServerClientTestUtil {
     OtherContent xmlContent = new OtherContent();
     xmlContent.setXml(xmlBlob);
     xmlContent.setMimeType(ContentUtil.APPLICATION_XML);
-    vehicleEntry = new Entry();
+    vehicleEntry = new FeedServerEntry();
     vehicleEntry.setXmlBlob(xmlBlob);
     vehicleEntry.setContent(xmlContent);
   }
@@ -134,33 +120,39 @@ public class FeedServerClientTestUtil {
    * @param expected the expected entry represented as a map.
    * @param actual the actual entry represented as a map.
    * @return true if they are identical, false otherwise.
+   * @throws NullPointerException if map isnt properly formatted
+   * @throws ClassCastException if map is not of "typeless" variety.
+   * @throws IndexOutOfBoundsException if actual map has less entries than expected map.
    */
-  public boolean isEqual(Map<String, List<String>> expected, Map<String, List<String>> actual) {
-    try {
-	  for (String key : expected.keySet()) {
-	    List<String> expectedValueList = expected.get(key);
-	    List<String> actualValueList = actual.get(key);
-	    for (int index=0 ; index < expected.get(key).size() ; index++) {
-	      if (!expectedValueList.get(index).equals(actualValueList.get(index))) {
-	        return false;
-	      }
-	    }
-	  }
-	  return true;
-    } catch (NullPointerException e) {
-      return false;
+  public boolean isEqual(Map<String, Object> expected, Map<String, Object> actual) {
+    for (String key : expected.keySet()) {
+      if (expected.get(key) instanceof String) {
+        if (!expected.get(key).equals(actual.get(key))) {
+          return false;
+        }
+      } else if (expected.get(key) instanceof Object[]) {
+        Object[] expectedRepeatedValue = (Object[]) expected.get(key);
+        Object[] actualRepeatedValue = (Object[]) actual.get(key);
+        for (int index=0 ; index < expectedRepeatedValue.length ; index++) {
+          if (!((String) expectedRepeatedValue[index]).equals(
+              actualRepeatedValue[index])) {
+            return false;
+          }
+        }
+      }
     }
+    return true;
   }
 
   public VehicleBean getSampleVehicleBean() {
     return sampleVehicleBean;
   }
   
-  public Entry getVehicleEntry() {
+  public FeedServerEntry getVehicleEntry() {
     return vehicleEntry;
   }
   
-  public Map<String, List<String>> getSampleVehicleMap() {
+  public Map<String, Object> getSampleVehicleMap() {
     return sampleVehicleMap;
   }
   
@@ -170,7 +162,7 @@ public class FeedServerClientTestUtil {
    * @param in object to compare.
    * @return an Entry to pass through.
    */
-  public static Entry eqEntry(Entry in) {
+  public static FeedServerEntry eqEntry(FeedServerEntry in) {
     EasyMock.reportMatcher(new EntryEquals(in));
     return null;
   }
@@ -182,32 +174,29 @@ public class FeedServerClientTestUtil {
    */
   public static class EntryEquals implements IArgumentMatcher {
     
-    private Entry expected;
+    private FeedServerEntry expected;
     
-    public EntryEquals(Entry expected) {
+    public EntryEquals(FeedServerEntry expected) {
       this.expected = expected;
     }
     
     public boolean matches(Object actual) {
-      if (!(actual instanceof Entry)) {
+      if (!(actual instanceof FeedServerEntry)) {
         return false;
       }
       try {
-        ContentUtil contentUtil = new ContentUtil();
-        VehicleBean bean1 = new VehicleBean();
-        VehicleBean bean2 = new VehicleBean();
-        contentUtil.fillBean((OtherContent) ((Entry) actual).getContent(), bean1);
-        contentUtil.fillBean((OtherContent) expected.getContent(), bean2);
-        return new FeedServerClientTestUtil().isEqual(bean1, bean2);
-      } catch (Exception e) {
-        return false;
+        return new FeedServerClientTestUtil().isEqual(
+            expected.getEntity(VehicleBean.class),
+            ((FeedServerEntry) actual).getEntity(VehicleBean.class));
+      } catch (FeedServerClientException e) {
+        return false; 
       }
     }
+  
     
     public void appendTo(StringBuffer buffer) {
       buffer.append("eqException( expected: ");
       buffer.append(expected.getXmlBlob().getBlob());
     }
   }
-
 }

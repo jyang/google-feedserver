@@ -15,9 +15,6 @@
 package com.google.feedserver.client;
 
 import com.google.gdata.client.GoogleService;
-import com.google.gdata.data.BaseEntry;
-import com.google.gdata.data.Entry;
-import com.google.gdata.data.Feed;
 import com.google.gdata.data.OtherContent;
 import com.google.gdata.util.ServiceException;
 import com.google.inject.Inject;
@@ -32,7 +29,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -85,20 +81,20 @@ public class TypelessFeedServerClient {
   }
   
   /**
-   * Fetches generic "payload-in-content" feed to a Map.  The returned map is a 
-   * "map of lists of strings" where the lists or strings represent values.  
-   * For non-repeatable elements, the list will only have one value.  The keys of this map 
-   * are the element names.
+   * Fetches generic "payload-in-content" entry into a Map.  The returned map is a 
+   * "map of objects" where each object is either 1) a String if its not repeatable or 2) an 
+   * Object[] if the element is "repeatable".  Using introspection or "instanceof" one can
+   * determine how to consume this map.  
    * 
    * @param feedUrl the feed URL which can contain any valid ATOM "query"
-   * @return a map of lists of strings representing the "payload-in-content" entry.
+   * @return a map of objects representing the "payload-in-content" entry.
    * @throws FeedServerClientException if we cannot contact the feedserver, fetch the URL, or 
    * parse the XML.
    */
-  public Map<String, List<String>> getEntry(URL feedUrl) throws FeedServerClientException {
+  public Map<String, Object> getEntry(URL feedUrl) throws FeedServerClientException {
     try {
-      Entry entry = service.getEntry(feedUrl, Entry.class);
-      return getEntryMap(entry);
+      FeedServerEntry entry = service.getEntry(feedUrl, FeedServerEntry.class);
+      return getTyplessMapFromEntry(entry);
     } catch (IOException e) {
       throw new FeedServerClientException("Error while fetching " + feedUrl, e);
     } catch (ServiceException e) {
@@ -107,21 +103,21 @@ public class TypelessFeedServerClient {
   }
   
   /**
-   * Fetches generic "payload-in-content" entries for the given feed query and returns them
-   * as a list of maps. Each entry in the map is one entry returned by the feed and
-   * they can be consumed without any knowledge of the schema for the feed.  See 
-   * {@link TypelessFeedServerClient#getEntry(URL)} for description of the maps returned.
+   * Fetches generic "payload-in-content" entries to a Map for the given query URL.  The returned 
+   * map is a "map of objects" where each object is either 1) a String if its not repeatable or 
+   * 2) an Object[] if the element is "repeatable".  Using introspection or "instanceof" one can
+   * determine how to consume this map.  
    * 
    * @param feedUrl the feed URL which can contain any valid ATOM "query"
    * @return a list of maps representing all the "payload-in-content" entries.
    * @throws FeedServerClientException if we cannot contact the feedserver, fetch the URL, or 
    * parse the XML.
    */
-  public List<Map<String, List<String>>> getFeed(URL feedUrl) throws FeedServerClientException {
+  public List<Map<String, Object>> getEntries(URL feedUrl) throws FeedServerClientException {
     // Retrieve Feed from network
-    Feed feed;
+    FeedServerFeed feed;
     try {
-      feed = service.getFeed(feedUrl, Feed.class);
+      feed = service.getFeed(feedUrl, FeedServerFeed.class);
     } catch (IOException e) {
       throw new FeedServerClientException("Error while fetching " + feedUrl, e);
     } catch (ServiceException e) {
@@ -129,9 +125,9 @@ public class TypelessFeedServerClient {
     }
     
     // Go through all entries and build the map.
-    List<Map<String, List<String>>> feedMap = new ArrayList<Map<String, List<String>>>();
-    for (Entry entry : feed.getEntries()) {
-      feedMap.add(getEntryMap(entry));
+    List<Map<String, Object>> feedMap = new ArrayList<Map<String, Object>>();
+    for (FeedServerEntry entry : feed.getEntries()) {
+      feedMap.add(getTyplessMapFromEntry(entry));
     }
     return feedMap;
   }
@@ -161,16 +157,18 @@ public class TypelessFeedServerClient {
    * @throws FeedServerClientException if any communication issues occur with the feed or the
    * feed ID is invalid or malformed.
    */
-  public void deleteEntry(URL baseUrl, Map<String, List<String>> entry) throws 
+  public void deleteEntry(URL baseUrl, Map<String, Object> entry) throws 
       FeedServerClientException {
     
     try {
-      String name = entry.get("name").get(0);
+      String name = (String) entry.get("name");
       URL feedUrl = new URL(baseUrl.toString() + "/" + name);
       log.info("deleting entry in feed " + feedUrl);
       deleteEntry(feedUrl);
     } catch (NullPointerException e) {
       throw new RuntimeException("entry map does not have 'name' key", e);
+    } catch (ClassCastException e) {
+      throw new RuntimeException("entry map does not have 'name' key as String", e);
     } catch (IndexOutOfBoundsException e) {
       throw new RuntimeException("'name' in entry map is invalid.", e);
     } catch (MalformedURLException e) {
@@ -186,9 +184,9 @@ public class TypelessFeedServerClient {
    * @throws FeedServerClientException if any communication issues occur with the feed or the
    * feed ID is invalid.
    */
-  public void deleteEntries(URL baseUrl, List<Map<String, List<String>>> entries) throws
+  public void deleteEntries(URL baseUrl, List<Map<String, Object>> entries) throws
       FeedServerClientException {
-    for (Map<String, List<String>> entry : entries) {
+    for (Map<String, Object> entry : entries) {
       deleteEntry(baseUrl, entry);
     }
   }
@@ -201,11 +199,11 @@ public class TypelessFeedServerClient {
    * @throws FeedServerClientException if any feed communication issues occur or the URL is 
    * malformed.
    */
-  public void updateEntry(URL baseUrl, Map<String, List<String>> mapEntry) throws 
+  public void updateEntry(URL baseUrl, Map<String, Object> mapEntry) throws 
       FeedServerClientException {
     
     try {
-      String name = mapEntry.get("name").get(0);
+      String name = (String) mapEntry.get("name");
       URL feedUrl = new URL(baseUrl.toString() + "/" + name);
       log.info("updating entry to feed " + feedUrl);
       service.update(feedUrl, getEntryFromMap(mapEntry));
@@ -217,6 +215,8 @@ public class TypelessFeedServerClient {
       throw new FeedServerClientException(e);
     } catch (NullPointerException e) {
       throw new RuntimeException("Invalid Entry", e); 
+    } catch (ClassCastException e) {
+      throw new RuntimeException("entry map does not have 'name' key as String", e);
     }
   }
   
@@ -228,9 +228,9 @@ public class TypelessFeedServerClient {
    * @throws FeedServerClientException if any feed communication issues occur or the URL is 
    * malformed.
    */
-  public void updateEntries(URL baseUrl, List<Map<String, List<String>>> entries) 
+  public void updateEntries(URL baseUrl, List<Map<String, Object>> entries) 
       throws FeedServerClientException {
-    for (Map<String, List<String>> mapEntry : entries) {
+    for (Map<String, Object> mapEntry : entries) {
        updateEntry(baseUrl, mapEntry);      
     }
   }
@@ -243,11 +243,11 @@ public class TypelessFeedServerClient {
    * @throws FeedServerClientException if any feed communication issues occur or the URL is 
    * malformed.
    */
-  public void insertEntry(URL baseUrl, Map<String, List<String>> mapEntry) throws
+  public void insertEntry(URL baseUrl, Map<String, Object> mapEntry) throws
       FeedServerClientException {
     
     try {
-      String name = mapEntry.get("name").get(0);
+      String name = (String) mapEntry.get("name");
       log.info("inserting entry to feed " + baseUrl);
       service.insert(baseUrl, getEntryFromMap(mapEntry));
     } catch (MalformedURLException e) {
@@ -258,6 +258,8 @@ public class TypelessFeedServerClient {
       throw new FeedServerClientException(e);
     } catch (NullPointerException e) {
       throw new RuntimeException("Invalid Entry", e); 
+    } catch (ClassCastException e) {
+      throw new RuntimeException("entry map does not have 'name' key as String", e);
     }
   }
   
@@ -269,9 +271,9 @@ public class TypelessFeedServerClient {
    * @throws FeedServerClientException if any feed communication issues occur or the URL is 
    * malformed.
    */
-  public void insertEntries(URL baseUrl, List<Map<String, List<String>>> entries) throws
+  public void insertEntries(URL baseUrl, List<Map<String, Object>> entries) throws
       FeedServerClientException {
-    for (Map<String, List<String>> mapEntry : entries) {
+    for (Map<String, Object> mapEntry : entries) {
        insertEntry(baseUrl, mapEntry);      
     }
   }
@@ -283,15 +285,11 @@ public class TypelessFeedServerClient {
    * @returns a "typeless" map representing an entry.
    * @throws FeedServerClientException if the Xml cannot be parsed.
    */
-  public Map<String, List<String>> getEntryMapFromXml(String xmlText) throws
+  public Map<String, Object> getTypelessMapFromXml(String xmlText) throws
       FeedServerClientException {
     try {
       Map<String,Object> rawEntryMap = xmlUtil.convertXmlToProperties(xmlText);
-      OtherContent content = contentUtil.createXmlContent(
-          xmlUtil.convertPropertiesToXml(rawEntryMap));
-      Entry entry = new Entry();
-      entry.setContent(content);
-      return getEntryMap(entry);
+      return rawEntryMap;
     } catch (SAXException e) {
       throw new FeedServerClientException(e);
     } catch (IOException e) {
@@ -307,29 +305,14 @@ public class TypelessFeedServerClient {
    * @param entryMap the "typeless" map to convert.
    * @return a populated gdata entry object.
    */
-  private Entry getEntryFromMap(Map<String, List<String>> entryMap) {
+  private FeedServerEntry getEntryFromMap(Map<String, Object> entryMap) {
     // XMLutil expects entries in map form of string -> object.  For repeatable elements
     // the object is really an "object[]" but for single elements its a "String".  
     // This loop prepares this very hacky map representation from the passed in more sane
     // typed implementation.
-    Map<String, Object> baseEntryMap = new HashMap<String, Object>();
-    for (String key : entryMap.keySet()) {
-      int size = entryMap.get(key).size();
-      if (entryMap.get(key).size() > 1) {
-        Object[] objects = new Object[size];
-        for (int index=0; index < size; index++) {
-          objects[index] = entryMap.get(key).get(index);
-        }
-        baseEntryMap.put(key, objects);
-      } else {
-        baseEntryMap.put(key, entryMap.get(key).get(0));
-      }
-    }
     OtherContent content = contentUtil.createXmlContent(
-        xmlUtil.convertPropertiesToXml(baseEntryMap));
-    Entry entry = new Entry();
-    entry.setContent(content);
-    entry.setXmlBlob(content.getXml());
+        xmlUtil.convertPropertiesToXml(entryMap));
+    FeedServerEntry entry = new FeedServerEntry(content);
     return entry;
   }
   
@@ -341,7 +324,8 @@ public class TypelessFeedServerClient {
    * @return the populated map.
    * @throws FeedServerClientException if the XML parse fails.
    */
-  private Map<String, List<String>> getEntryMap(Entry entry) throws FeedServerClientException {
+  private Map<String, Object> getTyplessMapFromEntry(FeedServerEntry entry) 
+      throws FeedServerClientException {
     // Get XML and convert to primitive Object map. 
     OtherContent content = (OtherContent) entry.getContent();  
     log.info("Entry info " + content.getXml().getBlob());
@@ -349,6 +333,7 @@ public class TypelessFeedServerClient {
     Map<String, Object> rawEntryMap;
     try {
       rawEntryMap = xmlUtil.convertXmlToProperties(content.getXml().getBlob());
+      return rawEntryMap;
     } catch (SAXException e) {
       throw new FeedServerClientException(e);
     } catch (IOException e) {
@@ -356,21 +341,5 @@ public class TypelessFeedServerClient {
     } catch (ParserConfigurationException e) {
       throw new RuntimeException(e);
     }
-    
-    // Convert into more consumable format.
-    Map<String, List<String>> entryMap = new HashMap<String, List<String>>();
-    for (String key : rawEntryMap.keySet()) {
-      List<String> value = new ArrayList<String>();
-      if (rawEntryMap.get(key) instanceof Object[]) {
-        Object[] rawValues = (Object[]) rawEntryMap.get(key);
-        for (Object rawValue : rawValues) {
-          value.add((String) rawValue);
-        }
-      } else {
-        value.add((String) rawEntryMap.get(key));
-      }
-      entryMap.put(key, value);
-    }
-    return entryMap;
   }
 }
