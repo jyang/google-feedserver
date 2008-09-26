@@ -11,6 +11,15 @@
   <property name="web.home"           value="${basedir}/web"/>
   <property name="lib.home"           value="${basedir}/lib"/>
 
+  <!-- Client Properties -->
+  <property name="client.version" value="1.0"/>
+  <property 
+      name="client.jarfile"     
+      value="${dist.home}/google-feedserver-java-client-${client.version}.jar"/>
+
+
+  <!-- End Client Properties -->
+
 
   <path id="compile.resources">
     <fileset dir="src/resources" includes="**/*" />
@@ -50,6 +59,50 @@
 		 classpathref="classpath"
            packagenames="*">
     </javadoc>
+  </target>
+
+  <!-- Client targets -->
+
+  <target name="client_jar" depends="compile">
+    <tstamp/>
+    <mkdir dir="${dist.home}"/>
+    <jar jarfile="${client.jarfile}">
+      <fileset dir="${build.home}"> 
+        <include name="com/google/feedserver/client/**"/>
+        <include name="com/google/feedserver/tools/**"/>
+        <include name="com/google/feedserver/util/**"/>
+      </fileset>
+      <manifest>
+        <attribute name="Implementation-Title" value="Google Feedserver Client"/>
+        <attribute name="Implementation-Version" value="${version} ${TODAY}"/>
+        <attribute name="Implementation-Vendor" value="Google"/>
+        <attribute 
+            name="Main-Class"
+            value="com.google.feedserver.tools.SampleFeedTool"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="client-source-distro" depends="client_jar">
+    <tar 
+        destfile="${dist}/google-feedserver-java-client-${client.version}-src.tar.gz"
+        longfile="gnu"
+        compression="gzip"
+        excludes="tmp/**, third-party/*/docs/**">
+      <tarfileset dir=".">
+        <include name="build.xml"/>
+        <include name="src/java/com/google/feedserver/client/**"/>
+        <include name="src/java/com/google/feedserver/tools/**"/>
+        <include name="src/java/com/google/feedserver/util/**"/>
+        <include name="lib/commons-*/**"/>
+        <include name="lib/guice-*/**"/>
+        <include name="lib/gdata-*/**"/>
+      </tarfileset>
+      <tarfileset dir="." mode="755">
+        <include name="runfeedtool.sh"/>
+        <include name="runtypelessfeedtool.sh"/>
+      </tarfileset>
+    </tar>
   </target>
 
   <!-- Start of Jetty targets -->
