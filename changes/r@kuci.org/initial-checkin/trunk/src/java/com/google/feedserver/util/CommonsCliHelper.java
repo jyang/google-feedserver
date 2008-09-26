@@ -25,6 +25,30 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Uses reflection to scan registered classes for any String or boolean ending in "_FLAG" or
+ * "_HELP" and creates command line flags for these fields.  Use {@linke #register(Class)} to 
+ * register a classes flag Fields and {@link #parse} to parse the command line args.
+ * 
+ * Fields must be static and only String and boolean are currently supported.   The field name
+ * up to the "_" is used as the flag name and its value is the default.
+ * 
+ * example:
+ * to setup --filename as a flag. in class Foo with flag help.
+ * 
+ * public class Foo { 
+ *   public static String filename_FLAG = "/tmp/defaultfile";
+ *   public static String filename_HELP = "filename to access";
+ *   
+ *   public static void main(String[] args) {
+ *     CommonsCliHelper cliHelper = new CommonsCliHelper();
+ *     cliHelper.register(Foo.class);
+ *     cliHelper.parse(args);
+ *     System.stdout.println("Filename is " + filename_FLAG);
+ *   }
+ * 
+ * @author r@kuci.org (Ray Colline)
+ */
 public class CommonsCliHelper {
   
   @SuppressWarnings("unchecked")
@@ -42,6 +66,12 @@ public class CommonsCliHelper {
     classes.add(flagClass); 
   }
   
+  /**
+   * With provided command line string, populates all registered classes _FLAG fields with their
+   * command-line values.
+   * 
+   * @param args command-line.
+   */
   public void parse(String[] args) {
     options = createOptions();
     GnuParser parser = new GnuParser();
@@ -62,6 +92,9 @@ public class CommonsCliHelper {
     populateClasses();
   }
   
+  /**
+   * Prints usage information.
+   */
   public void usage() {
     new HelpFormatter().printHelp("Usage", options);
   }

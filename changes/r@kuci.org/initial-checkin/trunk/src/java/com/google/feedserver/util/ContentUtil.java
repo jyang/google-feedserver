@@ -30,8 +30,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Utility to handle content payload
- *
- * @author jyang@google.com (Jun Yang)
  */
 public class ContentUtil {
 

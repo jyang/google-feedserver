@@ -29,18 +29,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implements a Gdata feed client that represents feeds as generic maps of String->String pairs.
+ * Implements a parameterized Gdata feed client for FeedServer "payload-in-content" feeds employing
+ * java beans to represent the data.  Create a java bean that represents the entity data and
+ * use it as the parameterized type for the feed client.  
  * 
- * @author rayc@google.com (Ray Colline)
+ * @author r@kuci.org (Ray Colline)
  */
 public class FeedServerClient<T> {
   
+  private static final String NAME_ELEMENT = "name";
+
   // Logging instance
   private static final Logger LOG = Logger.getLogger(FeedServerClient.class);
   
   // Dependencies
   private GoogleService service; 
-  private Class<T> entityClass; // java bean
+  private Class<T> entityClass; // Java bean
   
   
   /**
@@ -115,6 +119,27 @@ public class FeedServerClient<T> {
   }
   
   /**
+   * Fetches generic "payload-in-content" feed .
+   * 
+   * @param feedUrl the feed URL which can contain any valid ATOM "query"
+   * @return the populated feed.
+   * @throws FeedServerClientException if we cannot contact the feedserver, fetch the URL, or 
+   * parse the XML.
+   * @throws RuntimeException if the bean is not constructed properly and is missing fields.
+   */
+  public FeedServerFeed getFeed(URL feedUrl) throws FeedServerClientException {
+    try {
+      return service.getFeed(feedUrl, FeedServerFeed.class);
+    } catch (IOException e) {
+      throw new FeedServerClientException("Error while fetching " + feedUrl, e);
+    } catch (ServiceException e) {
+      throw new FeedServerClientException(e);
+    } catch (IllegalArgumentException e) {
+      throw new RuntimeException("Invalid bean " + entityClass.getName(), e);
+    }
+  }
+  
+  /**
    * Fetches generic "payload-in-content" entity into a list of predefined java bean.  This 
    * bean should have fields necessary to receive all the elements of the feed.  Using a bean, 
    * requires you know the schema of your feed ahead of time, but gives you the convenience of 
@@ -162,7 +187,7 @@ public class FeedServerClient<T> {
    * feed ID is invalid or malformed.
    */
   public void deleteEntry(URL baseUrl, FeedServerEntry entry) throws FeedServerClientException {
-    String name = (String) getBeanProperty("name", entry.getEntity(entityClass), new String());
+    String name = (String) getBeanProperty(NAME_ELEMENT, entry.getEntity(entityClass), new String());
     try {
       URL feedUrl = new URL(baseUrl.toString() + "/" + name);
       LOG.info("deleting entry at feed " + feedUrl);
@@ -181,7 +206,7 @@ public class FeedServerClient<T> {
    * feed ID is invalid or malformed.
    */
   public void deleteEntity(URL baseUrl, T entity) throws FeedServerClientException {
-    String name = (String) getBeanProperty("name", entity, new String());
+    String name = (String) getBeanProperty(NAME_ELEMENT, entity, new String());
     try {
       URL feedUrl = new URL(baseUrl.toString() + "/" + name);
       LOG.info("deleting entry at feed " + feedUrl);
@@ -230,7 +255,7 @@ public class FeedServerClient<T> {
    * @throws FeedServerClientException if any feed communication errors occur.
    */
   public void updateEntry(URL baseUrl, FeedServerEntry entry) throws FeedServerClientException {
-    String name = (String) getBeanProperty("name", entry.getEntity(entityClass), new String());
+    String name = (String) getBeanProperty(NAME_ELEMENT, entry.getEntity(entityClass), new String());
     try {
       LOG.info("updating entry at feed " + baseUrl + "/" + name);
       service.update(new URL(baseUrl + "/" + name), entry);

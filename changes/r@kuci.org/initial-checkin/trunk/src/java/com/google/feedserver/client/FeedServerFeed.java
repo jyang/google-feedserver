@@ -20,7 +20,7 @@ import com.google.gdata.data.ExtensionProfile;
 /**
  * Feed class representing a "payload-in-content" feed.
  * 
- * @author rayc@google.com (Ray Colline)
+ * @author r@kuci.org (Ray Colline)
  */
 public class FeedServerFeed extends BaseFeed<FeedServerFeed, FeedServerEntry> {
 

@@ -28,7 +28,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -37,7 +36,7 @@ import java.util.Properties;
  * entries.  This tool highlights how to create a bean representing a feed entry, instantiate
  * the client and execute CRUD operations against the feedstore.
  * 
- * @author rayc@google.com (Ray Colline)
+ * @author r@kuci.org (Ray Colline)
  *
  */
 public class TypelessSampleFeedTool {

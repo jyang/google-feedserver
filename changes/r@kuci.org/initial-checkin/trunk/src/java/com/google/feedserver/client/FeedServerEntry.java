@@ -32,7 +32,7 @@ import javax.xml.parsers.ParserConfigurationException;
  * Represents a "payload-in-content" feed entry.  Simplifies interaction with feeds originating
  * from FeedServer and FeedStore.
  * 
- * @author rayc@google.com (Ray Colline)
+ * @author r@kuci.org (Ray Colline)
  */
 public class FeedServerEntry extends BaseEntry<FeedServerEntry> {
   

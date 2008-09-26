@@ -28,8 +28,6 @@ import javax.xml.parsers.SAXParserFactory;
 
 /**
  * Utils for handling XML entities.
- *
- * @author haldimann@google.com (Nik Haldimann)
  */
 public class XmlUtil {
 

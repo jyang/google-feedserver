@@ -15,10 +15,9 @@
 package com.google.feedserver.util;
 
 /**
- * Exception representing errors using the 
- * {@link com.google.securelink.gdata.client.FeedServerClient}.
+ * Exception for FeedServer client failures.
  * 
- * @author rayc@google.com (Ray Colline)
+ * @author r@kuci.org (Ray Colline)
  */
 public class FeedServerClientException extends Exception {
 

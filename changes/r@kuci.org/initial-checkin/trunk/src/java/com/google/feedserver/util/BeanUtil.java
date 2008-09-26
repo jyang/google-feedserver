@@ -27,8 +27,6 @@ import java.util.Map;
 
 /**
  * JavaBean utilities
- *
- * @author jyang@google.com (Jun Yang)
  */
 public class BeanUtil {
 

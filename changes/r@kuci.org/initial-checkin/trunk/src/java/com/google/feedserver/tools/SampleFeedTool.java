@@ -37,7 +37,7 @@ import java.util.Properties;
  * entries.  This tool highlights how to create a bean representing a feed entry, instantiate
  * the client and execute CRUD operations against the feedstore.
  * 
- * @author rayc@google.com (Ray Colline)
+ * @author r@kuci.org (Ray Colline)
  *
  */
 public class SampleFeedTool {

@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * Provides data and utilities for testing the feedserver clients.
  * 
- * @author rayc@google.com (Ray Colline)
+ * @author r@kuci.org (Ray Colline)
  */
 public class FeedServerClientTestUtil {
   

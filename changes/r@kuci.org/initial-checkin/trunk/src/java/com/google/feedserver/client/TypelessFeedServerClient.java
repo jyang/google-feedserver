@@ -47,10 +47,12 @@ import javax.xml.parsers.ParserConfigurationException;
  * in the feed.  If you are using most of the data, using the "typed" java bean 
  * {@link FeedServerClient} is probably a better choice.
  * 
- * @author rayc@google.com (Ray Colline)
+ * @author r@kuci.org (Ray Colline)
  */
 public class TypelessFeedServerClient {
   
+  private static final String NAME_ELEMENT = "name";
+
   // Logging instance
   private static final Logger log = Logger.getLogger(TypelessFeedServerClient.class);
   
@@ -161,7 +163,7 @@ public class TypelessFeedServerClient {
       FeedServerClientException {
     
     try {
-      String name = (String) entry.get("name");
+      String name = (String) entry.get(NAME_ELEMENT);
       URL feedUrl = new URL(baseUrl.toString() + "/" + name);
       log.info("deleting entry in feed " + feedUrl);
       deleteEntry(feedUrl);
@@ -203,7 +205,7 @@ public class TypelessFeedServerClient {
       FeedServerClientException {
     
     try {
-      String name = (String) mapEntry.get("name");
+      String name = (String) mapEntry.get(NAME_ELEMENT);
       URL feedUrl = new URL(baseUrl.toString() + "/" + name);
       log.info("updating entry to feed " + feedUrl);
       service.update(feedUrl, getEntryFromMap(mapEntry));
@@ -247,7 +249,7 @@ public class TypelessFeedServerClient {
       FeedServerClientException {
     
     try {
-      String name = (String) mapEntry.get("name");
+      String name = (String) mapEntry.get(NAME_ELEMENT);
       log.info("inserting entry to feed " + baseUrl);
       service.insert(baseUrl, getEntryFromMap(mapEntry));
     } catch (MalformedURLException e) {
