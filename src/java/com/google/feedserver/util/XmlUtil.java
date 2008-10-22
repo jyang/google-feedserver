@@ -41,19 +41,47 @@ public class XmlUtil {
   /**
    * Converts a a map of properties into an entity XML representation as used
    * in the content section of FeedStore entries:
-   * <entity>
-   *   <name0>value0</name0>
-   *   <name1>value1</name1>
+   *<pre>
+   * &lt;entity&gt;
+   *   &lt;name0&gt;value0&lt;/name0&gt;
+   *   &lt;name1&gt;value1&lt;/name1&gt;
    *   ...
-   * </entity>
+   * &lt;/entity&gt;
+   *</pre>
    */
   public String convertPropertiesToXml(Map<String, Object> properties) {
+    return convertPropertiesToXml(properties, XmlHandler.ENTITY);
+  }
+
+  /**
+   * Converts a a map of properties into an entity XML representation as used
+   * in the content section of FeedStore entries:
+   *<pre>
+   * &lt;topLevelElement&gt;
+   *   &lt;name0&gt;value0&lt;/name0&gt;
+   *   &lt;name1&gt;value1&lt;/name1&gt;
+   *   ...
+   * &lt;/topLevelElement&gt;
+   *</pre>
+   */
+  public String convertPropertiesToXml(Map<String, Object> properties,
+      String topLevelElement) {
     StringBuilder builder = new StringBuilder();
 
     builder.append("<");
-    builder.append(XmlHandler.ENTITY);
+    builder.append(topLevelElement);
     builder.append(">");
 
+    addMapValue(properties, builder);
+
+    builder.append("</");
+    builder.append(topLevelElement);
+    builder.append(">");
+
+    return builder.toString();
+  }
+
+  private void addMapValue(Map<String, Object> properties, StringBuilder builder) {
     for (String name : properties.keySet()) {
       Object value = properties.get(name);
       if (value instanceof Object[]) {
@@ -69,12 +97,6 @@ public class XmlUtil {
         addPropertyXml(builder, name, value, false);
       }
     }
-
-    builder.append("</");
-    builder.append(XmlHandler.ENTITY);
-    builder.append(">");
-
-    return builder.toString();
   }
 
   private void addPropertyXml(StringBuilder builder, String propertyName,
@@ -90,19 +112,41 @@ public class XmlUtil {
       builder.append("=\"true\"");
     }
     builder.append(">");
-    builder.append(StringEscapeUtils.escapeXml(value.toString()));
+    addValue(builder, value);
     builder.append("</");
     builder.append(propertyName);
     builder.append(">");
   }
 
   /**
+   * @param builder
+   * @param value
+   */
+  @SuppressWarnings("unchecked")
+  private void addValue(StringBuilder builder, Object value) {
+    if (value instanceof Map) {
+      addMapValue((Map) value, builder);
+    } else {
+      builder.append(StringEscapeUtils.escapeXml(value.toString()));
+    }
+  }
+
+  /**
    * Converts XML representation of an entity into properties.
    */
   public Map<String, Object> convertXmlToProperties(String xmlText)
-      throws SAXException, IOException, ParserConfigurationException  {
+      throws SAXException, IOException, ParserConfigurationException {
+    return convertXmlToProperties(xmlText, XmlHandler.ENTITY);
+  }
+
+  /**
+   * Converts XML representation of an entity into properties.
+   */
+  public Map<String, Object> convertXmlToProperties(String xmlText,
+      String topLevelELement)
+      throws SAXException, IOException, ParserConfigurationException {
     InputSource input = new InputSource(new StringReader(xmlText));
-    XmlHandler xmlHandler = new XmlHandler();
+    XmlHandler xmlHandler = new XmlHandler(topLevelELement);
     getParser().parse(input, xmlHandler);
     return xmlHandler.getValueMap();
   }

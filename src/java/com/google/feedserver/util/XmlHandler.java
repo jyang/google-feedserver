@@ -28,7 +28,6 @@ import java.util.Stack;
  *
  * An empty element is parsed as a null value for that property (e.g.,
  * <string></string> will set the property "string" to null).
- *
  */
 public class XmlHandler extends DefaultHandler {
 
@@ -41,6 +40,7 @@ public class XmlHandler extends DefaultHandler {
 
   protected Map<String, Object> valueMap;
   protected Stack<String> currentElementStack;
+  protected Stack<Boolean> elementRepetableStack;
   protected String lastElement;
   protected boolean isRepeatable;
   protected Object value;
@@ -59,6 +59,7 @@ public class XmlHandler extends DefaultHandler {
    */
   public XmlHandler(String topLevelElement) {
     currentElementStack = new Stack<String>();
+    elementRepetableStack = new Stack<Boolean>();
     valueMapStack = new Stack<Map<String, Object>>();
     this.topLevelElement = topLevelElement;
   }
@@ -80,6 +81,7 @@ public class XmlHandler extends DefaultHandler {
         isRepeatable = "true".equals(attributes.getValue(REPEATABLE));
       }
       currentElementStack.push(name);
+      elementRepetableStack.push(isRepeatable);
       updateValueMapStack();
     }
   }
@@ -116,6 +118,7 @@ public class XmlHandler extends DefaultHandler {
    */
   private void removeLastElementFromStack() {
     lastElement = currentElementStack.pop();
+    isRepeatable = elementRepetableStack.pop();
     if (valueMapStack.size() > currentElementStack.size() + 1) {
       value = valueMapStack.pop();
       valueMap = valueMapStack.peek();
@@ -128,7 +131,7 @@ public class XmlHandler extends DefaultHandler {
 
     if (currentElementStack.size() > 0) {
       StringBuilder builder;
-      if (value == null ) {
+      if (value == null) {
         builder = new StringBuilder();
       } else if (value instanceof StringBuilder) {
         builder = (StringBuilder) value;
