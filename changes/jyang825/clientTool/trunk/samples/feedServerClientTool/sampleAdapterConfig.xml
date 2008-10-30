@@ -1,0 +1,10 @@
+<entity xmlns="">
+  <name>sampleDbAdapter</name>
+  <type>jdbcAdapter</type>
+  <mixins repeatable="true">
+    <wrapperName>secureDataConnectorWrapper</wrapperName>
+    <wrapperConfig>@secureDataConnectorWrapper.xml</wrapperConfig>
+  </mixins>
+  <configValueType>xml</configValueType>
+  <configValue>@sampleDbConfig.xml</configValue>
+</entity>

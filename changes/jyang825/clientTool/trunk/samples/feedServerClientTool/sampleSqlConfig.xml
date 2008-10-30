@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+   PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="test">
+
+  <resultMap id="result-lang" class="java.util.HashMap">
+    <result property="id" column="lang"/>
+    <result property="totalUsers" column="users"/>
+  </resultMap>
+
+  <select id="lang-get-feed" resultMap="result-lang">
+   SELECT lang, count(*) as 'users' FROM todaydomains GROUP BY lang ORDER BY
+       count(*) desc LIMIT 1,20;
+  </select>
+
+  <select id="lang-get-entry" resultMap="result-lang">
+   SELECT lang, count(*) as 'users' FROM todaydomains WHERE lang = #lang# GROUP
+       BY lang;
+  </select>
+</sqlMap>

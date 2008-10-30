@@ -1,0 +1,24 @@
+<entity xmlns="">
+  <name>sampleDbFeed</name>
+  <adapterName>sampleDbAdapter</adapterName>
+  <title>Sample Database Feed</title>
+  <author>demo1@joonix.net</author>
+  <configValueType>xml</configValueType>
+  <configValue>@sampleSqlConfig.xml</configValue>
+  <feedInfo>
+    <entityInfo>
+      <properties repeatable="true">
+        <label>Language</label>
+        <name>id</name>
+        <isRepetable>false</isRepetable>
+        <typeName>string</typeName>
+      </properties>
+      <properties>
+        <label>Number of Users</label>
+        <name>totalUsers</name>
+        <isRepetable>false</isRepetable>
+        <typeName>number</typeName>
+      </properties>
+    </entityInfo>
+  </feedInfo>
+</entity>
