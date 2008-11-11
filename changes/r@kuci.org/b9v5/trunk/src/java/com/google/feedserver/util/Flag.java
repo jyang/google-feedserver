@@ -23,9 +23,11 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Indicates that the decorated field be interpreted as a command-line-flag.
  * The name of the decorated field becomes the option name. eg. 
- * private int foo = 0;
  * 
- * becomes --foo and Integer option.
+ *   @Flag(help = "filename to access")
+ *   private String filename = "/tmp/defaultfile";
+ * 
+ * becomes --filename a String option with help "filename to access".
  * 
  * @author rayc@google.com (Ray Colline)
  */

@@ -77,22 +77,21 @@ import javax.xml.parsers.ParserConfigurationException;
  *     cliHelper.parse(args);
  *     System.stdout.println("Filename is " + fooBean.getFilename());
  *   }
+ *   
+ * Note: classes with identical flag field names will get overwritten with the last one processed.  
+ * TODO(rayc) support collision detection and use fully qualified class name for flag option.
  * 
  * @author r@kuci.org (Ray Colline)
  */
 public class BeanCliHelper {
   
-  /** We have a special setter for unittesting to keep test small */
-  private String testFileContents;
+  // We allow tests to set the file contents to avoid going to disk 
+  private static String testFileContents;
   
-  @SuppressWarnings("unchecked")
   private List<Object> beans;
   private CommandLine flags;
   private Options options;
   
-  private boolean requireConfigFile;
-  
-  @SuppressWarnings("unchecked")
   public BeanCliHelper() {
     beans = new ArrayList<Object>();
   }
@@ -103,8 +102,8 @@ public class BeanCliHelper {
   }
   
   /**
-   * With provided command line string, populates all registered classes _FLAG fields with their
-   * command-line values.
+   * With provided command line string, populates all registered classes with decorated fields 
+   * with their config file then command-line values.
    * 
    * @param args command-line.
    */
@@ -138,81 +137,80 @@ public class BeanCliHelper {
   
   /**
    * Must be called after {@link GnuParser#parse(Options, String[])} and if bean has 
-   * {@link ConfigFile} decorator load that file and populate bean.  If no decorator is present 
-   * we just no-op.  If there is not a default location for the config file in the bean, or
-   * they did not specify the flag on the commandline, we no-op and assume they want to 
-   * configure entirely from defaults or commandline.  
+   * {@link ConfigFile} decorator load the file that field points to and populate bean.  If no 
+   * decorator is present we just no-op.  If there is not a default location for the config file 
+   * in the bean, or they did not specify the flag on the commandline, we no-op and assume they 
+   * want to configure entirely from defaults or commandline.  
    */
-  @SuppressWarnings("unchecked")
   private void populateBeansFromConfigFile() throws ConfigurationBeanException {
     
     populateBeansFromCommandLine(); // we do an initial pass to pick up ConfigFile flag
     
+    // We go through all registered beans.
     for (Object bean : beans) {
+      // Go through each field to find annotated fields. We only support one ConfigFile per
+      // bean.  The first one encountered here will be used.
       for(Field field : bean.getClass().getDeclaredFields()) {
         ConfigFile configFileAnnotation = field.getAnnotation(ConfigFile.class);
         String configFileName = "";
-        if (configFileAnnotation != null) {
-          try {
-            configFileName = (String) bean.getClass().getMethod("get" + field.getName()
-                .substring(0,1).toUpperCase() + field.getName().substring(1), (Class[]) null)
-                .invoke(bean, (Object[]) null);
-            if (configFileName == null) {
-              return; // There is no config file default or flag entry, we no-op.
-            }
-            String configFileContents = readFileIntoString(configFileName);
-            FeedServerEntry configEntry = new FeedServerEntry(configFileContents);
-            ContentUtil contentUtil = new ContentUtil();
-            contentUtil.fillBean((OtherContent) configEntry.getContent(), bean);
-          } catch (RuntimeException e) { 
-            throw new ConfigurationBeanException(e);
-          } catch (IllegalAccessException e) {
-            throw new ConfigurationBeanException(e);
-          } catch (InvocationTargetException e) {
-            throw new ConfigurationBeanException(e);
-          } catch (NoSuchMethodException e) {
-            throw new ConfigurationBeanException(e);
-          } catch (IOException e) {
-            throw new ConfigurationBeanException("Error reading config file " + configFileName, e);
-          } catch (IntrospectionException e) {
-            throw new ConfigurationBeanException(e);
-          } catch (SAXException e) {
-            throw new ConfigurationBeanException(e);
-          } catch (ParserConfigurationException e) {
-            throw new ConfigurationBeanException(e);
+        if (configFileAnnotation == null) {
+          // no config file in this bean, we no-op.
+          return; 
+        }
+
+        try {
+          // retrieve the field value
+          configFileName = (String) bean.getClass().getMethod("get" + field.getName()
+              .substring(0,1).toUpperCase() + field.getName().substring(1), (Class[]) null)
+              .invoke(bean, (Object[]) null);
+          if (configFileName == null) {
+            return; // There is no config file default or flag entry, we no-op.
           }
+          
+          // load the file into a string.
+          String configFileContents = readFileIntoString(configFileName);
+          
+          // parse the contents into the bean.
+          FeedServerEntry configEntry = new FeedServerEntry(configFileContents);
+          ContentUtil contentUtil = new ContentUtil();
+          contentUtil.fillBean((OtherContent) configEntry.getContent(), bean);
+          
+          // BeanUtil throws many exceptions, re-wrap them and throw our exception.
+        } catch (RuntimeException e) { 
+          throw new ConfigurationBeanException(e);
+        } catch (IllegalAccessException e) {
+          throw new ConfigurationBeanException(e);
+        } catch (InvocationTargetException e) {
+          throw new ConfigurationBeanException(e);
+        } catch (NoSuchMethodException e) {
+          throw new ConfigurationBeanException(e);
+        } catch (IOException e) {
+          throw new ConfigurationBeanException("Error reading config file " + configFileName, e);
+        } catch (IntrospectionException e) {
+          throw new ConfigurationBeanException(e);
+        } catch (SAXException e) {
+          throw new ConfigurationBeanException(e);
+        } catch (ParserConfigurationException e) {
+          throw new ConfigurationBeanException(e);
         }
       }
     }
   }
   
   /**
-   * Helper that loads a file into a string.
-   * 
-   * @param fileName properties file with rules configuration.
-   * @returns a String representing the file.
-   * @throws IOException if any errors are encountered reading the properties file
+   * Loop through each registered class and create and parse command line options for fields
+   * decorated with {@link Flag}.
    */
-  String readFileIntoString(final String fileName) throws IOException {
-    if (testFileContents != null) {
-      return testFileContents;
-    }
-    File file = new File(fileName);
-    byte[] fileContents = new byte[(int) file.length()];
-    new BufferedInputStream(new FileInputStream(fileName)).read(fileContents);
-    return new String(fileContents);
-  }
-  
-  /**
-   * Loop through each registered class and parse the command line for their flags.  If
-   * option isnt specified we leave the default.
-   */
-  @SuppressWarnings("unchecked")
   private void populateBeansFromCommandLine() {
+    
+    // Go through all registered beans.
     for (Object bean : beans) {
+      
+      // Search for all fields in the bean with Flag decorator.
       for (Field field : bean.getClass().getDeclaredFields()) {
         Flag flag = field.getAnnotation(Flag.class);
         if (flag == null) {
+          // not decorated, continue.
           continue;
         }
         String argName = field.getName();
@@ -224,7 +222,7 @@ public class BeanCliHelper {
           } else if (flags.hasOption("no" + argName)) {
             setField(field, bean, new Boolean(false));
           }
-          // Integer Flags
+        // Integer Flags
         } else if (field.getType().getName().equals(Integer.class.getName())) {
           String argValue = flags.getOptionValue(argName, null);
           if (argValue != null) {
@@ -234,13 +232,13 @@ public class BeanCliHelper {
               throw new RuntimeException(e); 
             }
           }
-          // String Flag
+        // String Flag
         } else if (field.getType().getName().equals(String.class.getName())) {
           String argValue = flags.getOptionValue(argName, null);
           if (argValue != null) {
             setField(field, bean, argValue);
           }
-          // Repeated String Flag
+        // Repeated String Flag
         } else if (field.getType().getName().equals(String[].class.getName())) {
           String[] argValues = flags.getOptionValues(argName);
           if (argValues != null) {
@@ -265,60 +263,64 @@ public class BeanCliHelper {
       bean.getClass().getMethod("set" + field.getName().substring(0,1).toUpperCase() + 
               field.getName().substring(1),  
           field.getType()).invoke(bean, value);
+    // Lots of errors can happen when using introspection.  Most are programming errors
+    // so we throw RuntimeExceptions.  
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Field " + field.getName() + " must be a String", e);
+      throw new RuntimeException("Field error:" + field.getName(), e);
     } catch (IllegalAccessException e) {
-      throw new RuntimeException("Field " + field.getName() + " must be public", e);
+      throw new RuntimeException("Field error:" + field.getName(), e);
     } catch (NullPointerException e) {
-      throw new RuntimeException("Field " + field.getName() + " must be static");
+      throw new RuntimeException("Field error:" + field.getName(), e);
     } catch (SecurityException e) {
-      throw new RuntimeException("Field " + field.getName() + " must be static");
+      throw new RuntimeException("Field error:" + field.getName(), e);
     } catch (NoSuchMethodException e) {
-      throw new RuntimeException("Field " + field.getName() + " must be static");
+      throw new RuntimeException("Field error:" + field.getName(), e);
     } catch (InvocationTargetException e) {
-      throw new RuntimeException("Field " + field.getName() + " must be static");
+      throw new RuntimeException("Field error:" + field.getName(), e);
     }
   }
   
-  public boolean isRequireConfigFile() {
-    return requireConfigFile;
-  }
-
-  public void setRequireConfigFile(boolean requireConfigFile) {
-    this.requireConfigFile = requireConfigFile;
-  }
-
   /**
-   * For each class registered, we extract options based on the flags set within the class.
+   * For each class registered, we extract options based on the {@link Flag} decorator
+   * set on each field in the bean.  We use the help argument on the decorator to set
+   * command line option usage text.
    * 
-   *  - Any class field ending in {prefix}_FLAG is turned into "--{prefix}" on the command line. 
-   *   eg.  "public String adminEmail_FLAG" becomes "--adminEmail"
-   *  - Any field defined with {prefix}_HELP will be used as the help text.
+   * Note: classes with identical flag field names will get overwritten with the last one processed.  
+   * TODO(rayc) support collision detection and use fully qualified class name for flag option.
    * 
-   * @return Options all commandline options registered for parsing.
+   * see {@link Flag} for more info.
+   * 
+   * @return Options all command-line options registered for parsing.
    */
-  @SuppressWarnings("unchecked")
-  private Options createOptions() throws ConfigurationBeanException {
+  private Options createOptions() {
     
     Options options = new Options();
     options.addOption(new Option("help", false, "Print out usage."));
+
+    // Go through all registered beans.
     for (Object bean : beans) {
+
+      // Go through all fields.
       for (Field field : bean.getClass().getDeclaredFields()) {
         Flag flag = field.getAnnotation(Flag.class);
-        if (flag != null) {
-          // Check type we only support boolean, String and Integer.
-	      if ((field.getType() != Integer.class) && 
-	          (field.getType() != String.class) && 
-	          (field.getType() != Boolean.class)) {
-	        throw new RuntimeException("Field: " + field.getName() + " flag type not supported");
-	      }
-          String argName = field.getName();
-          if (field.getType().getName().equals(Boolean.class.getName())) {
-            options.addOption(new Option(argName, false, flag.help()));
-            options.addOption(new Option("no" + argName, false, flag.help()));
-          } else {
-            options.addOption(new Option(argName, true, flag.help()));
-          }
+        if (flag == null) {
+          continue; // no decorator we move on.
+        }
+
+        // Check type we only support boolean, String and Integer.
+        if ((field.getType() != Integer.class) && 
+            (field.getType() != String.class) && 
+            (field.getType() != Boolean.class)) {
+          throw new RuntimeException("Field: " + field.getName() + " flag type not supported");
+        }
+        
+        // Create options.
+        String argName = field.getName();
+        if (field.getType().getName().equals(Boolean.class.getName())) {
+          options.addOption(new Option(argName, false, flag.help()));
+          options.addOption(new Option("no" + argName, false, flag.help()));
+        } else {
+          options.addOption(new Option(argName, true, flag.help()));
         }
       }
     }
@@ -326,11 +328,28 @@ public class BeanCliHelper {
   }
   
   /**
+   * Helper that loads a file into a string.
+   * 
+   * @param fileName properties file with rules configuration.
+   * @returns a String representing the file.
+   * @throws IOException if any errors are encountered reading the properties file
+   */
+  static String readFileIntoString(final String fileName) throws IOException {
+    if (testFileContents != null) {
+      return testFileContents;
+    }
+    File file = new File(fileName);
+    byte[] fileContents = new byte[(int) file.length()];
+    new BufferedInputStream(new FileInputStream(fileName)).read(fileContents);
+    return new String(fileContents);
+  }
+  
+  /**
    * We use this to set the config file for unit tests.
    * 
    * @param contents a test payload-in-content file represented as a string.
    */
-  void setTestFileContents(String contents) {
+  static void setTestFileContents(String contents) {
     testFileContents = contents;
   }
 }

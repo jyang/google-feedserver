@@ -107,8 +107,8 @@ public class BeanCliHelperTest extends TestCase {
   }
   
   public void testSuccessfulConfFileOnlyConfig() throws ConfigurationBeanException {
+    BeanCliHelper.setTestFileContents(testBeanConfFile);
     beanCliHelper.register(testBean);
-    beanCliHelper.setTestFileContents(testBeanConfFile);
     beanCliHelper.parse(confFileOnly);
     assertEquals("test1", testBean.getOption1());
     assertEquals("test2", testBean.getOption2());
@@ -117,8 +117,8 @@ public class BeanCliHelperTest extends TestCase {
   }
   
   public void testSuccessfulConfFileAndArgs() throws ConfigurationBeanException {
+    BeanCliHelper.setTestFileContents(testBeanConfFile);
     beanCliHelper.register(testBean);
-    beanCliHelper.setTestFileContents(testBeanConfFile);
     beanCliHelper.parse(incompleteArgs);
     // From Args
     assertEquals("clitest1", testBean.getOption1());
@@ -142,8 +142,8 @@ public class BeanCliHelperTest extends TestCase {
   }
   
   public void testBrokenIntValue() {
+    BeanCliHelper.setTestFileContents(brokenIntegerConfFile);
     beanCliHelper.register(testBean);
-    beanCliHelper.setTestFileContents(brokenIntegerConfFile);
     try {
       beanCliHelper.parse(confFileOnly);
     } catch (ConfigurationBeanException e) {
