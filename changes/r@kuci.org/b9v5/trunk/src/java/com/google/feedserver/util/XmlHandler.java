@@ -1,17 +1,5 @@
-/* Copyright 2008 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2007 Google Inc.  All Rights Reserverd.
+
 package com.google.feedserver.util;
 
 import org.xml.sax.Attributes;
@@ -28,7 +16,6 @@ import java.util.Stack;
  *
  * An empty element is parsed as a null value for that property (e.g.,
  * <string></string> will set the property "string" to null).
- *
  */
 public class XmlHandler extends DefaultHandler {
 
@@ -41,6 +28,7 @@ public class XmlHandler extends DefaultHandler {
 
   protected Map<String, Object> valueMap;
   protected Stack<String> currentElementStack;
+  protected Stack<Boolean> elementRepetableStack;
   protected String lastElement;
   protected boolean isRepeatable;
   protected Object value;
@@ -59,6 +47,7 @@ public class XmlHandler extends DefaultHandler {
    */
   public XmlHandler(String topLevelElement) {
     currentElementStack = new Stack<String>();
+    elementRepetableStack = new Stack<Boolean>();
     valueMapStack = new Stack<Map<String, Object>>();
     this.topLevelElement = topLevelElement;
   }
@@ -80,6 +69,7 @@ public class XmlHandler extends DefaultHandler {
         isRepeatable = "true".equals(attributes.getValue(REPEATABLE));
       }
       currentElementStack.push(name);
+      elementRepetableStack.push(isRepeatable);
       updateValueMapStack();
     }
   }
@@ -116,6 +106,7 @@ public class XmlHandler extends DefaultHandler {
    */
   private void removeLastElementFromStack() {
     lastElement = currentElementStack.pop();
+    isRepeatable = elementRepetableStack.pop();
     if (valueMapStack.size() > currentElementStack.size() + 1) {
       value = valueMapStack.pop();
       valueMap = valueMapStack.peek();
@@ -128,7 +119,7 @@ public class XmlHandler extends DefaultHandler {
 
     if (currentElementStack.size() > 0) {
       StringBuilder builder;
-      if (value == null ) {
+      if (value == null) {
         builder = new StringBuilder();
       } else if (value instanceof StringBuilder) {
         builder = (StringBuilder) value;
@@ -148,35 +139,31 @@ public class XmlHandler extends DefaultHandler {
    */
   protected void collectValues() throws SAXException {
     if (value instanceof StringBuilder) {
-      String stringValue = value.toString();
+      String stringValue = value.toString().trim();
       value = stringValue.isEmpty() ? null : stringValue;
     }
 
     String elementToBeUpdated = getLastElement();
     if (isRepeatable) {
-      Object[] oldValuesArray = null;
-      Object[] valuesArray;
-      if (getValueMap().containsKey(elementToBeUpdated)) {
-        oldValuesArray = (Object[]) getValueMap().get(elementToBeUpdated);
-      }
-
       if (value == null) {
-        valuesArray = oldValuesArray;
-      } else if (null == oldValuesArray) {
-        valuesArray = new Object[1];
-        valuesArray[0] = value;
-      } else {
-        valuesArray = new Object[oldValuesArray.length + 1];
-        for (int i = 0; i < oldValuesArray.length; i++) {
-          valuesArray[i] = oldValuesArray[i];
-        }
-        valuesArray[oldValuesArray.length] = value;
+        value = "";
       }
-      getValueMap().put(elementToBeUpdated, valuesArray);
+      Object[] array = (Object[]) getValueMap().get(elementToBeUpdated);
+      if (array == null) {
+        array = new Object[]{value};
+      } else {
+        Object[] newArray = new Object[array.length + 1];
+        for (int i = 0; i < array.length; i++) {
+          newArray[i] = array[i];
+        }
+        newArray[array.length] = value;
+        array = newArray;
+      }
+      getValueMap().put(elementToBeUpdated, array);
     } else if (getValueMap().containsKey(elementToBeUpdated)) {
       throw new SAXException("Repeated element " + currentElementStack);
     } else {
-        getValueMap().put(elementToBeUpdated, value);
+      getValueMap().put(elementToBeUpdated, value);
     }
   }
 }
