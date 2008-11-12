@@ -15,8 +15,10 @@
 package com.google.feedserver.tools;
 
 import com.google.feedserver.client.TypelessFeedServerClient;
+import com.google.feedserver.tools.SampleFeedTool.ConfBean;
+import com.google.feedserver.util.BeanCliHelper;
+import com.google.feedserver.util.ConfigurationBeanException;
 import com.google.feedserver.util.FeedServerClientException;
-import com.google.feedserver.util.CommonsCliHelper;
 import com.google.gdata.client.GoogleService;
 
 import org.apache.log4j.Logger;
@@ -44,31 +46,23 @@ public class TypelessSampleFeedTool {
   // Logging instance
   private static final Logger log = Logger.getLogger(TypelessSampleFeedTool.class);
 
-  // Flags
-  public static String feedUrl_FLAG = null;
-  public static String feedUrl_HELP = "Url to fetch";
-  
-  public static String task_FLAG = "get";
-  public static String task_HELP = "Operation to perform";
-  
-  public static String entry_FLAG = null;
-  public static String entry_HELP = "xml file to insert or update";
-  
   public static void main(String[] args) throws FeedServerClientException, MalformedURLException,
-      IOException {
+      IOException, ConfigurationBeanException {
     
     // Bootstrap logging system
     PropertyConfigurator.configure(getBootstrapLoggingProperties());
     
-    CommonsCliHelper cliHelper = new CommonsCliHelper();
-    cliHelper.register(TypelessSampleFeedTool.class);
+    // Parse config options from command line into bean.
+    ConfBean confBean = new ConfBean();
+    BeanCliHelper cliHelper = new BeanCliHelper();
+    cliHelper.register(confBean);
     cliHelper.parse(args);
     
     TypelessFeedServerClient feedClient = new TypelessFeedServerClient(
         new GoogleService("test", "test"));
     
-    if (task_FLAG.equals("get")) {
-      URL feedUrl = new URL(feedUrl_FLAG);
+    if (confBean.getTask().equals("get")) {
+      URL feedUrl = new URL(confBean.getFeedUrl());
       for (Map<String, Object> vehicleMap : feedClient.getEntries(feedUrl)) {
         for (String key : vehicleMap.keySet()) { 
           if (vehicleMap.get(key) instanceof String) {
@@ -82,18 +76,18 @@ public class TypelessSampleFeedTool {
           }
         }
       }
-    } else if (task_FLAG.equals("insert")) {
-      String entryXml = readFileIntoString(entry_FLAG);
-      feedClient.insertEntry(new URL(feedUrl_FLAG), feedClient.getTypelessMapFromXml(entryXml));
-    } else if (task_FLAG.equals("update")) {
-      String entryXml = readFileIntoString(entry_FLAG);
-      feedClient.updateEntry(new URL(feedUrl_FLAG), feedClient.getTypelessMapFromXml(entryXml));
-    } else if (task_FLAG.equals("delete")) {
-      if (entry_FLAG == null) {
-        feedClient.deleteEntry(new URL(feedUrl_FLAG));
+    } else if (confBean.getTask().equals("insert")) {
+      String entryXml = readFileIntoString(confBean.getEntry());
+      feedClient.insertEntry(new URL(confBean.getFeedUrl()), feedClient.getTypelessMapFromXml(entryXml));
+    } else if (confBean.getTask().equals("update")) {
+      String entryXml = readFileIntoString(confBean.getEntry());
+      feedClient.updateEntry(new URL(confBean.getFeedUrl()), feedClient.getTypelessMapFromXml(entryXml));
+    } else if (confBean.getTask().equals("delete")) {
+      if (confBean.getEntry() == null) {
+        feedClient.deleteEntry(new URL(confBean.getFeedUrl()));
       } else {
-        String entryXml = readFileIntoString(entry_FLAG);
-        feedClient.deleteEntry(new URL(feedUrl_FLAG), feedClient.getTypelessMapFromXml(entryXml));
+        String entryXml = readFileIntoString(confBean.getEntry());
+        feedClient.deleteEntry(new URL(confBean.getFeedUrl()), feedClient.getTypelessMapFromXml(entryXml));
       }
     } else {
       log.fatal("Incorrect target specified.  Must use 'get', 'insert', 'delete', 'update'");
