@@ -1,17 +1,5 @@
-/* Copyright 2008 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2008 Google Inc.  All Rights Reserved.
+
 package com.google.feedserver.util;
 
 import junit.framework.TestCase;
@@ -20,11 +8,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Tests for the {@link BeanUtil} class.
+ * BeanUtil tests.
+ *
+ * @author jyang@google.com (Jun Yang)
  */
 public class BeanUtilTest extends TestCase {
 
   protected BeanUtil beanUtil = new BeanUtil();
+
+  public static class InternalBean {
+    protected String string;
+    protected String[] strings;
+
+    public String getString() {
+      return string;
+    }
+
+    public void setString(String value) {
+      string = value;
+    }
+
+    public String[] getStrings() {
+      return strings;
+    }
+
+    public void setStrings(String[] values) {
+      strings = values;
+    }
+  }
 
   public static class Bean {
 
@@ -34,6 +45,8 @@ public class BeanUtilTest extends TestCase {
     protected String[] strings;
     protected int[] integers;
     protected long[] longIntegers;
+    protected InternalBean internalBean;
+    protected InternalBean[] internalBeans;
 
     public String getString() {
       return string;
@@ -82,8 +95,24 @@ public class BeanUtilTest extends TestCase {
     public void setLongs(long[] values) {
       longIntegers = values;
     }
+
+    public InternalBean getInternalBean() {
+      return internalBean;
+    }
+
+    public void setInternalBean(InternalBean internalBean) {
+      this.internalBean = internalBean;
+    }
+
+    public InternalBean[] getInternalBeans() {
+      return internalBeans;
+    }
+
+    public void setInternalBeans(InternalBean[] internalBeans) {
+      this.internalBeans = internalBeans;
+    }
   }
-  
+
   public void testInvalidIntegerThrowsException() throws Exception {
     Bean bean = new Bean();
     bean.setString("test");
@@ -96,12 +125,12 @@ public class BeanUtilTest extends TestCase {
     try {
       beanUtil.convertPropertiesToBean(properties, bean);
     } catch (IllegalArgumentException e) {
-      assertTrue(e.getMessage().startsWith("Conversion")); 
+      assertTrue(e.getMessage().startsWith("Conversion"));
       return;
     }
     fail("did not get illegal argument exception");
   }
-  
+
   public void testUnsetPropertiesShouldRetainDefaults() throws Exception {
     Bean bean = new Bean();
     bean.setString("test");
@@ -111,10 +140,17 @@ public class BeanUtilTest extends TestCase {
     properties.put("strings", new String[]{"string0", "string1"});
     properties.put("ints", new int[]{100, 200});
     properties.put("longs", new long[]{300L, 400L});
+
+    Map<String, Object> internalProperties = new HashMap<String, Object>();
+    internalProperties.put("strings", new String[]{"string0", "string1"});
+
+    properties.put("internalBean", internalProperties);
+    properties.put("internalBeans", new Map[] {internalProperties});
+
     beanUtil.convertPropertiesToBean(properties, bean);
     // Check we left our previously set value
     assertTrue("test".equals(bean.getString()));
-    
+
     // Check that the rest of the values were set ok.
     assertEquals(1234, bean.getInt());
     assertEquals(5678L, bean.getLong());
@@ -133,8 +169,22 @@ public class BeanUtilTest extends TestCase {
     assertEquals(2, longs.length);
     assertEquals(300L, longs[0]);
     assertEquals(400L, longs[1]);
+
+    InternalBean internalBean = bean.getInternalBean();
+    strings = internalBean.getStrings();
+    assertEquals(2, strings.length);
+    assertEquals("string0", strings[0]);
+    assertEquals("string1", strings[1]);
+
+
+    InternalBean[] internalBeans = bean.getInternalBeans();
+    strings = internalBeans[0].getStrings();
+    assertEquals(2, strings.length);
+    assertEquals("string0", strings[0]);
+    assertEquals("string1", strings[1]);
   }
 
+  @SuppressWarnings("unchecked")
   public void testConvertBeanToProperties() throws Exception {
     Bean bean = new Bean();
     bean.setString("string0");
@@ -143,9 +193,15 @@ public class BeanUtilTest extends TestCase {
     bean.setStrings(new String[]{"string0", "string1"});
     bean.setInts(new int[]{100, 200});
     bean.setLongs(new long[]{300L, 400L});
+
+    InternalBean internalBean = new InternalBean();
+    internalBean.setStrings(new String[]{"string0", "string1"});
+    bean.setInternalBean(internalBean);
+    bean.setInternalBeans(new InternalBean[] {internalBean, internalBean});
+
     Map<String, Object> properties = beanUtil.convertBeanToProperties(bean);
 
-    assertEquals(6, properties.size());
+    assertEquals(8, properties.size());
     assertEquals("string0", properties.get("string"));
     assertEquals(1234, properties.get("int"));
     assertEquals(5678L, properties.get("long"));
@@ -164,6 +220,25 @@ public class BeanUtilTest extends TestCase {
     assertEquals(2, longs.length);
     assertEquals(300L, longs[0]);
     assertEquals(400L, longs[1]);
+
+    Map<String, Object> internalBeanMap =
+        (Map<String, Object>) properties.get("internalBean");
+    strings = (String[]) internalBeanMap.get("strings");
+    assertEquals(2, strings.length);
+    assertEquals("string0", strings[0]);
+    assertEquals("string1", strings[1]);
+
+
+    Map<String, Object>[] internalBeanMaps =
+        (Map<String, Object>[]) properties.get("internalBeans");
+    strings = (String[]) internalBeanMaps[0].get("strings");
+    assertEquals(2, strings.length);
+    assertEquals("string0", strings[0]);
+    assertEquals("string1", strings[1]);
+    strings = (String[]) internalBeanMaps[1].get("strings");
+    assertEquals(2, strings.length);
+    assertEquals("string0", strings[0]);
+    assertEquals("string1", strings[1]);
   }
 
   public void testConvertPropertiesToBean() throws Exception {
@@ -227,5 +302,27 @@ public class BeanUtilTest extends TestCase {
     assertEquals(2, longs.length);
     assertEquals(300L, longs[0]);
     assertEquals(400L, longs[1]);
+  }
+
+
+  public void testIsBean() {
+    assertTrue(beanUtil.isBean(Bean.class));
+
+    assertFalse(beanUtil.isBean(String.class));
+    assertFalse(beanUtil.isBean(String[].class));
+    assertFalse(beanUtil.isBean(Integer.class));
+    assertFalse(beanUtil.isBean(Integer[].class));
+    assertFalse(beanUtil.isBean(Boolean.class));
+    assertFalse(beanUtil.isBean(Boolean[].class));
+    assertFalse(beanUtil.isBean(int.class));
+    assertFalse(beanUtil.isBean(int[].class));
+    assertFalse(beanUtil.isBean(boolean.class));
+    assertFalse(beanUtil.isBean(boolean[].class));
+    assertFalse(beanUtil.isBean(long.class));
+    assertFalse(beanUtil.isBean(long[].class));
+    assertFalse(beanUtil.isBean(float.class));
+    assertFalse(beanUtil.isBean(float[].class));
+    assertFalse(beanUtil.isBean(double.class));
+    assertFalse(beanUtil.isBean(double[].class));
   }
 }
