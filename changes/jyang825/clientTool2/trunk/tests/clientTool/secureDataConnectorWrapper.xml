@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <serverExpression>SERVER</serverExpression>
+  <remoteServerAddress>127.0.0.1</remoteServerAddress>
+  <remotePortNumber>3306</remotePortNumber>
+</config>
