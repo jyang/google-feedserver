@@ -15,8 +15,10 @@
 package com.google.feedserver.tools;
 
 import com.google.feedserver.client.TypelessFeedServerClient;
+import com.google.feedserver.tools.SampleFeedTool.ConfBean;
+import com.google.feedserver.util.BeanCliHelper;
+import com.google.feedserver.util.ConfigurationBeanException;
 import com.google.feedserver.util.FeedServerClientException;
-import com.google.feedserver.util.CommonsCliHelper;
 import com.google.gdata.client.GoogleService;
 
 import org.apache.log4j.Logger;
@@ -35,76 +37,67 @@ import java.util.Properties;
  * Sample tool that uses the {@link TypelessFeedServerClient} to retrieve and write "vehicle" feed
  * entries.  This tool highlights how to create a bean representing a feed entry, instantiate
  * the client and execute CRUD operations against the feedstore.
- * 
+ *
  * @author r@kuci.org (Ray Colline)
  *
  */
 public class TypelessSampleFeedTool {
-  
   // Logging instance
   private static final Logger log = Logger.getLogger(TypelessSampleFeedTool.class);
 
-  // Flags
-  public static String feedUrl_FLAG = null;
-  public static String feedUrl_HELP = "Url to fetch";
-  
-  public static String task_FLAG = "get";
-  public static String task_HELP = "Operation to perform";
-  
-  public static String entry_FLAG = null;
-  public static String entry_HELP = "xml file to insert or update";
-  
-  @SuppressWarnings("unused") 
+  @SuppressWarnings("unused")
   public static void main(String[] args) throws FeedServerClientException, MalformedURLException,
-      IOException {
-    
+      IOException, ConfigurationBeanException {
+
     // Bootstrap logging system
     PropertyConfigurator.configure(getBootstrapLoggingProperties());
-    
-    CommonsCliHelper cliHelper = new CommonsCliHelper();
-    cliHelper.register(TypelessSampleFeedTool.class);
+
+    // Parse config options from command line into bean.
+    ConfBean confBean = new ConfBean();
+    BeanCliHelper cliHelper = new BeanCliHelper();
+    cliHelper.register(confBean);
     cliHelper.parse(args);
-    
+
     TypelessFeedServerClient feedClient = new TypelessFeedServerClient(
         new GoogleService("test", "test"));
-    
-    if (task_FLAG.equals("get")) {
-      URL feedUrl = new URL(feedUrl_FLAG);
+
+    if (confBean.getTask().equals("get")) {
+      URL feedUrl = new URL(confBean.getFeedUrl());
       for (Map<String, Object> vehicleMap : feedClient.getEntries(feedUrl)) {
-        for (String key : vehicleMap.keySet()) { 
+        for (String key : vehicleMap.keySet()) {
           if (vehicleMap.get(key) instanceof String) {
-	        log.info("key " + key + " value " + vehicleMap.get(key)); 
+            log.info("key " + key + " value " + vehicleMap.get(key));
           } else if (vehicleMap.get(key) instanceof Object[]) {
             for (Object value : (Object[]) vehicleMap.get(key)) {
-              log.info("repeated key" + key + " value " + vehicleMap.get(key)); 
+              log.info("repeated key" + key + " value " + vehicleMap.get(key));
             }
           } else {
             log.warn("Invalid object in typeless map " + key);
           }
         }
       }
-    } else if (task_FLAG.equals("insert")) {
-      String entryXml = readFileIntoString(entry_FLAG);
-      feedClient.insertEntry(new URL(feedUrl_FLAG), feedClient.getMapFromXml(entryXml));
-    } else if (task_FLAG.equals("update")) {
-      String entryXml = readFileIntoString(entry_FLAG);
-      feedClient.updateEntry(new URL(feedUrl_FLAG), feedClient.getMapFromXml(entryXml));
-    } else if (task_FLAG.equals("delete")) {
-      if (entry_FLAG == null) {
-        feedClient.deleteEntry(new URL(feedUrl_FLAG));
+    } else if (confBean.getTask().equals("insert")) {
+      String entryXml = readFileIntoString(confBean.getEntry());
+      feedClient.insertEntry(new URL(confBean.getFeedUrl()), feedClient.getMapFromXml(entryXml));
+    } else if (confBean.getTask().equals("update")) {
+      String entryXml = readFileIntoString(confBean.getEntry());
+      feedClient.updateEntry(new URL(confBean.getFeedUrl()), feedClient.getMapFromXml(entryXml));
+    } else if (confBean.getTask().equals("delete")) {
+      if (confBean.getEntry() == null) {
+        feedClient.deleteEntry(new URL(confBean.getFeedUrl()));
       } else {
-        String entryXml = readFileIntoString(entry_FLAG);
-        feedClient.deleteEntry(new URL(feedUrl_FLAG));
+        String entryXml = readFileIntoString(confBean.getEntry());
+        feedClient.deleteEntry(new URL(confBean.getFeedUrl()), feedClient.getMapFromXml(entryXml));
       }
     } else {
       log.fatal("Incorrect target specified.  Must use 'get', 'insert', 'delete', 'update'");
       cliHelper.usage();
     }
   }
-  
+
   /**
    * Helper function that reads contents of specified file into a String.
-   * 
+   *
    * @param filename to read.
    * @return string with file contents.
    * @throws IOException if any file operations fail.
@@ -116,11 +109,11 @@ public class TypelessSampleFeedTool {
       bis.read(fileContents);
       return new String(fileContents);
   }
-  
+
   /**
-   * Returns a base set of logging properties so we can log fatal errors before config parsing is 
+   * Returns a base set of logging properties so we can log fatal errors before config parsing is
    * done.
-   * 
+   *
    * @return Properties a basic console logging setup.
    */
   public static Properties getBootstrapLoggingProperties() {

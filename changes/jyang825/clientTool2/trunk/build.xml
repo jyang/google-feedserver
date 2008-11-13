@@ -1,20 +1,20 @@
 <project name="Google FeedServer" default="all" basedir=".">
 
   <property file="build.properties"/>
-  
+
   <property name="app.name"        value="feedserver"/>
 
-  <property name="build.home"         value="${basedir}/build"/>
-  <property name="dist.home"          value="${basedir}/dist"/>
-  <property name="src.home"           value="${basedir}/src/java"/>
-  <property name="conf.home"          value="${basedir}/conf"/>
-  <property name="web.home"           value="${basedir}/web"/>
-  <property name="lib.home"           value="${basedir}/lib"/>
+  <property name="build.home"      value="${basedir}/build"/>
+  <property name="dist.home"       value="${basedir}/dist"/>
+  <property name="src.home"        value="${basedir}/src/java"/>
+  <property name="conf.home"       value="${basedir}/conf"/>
+  <property name="web.home"        value="${basedir}/web"/>
+  <property name="lib.home"        value="${basedir}/lib"/>
 
   <!-- Client Properties -->
   <property name="client.version" value="2.0"/>
-  <property 
-      name="client.jarfile"     
+  <property
+      name="client.jarfile"
       value="${dist.home}/google-feedserver-client-${client.version}.jar"/>
   <!-- End Client Properties -->
 
@@ -34,12 +34,11 @@
   <target name="all" depends="clean,server,client"
    description="The default Jetty-based build, with conditional Tomcat."/>
 
-  <target name="server" 
+  <target name="server"
    description="Compile and build jar file">
    <antcall target="jar"/>
   </target>
-  
-  
+
   <target name="clean"
    description="Delete old build and dist directories">
     <delete dir="${build.home}"/>
@@ -58,7 +57,7 @@
     <mkdir          dir="${dist.home}/docs/api"/>
     <javadoc sourcepath="${src.home}"
                 destdir="${dist.home}/docs/api"
-		 classpathref="classpath"
+           classpathref="classpath"
            packagenames="*">
     </javadoc>
   </target>
@@ -69,7 +68,7 @@
     <tstamp/>
     <mkdir dir="${dist.home}"/>
     <jar jarfile="${client.jarfile}">
-      <fileset dir="${build.home}"> 
+      <fileset dir="${build.home}">
         <include name="com/google/feedserver/client/**"/>
         <include name="com/google/feedserver/tools/**"/>
         <include name="com/google/feedserver/util/**"/>
@@ -78,7 +77,7 @@
         <attribute name="Implementation-Title" value="Google Feedserver Client"/>
         <attribute name="Implementation-Version" value="${version} ${TODAY}"/>
         <attribute name="Implementation-Vendor" value="Google"/>
-        <attribute 
+        <attribute
             name="Main-Class"
             value="com.google.feedserver.tools.SampleFeedTool"/>
       </manifest>
@@ -86,7 +85,7 @@
   </target>
 
   <target name="client-source-distro" depends="client">
-    <tar 
+    <tar
         destfile="${dist}/google-feedserver-client-${client.version}-src.tar.gz"
         longfile="gnu"
         compression="gzip"
@@ -119,8 +118,7 @@
      </jar>
   </target>
   <!-- End of Jetty targets -->
-  
-  
+
   <!-- Start of Tomcat targets -->
   <target name="tomcat" depends="checkIfPropsFileExists,tomcat-all"
    description="Run Tomcat tasks only if the catalina.home property is detected.">
@@ -147,7 +145,7 @@
         <include name="*.jar"/>
       </fileset>
     </path>
-    
+
     <!-- declare catalina deployment tasks -->
     <taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask"
           classpathref="catalina.classpath"/>
@@ -155,8 +153,8 @@
           classpathref="catalina.classpath"/>
     <taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask"
           classpathref="catalina.classpath"/>
-  </target>    
-  
+  </target>
+
   <!-- Build a war file for Tomcat -->
   <target name="war" depends="compile,javadoc"
        description="Create binary distribution">
@@ -171,7 +169,7 @@
       <lib dir="${lib.home}" excludes="servlet-api.jar"/>
     </war>
   </target>
-  
+
   <!-- undeploy the app, if it already exists -->
   <target name="undeploy" depends="tomcat-path,checkIfDeployed" if="dir.exists">
      <echo message="App ${app.name} exists. undeploying it"/>
@@ -184,14 +182,14 @@
      <!-- the manager app does not delete the directory for us -->
      <delete dir="${catalina.home}/webapps/${app.name}"/>
   </target>
-  
+
   <!-- checks to make sure the dir exists - so that undeploy won't fail -->
   <target name="checkIfDeployed">
      <condition property="dir.exists">
         <available file="${catalina.home}/webapps/${app.name}" type="dir"/>
      </condition>
   </target>
-  
+
   <target name="deploy" depends="tomcat-path" if="catalina.home"
     description="deploy application to servlet container">
 
@@ -222,8 +220,8 @@
       <include name="**/*.jar"/>
     </fileset>
   </path>
-  
-  <target name="test" depends="cleanTests,compileTests">
+
+  <target name="test" depends="server,client,cleanTests,compileTests">
       <mkdir dir="${testOutput.home}"/>
       <junit haltonfailure="yes" printsummary="yes">
         <classpath refid="classpath.test"/>

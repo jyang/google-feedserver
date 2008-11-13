@@ -1,7 +1,7 @@
 FSCT_BASE_DIR=../..
 FSCT_LIB_DIR=$FSCT_BASE_DIR/lib
 FSCT_DIST_DIR=$FSCT_BASE_DIR/dist
-FSCT_CLASSPATH=$FSCT_DIST_DIR/google-feedserver-client-2.0.jar:$FSCT_LIB_DIR/gdata-client-1.0.jar:$FSCT_LIB_DIR/log4j-1.2.14.jar:$FSCT_LIB_DIR/commons-cli-1.1.jar:$FSCT_LIB_DIR/commons-lang-2.4.jar
+FSCT_CLASSPATH=$FSCT_DIST_DIR/google-feedserver-client-2.0.jar:$FSCT_LIB_DIR/gdata-client-1.0.jar:$FSCT_LIB_DIR/log4j-1.2.14.jar:$FSCT_LIB_DIR/commons-cli-1.1.jar:$FSCT_LIB_DIR/commons-lang-2.4.jar:$FSCT_LIB_DIR/commons-beanutils-core-1.8.0.jar:$FSCT_LIB_DIR/commons-logging-1.0.4.jar
 
 FSCT_DOMAIN=joonix.net
 FSCT_USER_NAME=demo1@$FSCT_DOMAIN

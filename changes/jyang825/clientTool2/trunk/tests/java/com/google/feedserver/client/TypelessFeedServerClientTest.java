@@ -99,7 +99,7 @@ public class TypelessFeedServerClientTest extends TestCase {
     EasyMock.replay(mockService);
     
     // Perform Test
-    feedServerClient.deleteEntry(new URL(TEST_FEED_URL));
+    feedServerClient.deleteEntry(new URL(TEST_ENTRY_URL));
     
     // Verify
     EasyMock.verify(mockService);

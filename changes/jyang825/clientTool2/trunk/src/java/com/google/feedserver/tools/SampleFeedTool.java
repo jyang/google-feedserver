@@ -16,8 +16,10 @@ package com.google.feedserver.tools;
 
 import com.google.feedserver.client.FeedServerClient;
 import com.google.feedserver.client.FeedServerEntry;
+import com.google.feedserver.util.BeanCliHelper;
+import com.google.feedserver.util.ConfigurationBeanException;
 import com.google.feedserver.util.FeedServerClientException;
-import com.google.feedserver.util.CommonsCliHelper;
+import com.google.feedserver.util.Flag;
 import com.google.gdata.client.GoogleService;
 
 import org.apache.commons.beanutils.BeanMap;
@@ -45,31 +47,22 @@ public class SampleFeedTool {
   // Logging instance
   private static final Logger LOG = Logger.getLogger(SampleFeedTool.class);
 
-  // Flags
-  public static String feedUrl_FLAG = null;
-  public static String feedUrl_HELP = "Url to fetch";
-  
-  public static String task_FLAG = "get";
-  public static String task_HELP = "Operation to perform";
-  
-  public static String entry_FLAG = null;
-  public static String entry_HELP = "xml file to insert or update";
-  
   public static void main(String[] args) throws FeedServerClientException, MalformedURLException,
-      IOException {
+      IOException, ConfigurationBeanException {
     
     // Bootstrap logging system
     PropertyConfigurator.configure(getBootstrapLoggingProperties());
     
-    CommonsCliHelper cliHelper = new CommonsCliHelper();
-    cliHelper.register(SampleFeedTool.class);
+    ConfBean conf = new ConfBean();
+    BeanCliHelper cliHelper = new BeanCliHelper();
+    cliHelper.register(conf);
     cliHelper.parse(args);
     
     FeedServerClient<VehicleBean> feedClient = new FeedServerClient<VehicleBean>(
         new GoogleService("test", "test"), VehicleBean.class);
     
-    if (task_FLAG.equals("get")) {
-      URL feedUrl = new URL(feedUrl_FLAG);
+    if (conf.getTask().equals("get")) {
+      URL feedUrl = new URL(conf.getFeedUrl());
       for (VehicleBean vehicleBean : feedClient.getEntities(feedUrl)) {
         BeanMap beanMap = new BeanMap(vehicleBean);
         for (Object key : beanMap.keySet()) {
@@ -82,21 +75,21 @@ public class SampleFeedTool {
           }
         }
       }
-    } else if (task_FLAG.equals("insert")) {
-      String entryXml = readFileIntoString(entry_FLAG);
+    } else if (conf.getTask().equals("insert")) {
+      String entryXml = readFileIntoString(conf.getEntry());
       FeedServerEntry vehicleEntry = new FeedServerEntry(entryXml);
-      feedClient.insertEntry(new URL(feedUrl_FLAG), vehicleEntry);
-    } else if (task_FLAG.equals("update")) {
-      String entryXml = readFileIntoString(entry_FLAG);
+      feedClient.insertEntry(new URL(conf.getFeedUrl()), vehicleEntry);
+    } else if (conf.getTask().equals("update")) {
+      String entryXml = readFileIntoString(conf.getEntry());
       FeedServerEntry vehicleEntry = new FeedServerEntry(entryXml);
-      feedClient.updateEntry(new URL(feedUrl_FLAG), vehicleEntry);
-    } else if (task_FLAG.equals("delete")) {
-      if (entry_FLAG == null) {
-        feedClient.deleteEntry(new URL(feedUrl_FLAG));
+      feedClient.updateEntry(new URL(conf.getFeedUrl()), vehicleEntry);
+    } else if (conf.getTask().equals("delete")) {
+      if (conf.getEntry() == null) {
+        feedClient.deleteEntry(new URL(conf.getFeedUrl()));
       } else {
-        String entryXml = readFileIntoString(entry_FLAG);
+        String entryXml = readFileIntoString(conf.getEntry());
         FeedServerEntry vehicleEntry = new FeedServerEntry(entryXml);
-        feedClient.deleteEntry(new URL(feedUrl_FLAG), vehicleEntry);
+        feedClient.deleteEntry(new URL(conf.getFeedUrl()), vehicleEntry);
       }
     } else {
       LOG.fatal("Incorrect target specified.  Must use 'get', 'insert', 'delete', 'update'");
@@ -192,6 +185,40 @@ public class SampleFeedTool {
     }
     public void setPropertyValue(String[] propertyValue) {
       this.propertyValue = propertyValue;
+    }
+  }
+  
+  /**
+   * Configuration for the Sample Feed Tool.
+   * 
+   * @author rayc@google.com (Ray Colline)
+   */
+  public static class ConfBean {
+    
+    @Flag(help = "Url to fetch")
+    private String feedUrl;
+    @Flag(help = "Operation to perform")
+    private String task;
+    @Flag(help = "xml to insert or update")
+    private String entry;
+    
+    public String getFeedUrl() {
+      return feedUrl;
+    }
+    public void setFeedUrl(String feedUrl) {
+      this.feedUrl = feedUrl;
+    }
+    public String getTask() {
+      return task;
+    }
+    public void setTask(String task) {
+      this.task = task;
+    }
+    public String getEntry() {
+      return entry;
+    }
+    public void setEntry(String entry) {
+      this.entry = entry;
     }
   }
 }

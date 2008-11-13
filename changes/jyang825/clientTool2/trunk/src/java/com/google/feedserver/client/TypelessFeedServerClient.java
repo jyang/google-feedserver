@@ -65,7 +65,7 @@ public class TypelessFeedServerClient {
   /**
    * Creates the client using provided dependencies.
    * 
-   * @param service the configured Gdata service.
+   * @param service the configured GData service.
    */
   @Inject
   public TypelessFeedServerClient(GoogleService service, ContentUtil contentUtil, XmlUtil xmlUtil) {
@@ -151,7 +151,32 @@ public class TypelessFeedServerClient {
       throw new FeedServerClientException(e);
     }
   }
-  
+
+  /**
+   * Deletes specified by "id" in supplied entry map.
+   *
+   * @param feedUrl Feed url not including ID.
+   * @param entry a valid entry map.
+   * @throws FeedServerClientException if any communication issues occur with the feed or the
+   * feed ID is invalid or malformed.
+   */
+  public void deleteEntry(URL feedUrl, Map<String, Object> entry) throws
+      FeedServerClientException {
+    try {
+      String id = (String) entry.get(ID);
+      URL entryUrl = new URL(feedUrl.toString() + "/" + id);
+      deleteEntry(entryUrl);
+    } catch (NullPointerException e) {
+      throw new RuntimeException("entry map does not have 'name' key", e);
+    } catch (ClassCastException e) {
+      throw new RuntimeException("entry map does not have 'name' key as String", e);
+    } catch (IndexOutOfBoundsException e) {
+      throw new RuntimeException("'name' in entry map is invalid.", e);
+    } catch (MalformedURLException e) {
+      throw new FeedServerClientException("invalid base URL", e);
+    }
+  }
+
   /**
    * Deletes each entry in the supplied list of entries.  This makes one request per entry.
    * 

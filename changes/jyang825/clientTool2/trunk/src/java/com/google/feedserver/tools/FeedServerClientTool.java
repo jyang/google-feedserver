@@ -42,7 +42,6 @@ import org.apache.commons.lang.StringEscapeUtils;
  *
  */
 public class FeedServerClientTool {
-
   public static final String OPERATION_GET_FEED = "getFeed";
   public static final String OPERATION_GET_ENTRY = "getEntry";
   public static final String OPERATION_INSERT = "insert";
