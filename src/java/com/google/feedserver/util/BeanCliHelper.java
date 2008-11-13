@@ -155,7 +155,7 @@ public class BeanCliHelper {
         String configFileName = "";
         if (configFileAnnotation == null) {
           // no config file in this bean, we no-op.
-          return; 
+          continue; 
         }
 
         try {
@@ -215,7 +215,8 @@ public class BeanCliHelper {
         }
         String argName = field.getName();
         // Boolean Flags
-        if (field.getType().getName().equals(Boolean.class.getName())) {
+        if (field.getType().getName().equals(Boolean.class.getName()) ||
+            field.getType().getName().equals(Boolean.TYPE.getName())) {
           boolean newValue;
           if (flags.hasOption(argName)) {
             setField(field, bean, new Boolean(true));
@@ -223,7 +224,8 @@ public class BeanCliHelper {
             setField(field, bean, new Boolean(false));
           }
         // Integer Flags
-        } else if (field.getType().getName().equals(Integer.class.getName())) {
+        } else if (field.getType().getName().equals(Integer.class.getName()) ||
+            field.getType().getName().equals(Integer.TYPE.getName())) {
           String argValue = flags.getOptionValue(argName, null);
           if (argValue != null) {
             try {
@@ -309,14 +311,17 @@ public class BeanCliHelper {
 
         // Check type we only support boolean, String and Integer.
         if ((field.getType() != Integer.class) && 
+            (field.getType() != Integer.TYPE) && 
             (field.getType() != String.class) && 
-            (field.getType() != Boolean.class)) {
+            (field.getType() != Boolean.class) &&
+            (field.getType() != Boolean.TYPE)) {
           throw new RuntimeException("Field: " + field.getName() + " flag type not supported");
         }
         
         // Create options.
         String argName = field.getName();
-        if (field.getType().getName().equals(Boolean.class.getName())) {
+        if (field.getType().getName().equals(Boolean.class.getName()) || 
+            field.getType().getName().equals(Boolean.TYPE.getName())) {
           options.addOption(new Option(argName, false, flag.help()));
           options.addOption(new Option("no" + argName, false, flag.help()));
         } else {
