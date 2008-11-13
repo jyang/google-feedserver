@@ -1,0 +1,251 @@
+<project name="Google FeedServer" default="all" basedir=".">
+
+  <property file="build.properties"/>
+  
+  <property name="app.name"        value="feedserver"/>
+
+  <property name="build.home"         value="${basedir}/build"/>
+  <property name="dist.home"          value="${basedir}/dist"/>
+  <property name="src.home"           value="${basedir}/src/java"/>
+  <property name="conf.home"          value="${basedir}/conf"/>
+  <property name="web.home"           value="${basedir}/web"/>
+  <property name="lib.home"           value="${basedir}/lib"/>
+
+  <!-- Client Properties -->
+  <property name="client.version" value="1.0"/>
+  <property 
+      name="client.jarfile"     
+      value="${dist.home}/google-feedserver-java-client-${client.version}.jar"/>
+
+
+  <!-- End Client Properties -->
+
+
+  <path id="compile.resources">
+    <fileset dir="src/resources" includes="**/*" />
+  </path>
+
+  <path id="classpath">
+    <fileset dir="${lib.home}" includes="**/*.jar"/>
+  </path>
+
+  <target name="all" depends="clean,jetty"
+   description="The default Jetty-based build, with conditional Tomcat."/>
+
+  <target name="jetty" 
+   description="Compile and build jar file">
+   <antcall target="jar"/>
+  </target>
+  
+  
+  <target name="clean"
+   description="Delete old build and dist directories">
+    <delete dir="${build.home}"/>
+    <delete dir="${dist.home}"/>
+  </target>
+
+  <target name="compile" description="Compile Java sources">
+    <mkdir    dir="${build.home}"/>
+    <javac srcdir="${src.home}" destdir="${build.home}" classpathref="classpath"
+      debug="true" debuglevel="lines,vars,source">
+    </javac>
+  </target>
+
+  <target name="javadoc" depends="compile"
+   description="Create Javadoc API documentation">
+    <mkdir          dir="${dist.home}/docs/api"/>
+    <javadoc sourcepath="${src.home}"
+                destdir="${dist.home}/docs/api"
+		 classpathref="classpath"
+           packagenames="*">
+    </javadoc>
+  </target>
+
+  <!-- Client targets -->
+
+  <target name="client_jar" depends="compile">
+    <tstamp/>
+    <mkdir dir="${dist.home}"/>
+    <jar jarfile="${client.jarfile}">
+      <fileset dir="${build.home}"> 
+        <include name="com/google/feedserver/client/**"/>
+        <include name="com/google/feedserver/tools/**"/>
+        <include name="com/google/feedserver/util/**"/>
+      </fileset>
+      <manifest>
+        <attribute name="Implementation-Title" value="Google Feedserver Client"/>
+        <attribute name="Implementation-Version" value="${version} ${TODAY}"/>
+        <attribute name="Implementation-Vendor" value="Google"/>
+        <attribute 
+            name="Main-Class"
+            value="com.google.feedserver.tools.SampleFeedTool"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="client-source-distro" depends="client_jar">
+    <tar 
+        destfile="${dist}/google-feedserver-java-client-${client.version}-src.tar.gz"
+        longfile="gnu"
+        compression="gzip"
+        excludes="tmp/**, third-party/*/docs/**">
+      <tarfileset dir=".">
+        <include name="build.xml"/>
+        <include name="src/java/com/google/feedserver/client/**"/>
+        <include name="src/java/com/google/feedserver/tools/**"/>
+        <include name="src/java/com/google/feedserver/util/**"/>
+        <include name="lib/commons-*/**"/>
+        <include name="lib/guice-*/**"/>
+        <include name="lib/gdata-*/**"/>
+      </tarfileset>
+      <tarfileset dir="." mode="755">
+        <include name="runfeedtool.sh"/>
+        <include name="runtypelessfeedtool.sh"/>
+      </tarfileset>
+    </tar>
+  </target>
+
+  <!-- Start of Jetty targets -->
+  <target name="jar" depends="compile"
+    description="Build a jar file for Jetty">
+     <mkdir dir="${dist.home}"/>
+     <jar destfile="${dist.home}/feedserver.jar" basedir="${build.home}">
+       <manifest>
+         <attribute name="Main-Class"
+            value="com.google.feedserver.server.jetty.Main"/>
+       </manifest>
+     </jar>
+  </target>
+  <!-- End of Jetty targets -->
+  
+  
+  <!-- Start of Tomcat targets -->
+  <target name="tomcat" depends="checkIfPropsFileExists,tomcat-all"
+   description="Run Tomcat tasks only if the catalina.home property is detected.">
+  </target>
+
+  <!-- for tomcat target, checks to make sure the build.properties file exists -->
+  <target name="checkIfPropsFileExists" unless="catalina.home" >
+   <fail message="build.properties file is missing. 'tomcat' target NOT built.
+         please check the wiki page at http://code.google.com/p/google-feedserver/wiki/DeveloperSetup"/>
+  </target>
+
+  <target name="tomcat-all" depends="tomcat-path,war,undeploy,deploy" if="catalina.home"
+    description="Set paths, then compile and build war file"/>
+
+  <target name="tomcat-path">
+      <!-- Paths for compiling Tomcat needed for catalina deployment tasks -->
+    <path id="catalina.classpath">
+      <!-- Include all elements that Tomcat exposes to applications -->
+      <fileset dir="${catalina.home}/bin">
+        <include name="*.jar"/>
+      </fileset>
+      <pathelement location="${catalina.home}/lib"/>
+      <fileset dir="${catalina.home}/lib">
+        <include name="*.jar"/>
+      </fileset>
+    </path>
+    
+    <!-- declare catalina deployment tasks -->
+    <taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask"
+          classpathref="catalina.classpath"/>
+    <taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask"
+          classpathref="catalina.classpath"/>
+    <taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask"
+          classpathref="catalina.classpath"/>
+  </target>    
+  
+  <!-- Build a war file for Tomcat -->
+  <target name="war" depends="compile,javadoc"
+       description="Create binary distribution">
+
+    <!-- Create application WAR file -->
+    <war destfile="${dist.home}/${app.name}.war"
+      webxml="${web.home}/WEB-INF/web.xml">
+      <fileset dir="${web.home}" excludes="WEB-INF/**"/>
+      <fileset dir="${dist.home}/docs"/>
+      <classes dir="${conf.home}"/>
+      <classes dir="${build.home}"/>
+      <lib dir="${lib.home}" excludes="servlet-api.jar"/>
+    </war>
+  </target>
+  
+  <!-- undeploy the app, if it already exists -->
+  <target name="undeploy" depends="tomcat-path,checkIfDeployed" if="dir.exists">
+     <echo message="App ${app.name} exists. undeploying it"/>
+     <!-- use the Tomcat manager app to undeploy -->
+     <echo message="Undeploying from ${url.manager}"/>
+       <undeploy url="${url.manager}"
+          username="${manager.username}"
+          password="${manager.password}"
+          path="/${app.name}"/>
+     <!-- the manager app does not delete the directory for us -->
+     <delete dir="${catalina.home}/webapps/${app.name}"/>
+  </target>
+  
+  <!-- checks to make sure the dir exists - so that undeploy won't fail -->
+  <target name="checkIfDeployed">
+     <condition property="dir.exists">
+        <available file="${catalina.home}/webapps/${app.name}" type="dir"/>
+     </condition>
+  </target>
+  
+  <target name="deploy" depends="tomcat-path" if="catalina.home"
+    description="deploy application to servlet container">
+
+    <echo message="Deploying to ${url.manager}"/>
+    <deploy url="${url.manager}"
+       username="${manager.username}"
+       password="${manager.password}"
+           path="/${app.name}"
+            war="${dist.home}/${app.name}.war"/>
+  </target>
+  <!-- End of Tomcat targets -->
+
+  <!-- Start of Testing-related stuff -->
+  <property name="testSrc.home"       value="${basedir}/tests/java"/>
+  <property name="testClasses.home"   value="${build.home}/testClasses/"/>
+  <property name="testOutput.home"    value="${build.home}/testOutput"/>
+  <property name="testLib.home"       value="${basedir}/tests/lib"/>
+  <property name="junit.jar"          location="${testLib.home}/junit-4.4.jar"/>
+
+  <path id="classpath.test">
+    <pathelement location="${testClasses.home}" />
+    <pathelement location="${dist.home}/feedserver.jar" />
+    <pathelement location="${conf.home}" />
+    <fileset dir="${lib.home}">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${testLib.home}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+  
+  <target name="test" depends="cleanTests,compileTests">
+      <mkdir    dir="${testOutput.home}"/>
+      <junit haltonfailure="yes" printsummary="yes">
+        <classpath refid="classpath.test"/>
+        <formatter type="plain" usefile="true" />
+        <batchtest todir="${testOutput.home}">
+          <fileset dir="${testSrc.home}">
+            <include name="**/*Test.java"/>
+          </fileset>
+        </batchtest>
+      </junit>
+  </target>
+
+  <target name="compileTests" depends="cleanTests" description="Compile Tests">
+    <mkdir    dir="${testClasses.home}"/>
+    <javac srcdir="${testSrc.home}" destdir="${testClasses.home}" classpathref="classpath.test"
+      debug="true" debuglevel="lines,vars,source">
+    </javac>
+  </target>
+
+  <target name="cleanTests"
+   description="Delete old build and dist directories">
+    <delete dir="${testClasses.home}"/>
+    <delete dir="${testOutput.home}"/>
+  </target>
+
+  <!-- End of Testing-related stuff -->
+</project>
