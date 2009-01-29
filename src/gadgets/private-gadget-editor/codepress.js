@@ -199,7 +199,7 @@ CodePress.run = function() {
     if(t[i].className.match('codepress')) {
       id = t[i].id;
       t[i].id = id+'_cp';
-      eval(id+' = new CodePress(t[i])');
+      window[id] = new CodePress(t[i]);
       t[i].parentNode.insertBefore(eval(id), t[i]);
     }
   }
