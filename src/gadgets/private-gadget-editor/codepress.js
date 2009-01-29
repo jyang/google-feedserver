@@ -101,7 +101,7 @@ CodePress = function(obj) {
         '// else if(engine == "khtml") document.write("<body> </body>");' +
         '</script>' +
         '' +
-        '</html>' +
+        '</html>';
     if(self.attachEvent) self.attachEvent('onload',self.initialize);
     else self.addEventListener('load',self.initialize,false);
   }
