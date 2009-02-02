@@ -1,4 +1,4 @@
-= Setup a mapping file in iBATIS format = 
+= Set Up a Mapping File in iBATIS Format = 
 In the {{{conf/feedserver/sqlmap/}}} folder, create a mapping file for iBATIS to map Java Objects to database queries and results for a table or view.
 
 For example:
