@@ -1,0 +1,130 @@
+#summary Understanding the Google Feed Server framework.
+
+=Inside the Google Feed Server=
+------------------------------------------------------------------------------------------
+
+This document is for developers who want to understand the Google Feed Server framework and to write sample implementations.
+
+The following sections require an understanding of the Abdera framework. See http://cwiki.apache.org/confluence/display/ABDERA/Documentation.
+
+== Implementation Tasks ==
+
+  # Build a server based on the Apache Abdera framework that handles the Atom protocol.
+  # Build an extensible mechanism to convert data from any data source into an Atom feed without writing custom code to handle the details of the Atom protocol.
+  # Build a server with no dependence between the Atom protocol handling and the mechanism of getting data into or out of data sources.  (This task separates Tasks 1 and 2.)
+  # Support multiple namespaces.
+  # Provide loose coupling between configuring a feed and an adapter.
+  # Support signed requests.
+
+*Feed Server Components*
+  * Abdera-based Atom protocol server
+  Apache Abdera provides a framework to build servers to handle the Atom protocol. Google Feed Server uses this framework to build an Atom server. This is a very thin layer of code that uses the Abdera framework to ensure that data going into or out of the server conforms to the Atom protocol.
+  * Data adapter framework
+  Adapters interface with the data sources to perform CRUD (Create, Retrieve, Update, and  Delete) operations on data. Adapters working with new data sources can be written simply by implementing the {{{CollectionAdapter}}} interface (or extending {{{AbstractCollectionAdapter}}} OR {{{AbstractEntityCollectionAdapter}}})
+
+== Support for Multiple Name Spaces ==
+
+The Google Feed Server supports multiple name spaces on a single server. This is achieved with collection adapters and server configurations that understand namespaces. The feed and adapter configurations are stored for each namespace.
+  * {{{PerNamespaceServerConfiguration}}} -- A server configuration implementation with support for namespaces.
+  * {{{NamespacedFeedConfiguration}}} -- A feed configuration implementation with support for namespaces.
+  * {{{NamespacedAdapterConfiguration}}} -- An adapter configuration implementation with support for namespaces.
+
+== Wrapper Manager and ACL Validation ==
+
+The Google Feed Server implementation differs in the data adapter layer. The Feed Server provides a {{{WrapperManager}}} to wrap target adapters. The {{{FeedServerProvider}}} is the provider as well as the workspace manager. The Feed Server always returns a wrapper manager instance instead of the target provider. 
+
+The wrapper manager instance is configured with the adapter that you specify as part of the adapter configuration. The adapter is the target adapter that interacts with the data source. For Abdera, the wrapper manager returned by {{{FeedServerProvider}}}, is set as the target adapter. Any CRUD request is passed to the wrapper manager, which performs ACL validation. On successful ACL validation, the wrapper manager forwards the request to the target adapter. 
+
+To implement a wrapper manager, you need to extend {{{AbstractWrapperManager}}} OR {{{ManagedCollectionAdapterWrapper}}}. The target adapter that interacts with a data source should extend {{{AbstractManagedCollectionAdapter}}}. The {{{IBatisCollectionAdapter}}} is the same adapter implementation from Abdera with the difference that the adapter extends {{{AbstractManagedCollectionAdapter}}} so that the adapter can be used as the target adapter with a wrapper manager. The {{{XMLWrapper}}} is the wrapper manager implementation provided with the Feed Server.
+
+
+== Feed Configuration Storage ==
+
+To provide loose coupling between the feed and adapter configuration, the framework implements the concept of a feed config store. The main job of a feed config store is to read the feed and adapter configurations and pass the necessary configuration details to the framework so that the framework can initialize the target adapter. The target adaper then interacts with a data source for its CRUD operations. Using this approach, multiple feeds can be configured with the same adapter configuration. The feed config store acts as a link between the {{{FeedServerConfiguration}}} and the {{{CollectionAdapterConfiguration}}}. The feed config store understands and supports namespaces. 
+
+The Feed Server provides a sample file system based feed config store: {{{SampleFileSystemFeedConfigStore}}}.
+This implementation reads and updates the feed and adapter configurations using property files that are stored on the file system.
+{{{
+/conf/feedserver/{namespace}/FeedConfig/<<feedId>>.properties store the feed configuration.
+/conf/feedserver/{namespace}/AdapterConfig/<<adapterName>>.properties store the adapter configuration.
+<<feedId>>.properties has the link to the adapter configuration that should be used to initialize the adapter and interact with the datasource for CRUD operations.
+}}}
+
+In the earlier release of the Google Feed Server, both the feed and adapter configuration were stored as part of single configuration and were read by the {{{AdapterManager}}}.
+
+== Support for Signed Requests ==
+
+The Google Feed Server handles signed requests using Google !ClientLogin and OAuth.
+
+=== Signed Requests Using Google !ClientLogin ===
+
+See http://code.google.com/apis/gdata/auth.html#ClientLogin
+
+Use the Google !ClientLogin for clients such as a standalone single-user "installed" application (for example, a desktop application). The Google Feed Server ships with the {{{GetAuthTokenServlet}}} servlet that authenticates a user and issues authorization tokens to be used with requests for authorization. The {{{SignedRequestFilter}}} filter validates each request to check if the request is signed with a valid authorization token. 
+
+The token generation and validation of authorization is handled by the {{{TokenManager}}}. The sample implementation of {{{TokenManager: SampleTokenManager}}} generates tokens without performing authentication and validates the {{{authz}}} request token with a token issued earlier for the given user name and service pair. You can test this implementation using the scripts provided under {{{tests/client/demo}}}.
+For a more robust authentication and authorization mechanism, you can plug in a custom implementation of the {{{TokenManager}}}.
+
+=== Signed Requests Using OAuth ===
+
+See http://code.google.com/apis/accounts/docs/OAuth.html
+
+OAuth signed requests are authorized by the {{{OAuthFilter}}}. The key assumes Google as the default service provider with a Google public key. The easiest way to test this is to write a OAuth gadget. See http://code.google.com/apis/gadgets/docs/oauth.html. You can plug in a domain-specific key with the {{{SimpleKeyMananger}}} without changing OAuth signed requests .
+
+
+== Work Flow ==
+
+This section provides a high-level overview and walk through of the code base.
+
+Supported URL patterns:
+  # http://host:port/«namespace»/«feedname» for feeds
+  # http://host:port/«namespace»/«feedname»/«entryId» for entries
+
+  * Package {{{com.google.feedserver.manager}}} contains the Abdera-based server code.
+    * {{{FeedServerProvider}}} contains server code that acts as the {{{Provider}}} and {{{WorkspaceManager}}}.
+    * {{{FeedServerAdapterManager}}} contains an implementation to create instances of wrapper manager and target adapter by reading the adapter configuration.
+    * {{{FeedServerWorkspace}}} contains the implementation for {{{WorkspaceInfo}}}.
+    * {{{AbstractWrapperManager}}} extends the base implementation for wrapper managers provided by ManagedCollectionAdapterWrapper with support for ACL validation.
+  * Package {{{com.google.feedserver.wrappers}}} contains a base implementation for use by wrapper managers.
+    * {{{ManagedCollectionAdapterWrapper}}} contains a base implementation for wrapper managers.
+  * Package {{{com.google.feedserver.config}}} contains implementations for configurations.
+    * {{{FeedServerConfiguration}}} contains the implementation to get all the configuration  details for the feed server. The implementation is configured with the feed config store.
+    * {{{PerNamespaceServerConfiguration}}} contains the server configuration implementation with support for a namespace. The implementation uses the {{{FeedServerConfiguration}}} internally to load the feed and adapter configurations that are used by {{{FeedServerAdapterManager}}} and {{{FeedServerProvider}}}.
+    * {{{NamespacedFeedConfiguration}}} contains the feed configuration implementation with support for a namespace.
+    * {{{NamespacedAdapterConfiguration}}} contains the adapter configuration implementation with support for namespace.
+  * Package {{{com.google.feedserver.configstore}}} contains the {{{FeedConfigStore}}} interface that defines supported operations for reading and storing the feed and adapter configurations.
+  * Package {{{com.google.feedserver.adapter}}} contains the code required to define base implementations to build new adapters.  This package handles all data aspects of the Feed Server.
+    * {{{AbstractManagedCollectionAdapter}}} contains the base adapter implementation. Developers should check the functionality provided here before defining new adapter implementations.
+  * Package {{{com.google.feedserver.config.metadata}}} contains implementations related to metadata.
+  * Package {{{com.google.feedserver.server.servlet}}} contains servlet implementations:
+    * {{{GetAuthTokenServlet}}} contains implementation to authenticate and generate authorization tokens for clients using Google ClientLogin. This implementation uses the {{{TokenManager}}}.
+    * {{{MethodOverridableRequest}}} is a {{{HttpServletRequestWrapper}}} that returns the HTTP method when the request has the {{{X-HTTP-Method-Override}}} header set. This is required when a firewall does not allow PUT. The request is then sent as an HTTP POST with the method override header set as {{{PUT}}}.
+    * {{{MethodOverrideServletFilter}}} allows the {{{X-HTTP-Method-Override}}} value to be returned as the HTTP method.
+    * {{{FeedServerInitializationServlet}}} contains an implementation that initializes the Feed Server when running on Apache Tomcat.
+  * Package {{{com.google.feedserver.filters}}} contains the filters to handle signed requests.
+    * {{{OAuthFilter}}} contains an implementation to check if the request is signed with OAuth authorization parameters.
+    * {{{SignedRequestFilter}}} contains the implementation to check if the request is signed with authz token issued to the user earlier as part of Google ClientLogin. It uses the {{{TokenManager}}} for the same.
+  * Package {{{com.google.feedserver.authentication}}} contains implementations for handling authentication and authorization.
+    * {{{TokenManager}}} defines the operations for handling authentication and authorization for each request.
+    * {{{TokenManagerDIModule}}} is the Google Guice module that configures a concrete {{{TokenManager}}} instance.  You can plug in custom {{{TokenManager}}} implementations in this module.
+    * {{{SampleTokenManager}}} contains the sample implementation for {{{TokenManager}}}.
+  * Package {{{com.google.feedserver.samples.*}}}
+Contains the sample implementations of an adapter, wrapper manager, feed config store, and a configuration of an ACL validator.
+  * Package {{{com.google.feedserver.server.jetty}}}
+    * Run time main class that starts the application on the Jetty server.
+  * Package {{{com.google.feedserver.tools}}} and {{{com.google.feedserver.client}}} contains the client classes to work with the Feed Server.
+    * {{{FeedServerClientTool}}} is a command line client implementation for the CRUD operations.
+
+
+== Request Flow ==
+
+Incoming Request:
+
+===>> to {{{AbderaServlet}}}
+  ===>> to {{{AbstractProvider}}}
+    ===>> to {{{FeedServerProvider}}}
+      ===>> to {{{FeedServerAdapterManager}}}
+        ===>> to {{{SampleFileSystemFeedConfigStore}}}
+          ===>> to {{{XMLWrapperManager}}}
+            ===>> to {{{IBatisCollectionAdapter}}}
+
