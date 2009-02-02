@@ -1,7 +1,7 @@
-= Setup a mapping file in iBatis format = 
-In conf/feedserver/sqlmap/ dir, create a mapping file for iBatis to map Java Objects to Database queries (& results) on the table/view.
+= Setup a mapping file in iBATIS format = 
+In the {{{conf/feedserver/sqlmap/}}} folder, create a mapping file for iBATIS to map Java Objects to database queries and results for a table or view.
 
-an example:
+For example:
 {{{
 <?xml version="1.0" encoding="UTF-8" ?>
 
@@ -50,15 +50,18 @@ an example:
 
 }}}
 
-NOTE: All the attributes named "id" in the above xml file have a specific naming convention.
- * to get feed, id = <feedname>-get-feed
- * to get an entry, id = <feedname>-get-entry
- * to insert an entry, id = <feedname>-insert-entry
- * to delete an entry, id = <feedname>-delete-entry
- * to update an entry, id = <feedname>-update-entry
+*Note*: The {{{id=}}} attributes in the previous XML example have the following naming conventions:
+ * To get a feed, use {{{id = <feedname>-get-feed}}}
+ * To get an entry, use {{{id = <feedname>-get-entry}}}
+ * To insert an entry, use {{{id = <feedname>-insert-entry}}}
+ * To delete an entry, use {{{id = <feedname>-delete-entry}}}
+ * To update an entry, use {{{id = <feedname>-update-entry}}}
 
-= Setup xml file with database connection params =
-example
+= Set Up the XML File with Database Connection Parameters =
+
+Set up an XML file with database connection parameters.
+
+For example:
 {{{
    <?xml version="1.0" encoding="UTF-8" ?>
    <!DOCTYPE sqlMapConfig
@@ -80,10 +83,10 @@ example
 }}}
 
 
-= Setup adapter properties file =
-Create an adapter properties file in conf/feedserver/adapter/ dir.
+= Set Up the Adapter Properties File =
+Create an adapter properties file in the {{{conf/feedserver/adapter/}}} folder.
 
-example
+For example:
 {{{
    subUri=<feedname>
    adapterClassName=com.google.feedserver.adapter.JdbcAdapter
