@@ -2,6 +2,8 @@
 
 === Apache Abdera Project Information ===
 
+  * [http://abdera.apache.org/ Apache Abdera], [http://abdera.apache.org/docs/api/index.html Javadocs]
+
   * [http://mail-archives.apache.org/mod_mbox/abdera-dev/ Abdera Mailing List Archives]
 
   * [http://svn.apache.org/repos/asf/abdera/java/trunk/server/src/main/java/org/apache/abdera/protocol/server/ Apache Abdera Repos]
