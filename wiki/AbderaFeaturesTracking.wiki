@@ -1,13 +1,17 @@
-#this page is for keeping tabs on the abdera project
+#summary Keep tabs on the Apache Abdera project
 
-  * [http://mail-archives.apache.org/mod_mbox/incubator-abdera-dev/200709.mbox/%3c46EAA661.7060604%40gmail.com%3e The Converter system]
+=== Apache Abdera Project Information ===
 
-  * [http://mail-archives.apache.org/mod_mbox/incubator-abdera-dev/200709.mbox/%3c46EA8459.60600%40mulesource.com%3e ContentProvider and CollectionProvidor]
-     * see [http://svn.apache.org/repos/asf/incubator/abdera/java/trunk/server/src/main/java/org/apache/abdera/protocol/server/CollectionProvider.java this in the repo]
+  * [http://mail-archives.apache.org/mod_mbox/abdera-dev/ Abdera Mailing List Archives]
 
-  * [http://mail-archives.apache.org/mod_mbox/incubator-abdera-dev/200709.mbox/%3c19e0530f0709231935j40a2f2e3o93dbbf47ae4f41ae%40mail.gmail.com%3e build a WAR for SimpleProvider]
-    * includes example for files system adapting
-    * [https://issues.apache.org/jira/browse/ABDERA-66 Here's the issue for it]
+  * [http://svn.apache.org/repos/asf/abdera/java/trunk/server/src/main/java/org/apache/abdera/protocol/server/.java Apache Abdera Repos]
+
+  * [http://mail-archives.apache.org/mod_mbox/abdera-dev/200709.mbox/browser WAR file for SimpleProvider]
+    * Includes examples for file system adapting
+    * [https://issues.apache.org/jira/browse/ABDERA-66 Issue for building a WAR file for SimpleProvider]
 
   * [http://mail-archives.apache.org/mod_mbox/incubator-abdera-dev/200711.mbox/%3c473C7087.9030709%40gmail.com%3e Streamwriter]
-    * higher perf response writes
+    * Higher performance response writes
+----
+*Current Status:*
+Google Feed Server is based on Apache Abdera 3.0 and has a prototype implementation of Abdera Adapters. Managed Collection Adapters were added to Abdera 4.0. Abdera Head is now at 5.0 and this is the only working release. Work is currently in progress to bring Google Feed Server up to date with Abdera 5.0.
