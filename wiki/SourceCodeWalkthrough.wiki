@@ -8,35 +8,36 @@ Provides information about Google Feed Server components, how to build an adapte
 
 Google Feed Server:
 
- # Builds a server based on Apache's Abdera framework to handle Atom Protocol
- # Builds an extensible mechanism to convert data from any data source into an Atom feed without having to write any code to handle the Atom Protocol details.
- # Separates the two concerns; Build a server without dependence between Atom Protocol handling and the mechanism for getting data into or out of the data sources. 
- # Makes it easy and quick to add adapters for new datasources.
+ * Builds a server based on Apache's [http://abdera.apache.org/docs/api/index.html Abdera framework] to handle the Atom Protocol.
+ * Builds an extensible mechanism to convert data from any data source into an Atom feed without having to write code to handle the Atom Protocol details.
+ * Separates the two concerns; Builds a server without dependencies between Atom Protocol handling and the mechanism for getting data into or out of the data sources. 
+ * Makes it easy and quick to add adapters for new data sources.
 
 
 == Google Feed Server Components ==
 
- # Apache Abdera-based Atom Server:
-   * Apache Abdera provides a framework to build servers to handle Atom Protoco. Google Feed Server uses the Abdera framework to build an Atom server as a very thin layer of code that uses Abdera framework to ensure that data into or out of the server satisfies the  Atom Protocol.
- # Data Adapter framework:
-   * Adapters interface with the data sources to perform CRUD (Create Retrieve Update Delete) operations on data. For example, a !JdbcAdapter (included in the distribution) handles the mechanism of data from and in to databases. Adapters against any new data sources can be written simply by implementing the Adapter interface. Two example implementations are provided with the distribution: !JdbcAdapter and !SampleAdapter.
+ * Apache Abdera-based Atom Server:
+   * Apache Abdera provides a framework to build servers to handle Atom Protocol. Google Feed Server uses the Abdera framework to build an Atom server as a very thin layer of code that uses the Abdera framework to ensure that data into or out of the server satisfies the  Atom Protocol.
+
+ * Data Adapter framework:
+   * Adapters interface with the data sources to perform CRUD (Create Retrieve Update Delete) operations on data. For example, a {{{JdbcAdapter}}} (included in the distribution) handles the mechanism of data from and into databases. Adapters against any new data sources can be written simply by implementing the {{{Adapter}}} interface. Two example implementations are provided with the distribution: {{{JdbcAdapter}}} and {{{SampleAdapter}}}.
 
 
-= Building an Adapter =
+== Building an Adapter ==
 
 To build an adapter:
 
- # Implement the Adapter Interface ({{{Adapter.java}}}). {{{SampleAdapter.java}}} is a reference adapter implementation that you can view while you write the adapter for your particular data source.
+ # Implement the {{{Adapter}}} Interface ({{{Adapter.java}}}). {{{SampleAdapter.java}}} is a reference adapter implementation that you can view while you write the adapter for your particular data source.
  # Create an adapter properties file in the {{{conf/feedserver/adapter/}}} folder. For example, this directory should contain the adapter properties files for {{{JdbcAdapter}}} and {{{SampleAdapter}}}.
- # Make sure your adapter class is in the CLASSPATH, so that it can be loaded at runtime by the classloader.
+ # Make sure your adapter class is in the {{{CLASSPATH}}}, so that it can be loaded at runtime by the classloader.
  # {{{AbstractAdapter.java}}} contains many of the common methods used by the adapters. This is still an evolving class. Put methods in this class that you find useful for other adapter writers.
 
 
-= Code Structure and a Mini Code Walkthrough =
+== Code Structure and a Mini Code Walkthrough ==
 
 The following table lists the packages, the parent folder, and the package contents.
 
-<table border="1" width="80%">
+<table border="1" width="65%">
 <tr>
 <th width="40%">Package</th>
 <th width="20%">Parent</th>
@@ -71,8 +72,8 @@ The following table lists the packages, the parent folder, and the package conte
 </table>
 
 
-= Request Flow =
-Incoming Request: 
+== Request Flow ==
+*Incoming Request:*
   ---» To the Abdera servlet. 
     ---» To {{{com.google.feedserver.server.FeedServerProvider}}}. 
       ----» Calls the corresponding adapter in {{{com.google.feedserver.adapter}}} to get and put data. 
