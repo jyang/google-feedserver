@@ -1,5 +1,6 @@
+#summary Map Java objects to database queries and results.
 = Set Up a Mapping File in iBATIS Format = 
-In the {{{conf/feedserver/sqlmap/}}} folder, create a mapping file for iBATIS to map Java Objects to database queries and results for a table or view.
+In the {{{conf/feedserver/sqlmap/}}} folder, create a mapping file for iBATIS to map Java objects to database queries and results for a table or view.
 
 For example:
 {{{
