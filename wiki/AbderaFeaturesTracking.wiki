@@ -6,7 +6,7 @@
 
   * [http://svn.apache.org/repos/asf/abdera/java/trunk/server/src/main/java/org/apache/abdera/protocol/server/ Apache Abdera Repos]
 
-  * [http://mail-archives.apache.org/mod_mbox/abdera-dev/200709.mbox/browser WAR file for SimpleProvider]
+  * [http://mail-archives.apache.org/mod_mbox/abdera-dev/200709.mbox/%3c4953698.1190658350586.JavaMail.jira@brutus%3e Build a WAR file for SimpleProvider]
     * Includes examples for file system adapting
     * [https://issues.apache.org/jira/browse/ABDERA-66 Issue for building a WAR file for SimpleProvider]
 
