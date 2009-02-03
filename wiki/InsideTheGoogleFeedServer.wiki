@@ -1,4 +1,4 @@
-#summary Understanding the Google Feed Server framework.
+#summary Google Feed Server implementation, components, namespaces, wrappers, ACLs, feed config store, signed requests, and work flow.
 
 =Inside the Google Feed Server=
 ------------------------------------------------------------------------------------------
@@ -127,4 +127,3 @@ Incoming Request:
         ===>> to {{{SampleFileSystemFeedConfigStore}}}
           ===>> to {{{XMLWrapperManager}}}
             ===>> to {{{IBatisCollectionAdapter}}}
-
