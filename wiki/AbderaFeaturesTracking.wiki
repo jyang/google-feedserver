@@ -4,7 +4,7 @@
 
   * [http://mail-archives.apache.org/mod_mbox/abdera-dev/ Abdera Mailing List Archives]
 
-  * [http://svn.apache.org/repos/asf/abdera/java/trunk/server/src/main/java/org/apache/abdera/protocol/server/.java Apache Abdera Repos]
+  * [http://svn.apache.org/repos/asf/abdera/java/trunk/server/src/main/java/org/apache/abdera/protocol/server/ Apache Abdera Repos]
 
   * [http://mail-archives.apache.org/mod_mbox/abdera-dev/200709.mbox/browser WAR file for SimpleProvider]
     * Includes examples for file system adapting
