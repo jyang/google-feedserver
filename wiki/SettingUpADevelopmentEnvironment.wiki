@@ -1,0 +1,349 @@
+#summary Creating a development environment.
+
+= SettingUpADevelopmentEnvironment =
+------------------------------------------------------------------------------------------
+The purpose of this document is to provide information on creating a development environment and to help with builds, source code controls, and code reviews.
+
+= Setting Up a Development Environment =
+
+The sections that follow explain how to set up a development environment for modifying and building the Feed Server open source code.
+
+== Requirements ==
+To build code and run it, ensure that you have the following environment setup:
+    * Java 1.6
+    * Ant 1.6.5 or higher--if you are using an Ant version prior to 1.7.0, copy {{{junit.jar}}} into the {{{${ANT_HOME}/lib}}} directory.
+      * http://ant.apache.org/bindownload.cgi
+    * Jetty is included and is the default servlet engine
+    * Abdera is included as a library
+
+Optional:
+    * Apache Tomcat 6
+      * http://tomcat.apache.org/download-60.cgi
+
+== Background ==
+
+Before starting, read the Abdera's Getting Started documentation. See http://cwiki.apache.org/ABDERA/getting-started.html.  You can read the Overview document for high level goals of a project.
+
+Jetty is bundled with the Google Feed Server and provides build targets for a Tomcat WAR file.  You can implement the server as needed.
+
+== Checking Out Source Code ==
+
+To check out source code, you need to obtain a Subversion client such as Tortoise. For more information, see http://www.tigris.org.
+Use the following command to check out the source code:
+
+{{{svn checkout https://google-feedserver.googlecode.com/svn/trunk/ google-feedserver --username <<yourUserName>>}}}
+
+== Building with Ant ==
+The Ant script builds the codebase and runs the Feed Server with either Jetty or Tomcat as the servlet container.
+
+=== Building for Jetty ===
+At the root of the source tree, execute the {{{ant}}} command, which builds the {{{dist/feedserver.jar}}} JAR file.
+
+=== Building for Tomcat ===
+Create a {{{build.properties}}} file that indicates your Tomcat directory (the root directory of your Tomcat installation).  For example:
+{{{
+    catalina.home=/opt/tomcat
+    url.manager=http://localhost:8080/manager
+    manager.username=admin
+    manager.password=admin
+}}}
+
+Do not add this file to the source code repository--this file exists only in your local configuration.
+Add the administative user to Tomcat's {{{tomcat-users.xml}}} users file.
+{{{
+    <role rolename="manager"/>
+    <user username="admin" password="admin" roles="manager"/>
+}}}
+
+Start Tomcat and verify that it is accepting connections. You can ensure that Tomcat is working with the http://127.0.0.1:8080 URL. If the Tomcat start page appears, then Tomcat is active. The Tomcat server needs to be running when executing the following command:
+
+At the root of the source tree, execute the {{{ant tomcat}}} command, which builds {{{feedserver.war}}} and deploys the WAR file to the {{{${catalina.home}/webapps}}} folder.
+
+== Running Google Feed Server ==
+The sections that follow explain how to run the Feed Server.
+
+=== Database Configuration ===
+[http://db.apache.org/derby/ Apache Derby] is bundled as the default database to work with samples.
+<ol>
+<li>The database configuration parameters need to be updated in the following file: {{{conf/database/dbConfig.properties}}}.  Edit the connection URL, driver name, user name, password, and other parameters to point to your specific database.</li>
+<li>The SQL script is located under {{{conf/database/sql/{database}/create-contact-table.sql}}}.  Specify the path of this file in the {{{dbConfig.properties}}} file in the {{{sqlFilePath}}}.</li>
+<li>The database can be created by running the {{{ant target: createDb}}} command.
+<p>In case you are using Derby (default), the database is created in the same directory where you run the Ant script.</p> 
+<p>If you are deploying on Tomcat with Derby, ensure that you make the following entry in {{{%CATALINA_HOME%/conf/catalina.properties}}}:</p>
+<p>{{{derby.system.home=}}}{absolute path to the directory where the derby database has been created}</p>
+<p>For example, set the default project directory to {{{/home/GoogleFeedServer}}}.
+The {{{createDB}}} command creates the {{{feedserver}}} database in this directory entry in:</p><p>{{{%CATALINA_HOME%/conf/catalina.properties:derby.system.home=/home/GoogleFeedServer}}}</p></li>
+<li>Based on the database server being used, modify the query that will get the newly generated iID from the database for a new feed entry. The ID will be part of the {{{contact-insert-entry}}} node in {{{conf/feedserver/sqlmap/contact.xml}}}</li>
+</ol>
+
+=== Running the Feed Server with Jetty ===
+
+To run the Feed Server with the Jetty container, run the following script: {{{run.sh}}}
+
+You can try the sample feed to check that output is being generated. The feed pulls the feed entires with the default data populated in the database.
+
+{{{$ curl localhost:8080/example.com/contact | tidy -xml -indent -quiet}}}
+
+=== Running the Feed Server with Tomcat ===
+
+After you've built and deployed, you should have a {{{feedserver.war}}} file in your Tomcat {{{webapps}}} folder. You can use the Tomcat manager to verify that the WAR files has been installed.
+
+Test the following URL in your browser: <br>http://127.0.0.1:8080/feedserver/example.com/contact and check the output.
+
+== Working with Authenticated Requests ==
+The Feed server by default does not handle signed requests.
+
+You can configure the Feed Server to handle signed requests: 
+# Google !ClientLogin
+# OAuth
+The sections that follow describe each configuration.
+
+=== Using Google !ClientLogin ===
+*For Jetty:*
+
+To enable authenticated requests, run the {{{run.sh authenticated=true}}} command.
+
+This command accepts requests that have been signed with Google !ClientLogin authentication and authorization mechanism.
+
+*For Tomcat:*
+
+Before building the code base, uncomment the following lines in the {{{web/WEB-INF/web.xml}}} file to enable the servlet to grant authorization tokens and  to enable a filter that validates the authorization token that is embedded in each request:
+{{{
+
+<!-- The filter to intercept each request and check for the authorization token -->
+
+<filter>
+     <filter-name>SignedRequestFilter</filter-name>
+    <filter-class>com.google.feedserver.filters.SignedRequestFilter</filter-class>
+</filter>
+
+<filter-mapping>
+     <filter-name>SignedRequestFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+</filter-mapping>
+
+
+<!--The servlet that generates tokens -->
+
+<servlet id="auth-servlet">
+    <servlet-name>GetAuthTokenServlet</servlet-name>
+    <servlet-class>com.google.feedserver.server.servlet.GetAuthTokenServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping id="auth-servlet-mapping">
+    <servlet-name>GetAuthTokenServlet</servlet-name>
+    <url-pattern>/accounts/ClientLogin</url-pattern>
+  </servlet-mapping>
+
+
+  <!-- The GUICE listener creates an injector for the TokenManager instance required by the SignedRequestFilter & GetAuthTokenServlet -->
+
+  <listener>
+    <listener-class>com.google.feedserver.server.servlet.GuiceServletContextListener</listener-class>
+  </listener>
+
+}}}
+
+Build and deploy the WAR file for Tomcat, use the {{{ant tomcat}}} command.
+
+To test signed requests, you can use a the {{{FeedServerClientTool}}} using the following scripts in the {{{tests/clientTool/demo}}} folder:
+  * {{{setupEnv.sh}}} -- Set up the parameter values required by all other scripts
+  * {{{getFeed.sh}}} -- The script to retrieve a feed
+  * {{{getFeedEntry.sh}}} -- The script to retrieve a particular entry
+  * {{{insertEntry.sh}}} -- To add a new entry to the feed
+  * {{{updateEntry.sh}}} -- Update an existing entry
+  * {{{deleteEntry.sh}}} -- Delete an existing entry
+
+Before running these shell scripts, create the client JAR file. Run the {{{ant client}}} Ant target.
+
+When running each  script, you are prompted for a username and password. For the sample feeds, you can key in any username and password as no authentication is done to validate the user. In a production environment, configure the Feed Server to authenticate users for the service and issue tokens to authorize requests.
+
+Details of each script:
+
+*setupEnv.sh*
+
+Update the {{{setupEnv.sh}}} script with a domain name for the feeds and the other parameters required for authentication and authorization:
+  * FSCT_DOMAIN -- Domain name
+  * FSCT_FEED_BASE -- The feed URL
+  * AUTHN_SERVICE_NAME -- The name of the Google service to which your are connecting. For the sample feeds, it is {{{test}}}.
+  * AUTHN_URL_PROTOCOL -- Name of the protocol to use for authentication, either {{{http}}} or {{{https}}}.
+  * AUTHN_URL -- The end point that handles authentication and grants authorization tokens to be used with each request.
+_Note: If the Feed Server is running on Tomcat, ensure that you include the correct application root in the FSCT_FEED_BASE and AUTHN_URL_ parameters.
+
+*getFeed.sh*
+
+The {{{getFeed.sh}}} script fetchs the feed and all the entries that belong to this feed.
+Run this script as follows:
+{{{
+$> ./getFeed.sh <<feed_name>>
+}}}
+For example: {{{./getFeed.sh contact}}}
+The output appears as:
+{{{
+<entities>
+  <entity>
+    <id>http://localhost:8080/example.com/contact/1</id>
+    <lastName>Simon</lastName>
+    <email>jsimon@example.com</email>
+    <rating>5</rating>
+    <firstName>Jim</firstName>
+  </entity>
+  <entity>
+    <id>http://localhost:8080/example.com/contact/2</id>
+    <lastName>Doe</lastName>
+    <email>jdoe@example.com</email>
+    <rating>10</rating>
+    <firstName>John</firstName>
+  </entity>
+</entities>
+}}}
+
+*getFeedEntry.sh*
+
+The {{{getFeedEntry.sh}}} script fetchs a specific entry for a feed
+Run this script as follows:
+{{{
+$> ./getFeedEntry.sh <<feed_name>>/<<entry_id>>
+}}}
+For example: {{{/getFeedEntry.sh contact/1}}}
+The output appears as:
+{{{
+<entity>
+  <id>http://localhost:8080/example.com/contact/1</id>
+  <lastName>Simon</lastName>
+  <email>jsimon@example.com</email>
+  <rating>5</rating>
+  <firstName>Jim</firstName>
+</entity>
+}}}
+
+*insertEntry.sh*
+
+The {{{insertEntry.sh}}} script adds a new entry to a feed. The feed entry details come from a file whose path is specified as input in the script : -{{{entryFilePath <path to the file>}}}
+Run this script as follows:
+
+{{{$> insertEntry.sh <<feed_name>>}}}
+For example:  {{{$> insertEntry.sh contact}}}
+The newly added feed entry appears as output:
+{{{
+<entity>
+  <id>http://localhost:8080/example.com/contact/3</id>
+  <lastName>Moore</lastName>
+  <email>jmoore@example.com</email>
+  <rating>8</rating>
+  <firstName>Jimmy</firstName>
+</entity>
+}}}
+
+*updateEntry.sh*
+
+The {{{updateEntry.sh}}} script updates an existing feed entry. The feed entry details should come from a file whose path is specified as input in the script : {{{-entryFilePath <path to the file>}}}}.
+Run this script as follows:
+
+{{{$> updateEntry.sh <<feed_name>>/<<entry_id>>}}}
+For example: {{{updateEntry.sh contact/2}}}
+
+*Note:* The ID of the feed entry in the file and the input must be same.
+The updated feed entry appears as output:
+{{{
+<entity>
+  <id>http://localhost:8080/example.com/contact/2</id>
+  <lastName>Doe</lastName>
+  <email>johndoe@example.com</email>
+  <rating>22</rating>
+  <firstName>John</firstName>
+</entity>
+}}}
+
+*deleteEntry.sh*
+
+The {{{deleteEntry.sh}}} script deletes an existing feed entry.
+Run this script as follows:
+{{{$> deleteEntry.sh <<feed_name>>/<<entry_id>>}}}
+For example: {{{deleteEntry.sh contact/2}}}
+
+
+=== Using OAuth ===
+The codebase is shipped with a filter that intercepts each request and checks requests for those signed with OAuth.
+
+*With Jetty:*
+
+To enable OAuth signed requests, run the script with the following command line arguments: {{{run.sh OAuth_authenticated=true}}}. This 
+command accepts requests signed with the OAuth authentication and authorization mechanism. The default consumer key is the Google public key.
+
+*With Tomcat:*
+
+Before building the codebase, uncomment the following lines in the {{{web/WEB-INF/web.xml}}} file to enable a filter that validates the OAuth authorization token that is embedded in each request:
+
+{{{
+    <!-- The OAuth filter that validates OAuth signature embedded in the request -->
+    <filter>
+        <filter-name>OAuthFilter</filter-name>
+        <filter-class>com.google.feedserver.filters.OAuthFilter</filter-class>
+        <init-param>
+            <param-name>KEY_MANAGER</param-name>
+            <param-value>com.google.feedserver.filters.SimpleKeyMananger</param-value>
+        </init-param>
+    </filter>
+     <filter-mapping>
+         <filter-name>OAuthFilter</filter-name>
+          <url-pattern>/*</url-pattern>
+    </filter-mapping>
+}}}
+
+Build and deploy the WAR file to Tomcat, use the  {{{ant tomcat}}} command.
+
+*Testing OAuth Signed Requests:*
+
+The easiest way to test OAuth signed requests is to write a gadget using the {{{gadgets.io.makeRequest()}}} Gadget API to sign the request withan  OAuth consumer key and to retrieve a feed.
+
+== Abdera Debugging ==
+You can use the code that follows to debug an Abdera configuration:
+
+Abdera uses log4j, but Feed Server uses JDK logging. If you want to debug an Abdera configuration, put the {{{log4j.properties}}} file in the {{{/conf/feedserver/}}} folder:
+
+{{{
+# Set root logger level to DEBUG and its only appender to A1.
+log4j.rootLogger=DEBUG, A1
+
+# A1 is set to be a ConsoleAppender.
+log4j.appender.A1=org.apache.log4j.ConsoleAppender
+
+# A1 uses PatternLayout.
+log4j.appender.A1.layout=org.apache.log4j.PatternLayout
+log4j.appender.A1.layout.ConversionPattern=%-4r [%t] %-5p %c %x - %m%n
+
+log4j.logger.com.google=DEBUG
+}}}
+
+
+== SVN Code Review Process ==
+
+The following instructions show you how to use a Subversion client like TortoiseSVN to do your diffs in the graphical merge tool.
+
+Because the {{{/changes}}} section changes quite often, check out a working copy:
+
+{{{
+svn checkout https://google-feedserver.googlecode.com/svn/changes/ changes
+}}}
+
+You can use this to review changes. Changes can be diff'd by using TortoiseSVN. Go to the root that you want to diff, and select {{{tortoisesvn>merge}}} and then in the merge dialog put the trunk URL in the to: box. These directories should be the same root (usually {{{/trunk/}}}). Enter {{{diff}}} to display the changes so that you can review each individually with the Tortoise diff command. Don't enter {{{merge}}}. You have to diff with the trunk and the best way to do that is with the merge tool without doing the merge.
+
+=== SVN Approval ===
+
+After you receive a mail request to review a change, review it, discuss it, and when you're satisfied that it can be submitted, run the following command:
+{{{
+svn ack fix-deploy-task
+}}}
+
+Then send a message to the user to acknowledge the change so that the person can submit. There is no automated mail sent and there is no way to automatically acknowledge using a mail response.
+
+=== The Wiki ===
+
+You can check out the Wiki separately as follows:
+{{{
+svn checkout https://google-feedserver.googlecode.com/svn/wiki/ google-feedserver-wiki
+}}}
+
+
+
