@@ -40,7 +40,7 @@ To implement a wrapper manager, you need to extend {{{AbstractWrapperManager}}} 
 
 == Feed Configuration Storage ==
 
-To provide loose coupling between the feed and adapter configuration, the framework implements the concept of a feed config store. The main job of a feed config store is to read the feed and adapter configurations and pass the necessary configuration details to the framework so that the framework can initialize the target adapter. The target adaper then interacts with a data source for its CRUD operations. Using this approach, multiple feeds can be configured with the same adapter configuration. The feed config store acts as a link between the {{{FeedServerConfiguration}}} and the {{{CollectionAdapterConfiguration}}}. The feed config store understands and supports namespaces. 
+To provide loose coupling between the feed and adapter configuration, the framework implements the concept of a feed config store. The main job of a feed config store is to read the feed and adapter configurations and pass the necessary configuration details to the framework so that the framework can initialize the target adapter. The target adapter then interacts with a data source for its CRUD operations. Using this approach, multiple feeds can be configured with the same adapter configuration. The feed config store acts as a link between the {{{FeedServerConfiguration}}} and the {{{CollectionAdapterConfiguration}}}. The feed config store understands and supports namespaces. 
 
 The Feed Server provides a sample file system based feed config store: {{{SampleFileSystemFeedConfigStore}}}.
 This implementation reads and updates the feed and adapter configurations using property files that are stored on the file system.
@@ -84,7 +84,7 @@ Supported URL patterns:
     * {{{FeedServerProvider}}} contains server code that acts as the {{{Provider}}} and {{{WorkspaceManager}}}.
     * {{{FeedServerAdapterManager}}} contains an implementation to create instances of wrapper manager and target adapter by reading the adapter configuration.
     * {{{FeedServerWorkspace}}} contains the implementation for {{{WorkspaceInfo}}}.
-    * {{{AbstractWrapperManager}}} extends the base implementation for wrapper managers provided by ManagedCollectionAdapterWrapper with support for ACL validation.
+    * {{{AbstractWrapperManager}}} extends the base implementation for wrapper managers provided by {{{ManagedCollectionAdapterWrapper}}} with support for ACL validation.
   * Package {{{com.google.feedserver.wrappers}}} contains a base implementation for use by wrapper managers.
     * {{{ManagedCollectionAdapterWrapper}}} contains a base implementation for wrapper managers.
   * Package {{{com.google.feedserver.config}}} contains implementations for configurations.
@@ -97,13 +97,13 @@ Supported URL patterns:
     * {{{AbstractManagedCollectionAdapter}}} contains the base adapter implementation. Developers should check the functionality provided here before defining new adapter implementations.
   * Package {{{com.google.feedserver.config.metadata}}} contains implementations related to metadata.
   * Package {{{com.google.feedserver.server.servlet}}} contains servlet implementations:
-    * {{{GetAuthTokenServlet}}} contains implementation to authenticate and generate authorization tokens for clients using Google ClientLogin. This implementation uses the {{{TokenManager}}}.
+    * {{{GetAuthTokenServlet}}} contains implementation to authenticate and generate authorization tokens for clients using Google !ClientLogin. This implementation uses the {{{TokenManager}}}.
     * {{{MethodOverridableRequest}}} is a {{{HttpServletRequestWrapper}}} that returns the HTTP method when the request has the {{{X-HTTP-Method-Override}}} header set. This is required when a firewall does not allow PUT. The request is then sent as an HTTP POST with the method override header set as {{{PUT}}}.
     * {{{MethodOverrideServletFilter}}} allows the {{{X-HTTP-Method-Override}}} value to be returned as the HTTP method.
     * {{{FeedServerInitializationServlet}}} contains an implementation that initializes the Feed Server when running on Apache Tomcat.
   * Package {{{com.google.feedserver.filters}}} contains the filters to handle signed requests.
     * {{{OAuthFilter}}} contains an implementation to check if the request is signed with OAuth authorization parameters.
-    * {{{SignedRequestFilter}}} contains the implementation to check if the request is signed with authz token issued to the user earlier as part of Google ClientLogin. It uses the {{{TokenManager}}} for the same.
+    * {{{SignedRequestFilter}}} contains the implementation to check if the request is signed with authz token issued to the user earlier as part of Google !ClientLogin. It uses the {{{TokenManager}}} for the same.
   * Package {{{com.google.feedserver.authentication}}} contains implementations for handling authentication and authorization.
     * {{{TokenManager}}} defines the operations for handling authentication and authorization for each request.
     * {{{TokenManagerDIModule}}} is the Google Guice module that configures a concrete {{{TokenManager}}} instance.  You can plug in custom {{{TokenManager}}} implementations in this module.
