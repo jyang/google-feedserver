@@ -1,6 +1,8 @@
+#summary Steps to setup a sample feed, adapter configuration along with database configuration details
+
 =Database Configuration for a Feed=
 --------------------------------------------------------------------------------
-This document describes how to create a feed configuration, adapater configuration and configure database settings.
+This document describes how to create a feed configuration, adpater configuration and configure database settings.
 
 = Creating a Mapping File in iBATIS Format =
 
@@ -204,4 +206,3 @@ Attributes:
 
   * {{{configValue}}} is the value specific to the feed but will part of the adapter {{{configValue}}}.
   If a value starts with '@',  the value after '@' is the name of the file. The feed config store either adds the contents of file to the adapter 'configValue' or adds the name of the file.
-
