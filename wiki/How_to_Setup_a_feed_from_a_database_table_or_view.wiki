@@ -1,5 +1,11 @@
 #summary Map Java objects to database queries and results.
-= Set Up a Mapping File in iBATIS Format = 
+
+<h1>How to Set Up a Feed From a Database Table or View</h1>
+----
+<h2>Contents</h2>
+<wiki:toc max_depth="4" />
+----
+= Configuring a Mapping File in iBATIS Format =  
 In the {{{conf/feedserver/sqlmap/}}} folder, create a mapping file for iBATIS to map Java objects to database queries and results for a table or view.
 
 For example:
@@ -57,8 +63,8 @@ For example:
  * To insert an entry, use {{{id = <feedname>-insert-entry}}}
  * To delete an entry, use {{{id = <feedname>-delete-entry}}}
  * To update an entry, use {{{id = <feedname>-update-entry}}}
-
-= Set Up the XML File with Database Connection Parameters =
+----
+= Configuring an XML File with Database Connection Parameters =
 
 Set up an XML file with database connection parameters.
 
@@ -83,8 +89,8 @@ For example:
   </sqlMapConfig>
 }}}
 
-
-= Set Up the Adapter Properties File =
+----
+= Configuring an Adapter Properties File =
 Create an adapter properties file in the {{{conf/feedserver/adapter/}}} folder.
 
 For example:
