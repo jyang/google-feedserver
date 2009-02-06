@@ -1,0 +1,13 @@
+## Global connection settings
+Pool.MaximumActiveConnections=10
+Pool.MaximumIdleConnections=5
+Pool.MaximumCheckoutTime=120000
+Pool.TimeToWait=3000
+
+## MySQL database settings
+JDBC.Driver=com.mysql.jdbc.Driver
+JDBC.ConnectionURL=jdbc:mysql://localhost/feedserver
+JDBC.Username=<username>
+JDBC.Password=<password>
+JDBC.Jar=mysql-connector-java-5.0.8-bin.jar
+sqlFilePath=conf/database/sql/mysql/create-contact-table.sql
