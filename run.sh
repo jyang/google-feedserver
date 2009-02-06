@@ -6,18 +6,16 @@ done
 
 #add "conf" dir to CLASSPATH. thats where adapter and feedserver config files are at.
 CLASSPATH=$CLASSPATH:conf
-
-# number of args can be 0 or 2. not 1.
-# because in SimpleCommandLineParser.java file, it sets port, uri separately. For these 2 to be
-# in sync with each other, either the user supplies both or none.
-# and run jetty.Main
+# This is for the log4j property file
+# CLASSPATH=$CLASSPATH:conf/feedserver
 
 if [ $# -eq 1 ]
 then
    if [ $1 == "help" ]
    then
-     echo "Usage: $0 --port=<number> --uri=http://host:port"
+     echo "Usage: $0 --port=<number> --uri=http://host:port authenticated=true|false OAuth_authenticated=true|false"
+     echo "Specify either authenticated or OAuth_authenticated and not both"
      exit 0
    fi
 fi
-java -classpath $CLASSPATH com.google.feedserver.server.jetty.Main $*
+java -classpath $CLASSPATH com.google.feedserver.server.jetty.StartFeedServerWithJetty $*
