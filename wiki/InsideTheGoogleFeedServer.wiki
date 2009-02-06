@@ -27,13 +27,15 @@ The following sections require an understanding of the
   * Data adapter framework
   Adapters interface with the data sources to perform CRUD (Create, Retrieve, Update, and  Delete) operations on data. Adapters working with new data sources can be written simply by implementing the {{{CollectionAdapter}}} interface (or extending {{{AbstractCollectionAdapter}}} OR {{{AbstractEntityCollectionAdapter}}})
 
-== Support for Multiple Namespaces ==
+----
+== Multiple Namespace Support ==
 
 The Google Feed Server supports multiple namespaces on a single server. This is achieved with collection adapters and server configurations that understand namespaces. The feed and adapter configurations are stored for each namespace.
   * {{{PerNamespaceServerConfiguration}}} -- A server configuration implementation with support for namespaces.
   * {{{NamespacedFeedConfiguration}}} -- A feed configuration implementation with support for namespaces.
   * {{{NamespacedAdapterConfiguration}}} -- An adapter configuration implementation with support for namespaces.
 
+----
 == Wrapper Manager and ACL Validation ==
 
 The Google Feed Server implementation differs in the data adapter layer. The Feed Server provides a {{{WrapperManager}}} to wrap target adapters. The {{{FeedServerProvider}}} is the provider as well as the workspace manager. The Feed Server always returns a wrapper manager instance instead of the target provider. 
@@ -53,7 +55,7 @@ For applying multiple wrappers
    mixins=@WRAPPER_1,@WRAPPER_2,@WRAPPER_3
 }}}
 
-
+----
 == Adapters and Wrappers ==
 
   * Adapters are implementations which interact with the datasource to pull the information and construct feeds.
@@ -127,6 +129,7 @@ The adapters can define and use implicit mixins as pointers to adapters:
 
 You can configure implicit mixins for adapters and not wrappers by setting {{{isWrapper=false}}}.
 
+----
 == Feed Config Store ==
 
 To provide loose coupling between the feed and adapter configuration, the framework implements the concept of a feed config store. The main job of a feed config store is to read the feed and adapter configurations and pass the necessary configuration details to the framework so that the framework can initialize the target adapter. The target adapter then interacts with a data source for its CRUD operations. Using this approach, multiple feeds can be configured with the same adapter configuration (and hence same adapter). The feed config store acts as a link between the {{{FeedServerConfiguration}}} and the {{{CollectionAdapterConfiguration}}}. The feed config store is supposed to understand and support namespaces.
@@ -159,7 +162,8 @@ In the earlier release of the Google Feed Server, both the feed and adapter conf
 
 <b>Note:</b> You can have an implementation with just {{{FeedConfig}}} and {{{AdapterConfig}}}, but you lose the flexibility of using wrappers.
 
-== Support for Signed Requests ==
+----
+== Signed Requests Support ==
 
 The Google Feed Server handles signed requests using 
 [http://code.google.com/apis/gdata/auth.html#ClientLogin Google ClientLogin] and 
@@ -176,7 +180,7 @@ For a more robust authentication and authorization mechanism, you can plug in a 
 
 OAuth signed requests are authorized by the {{{OAuthFilter}}}. The key assumes Google as the default service provider with a Google public key. The easiest way to test this is to write a OAuth gadget. See http://code.google.com/apis/gadgets/docs/oauth.html. You can plug in a domain-specific key with the {{{SimpleKeyMananger}}} without changing OAuth signed requests.
 
-
+----
 == Work Flow ==
 
 This section provides a high-level overview and walk through of the code base.
@@ -263,7 +267,7 @@ Package {{{com.google.feedserver.tools}}} and {{{com.google.feedserver.client}}}
 
   * {{{FeedServerClientTool}}} is a command line client implementation for the CRUD operations.
 
-
+----
 == Request Flow ==
 
 Incoming Request:
