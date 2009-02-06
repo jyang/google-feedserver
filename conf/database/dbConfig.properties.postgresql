@@ -1,0 +1,13 @@
+## Global connection settings
+Pool.MaximumActiveConnections=10
+Pool.MaximumIdleConnections=5
+Pool.MaximumCheckoutTime=120000
+Pool.TimeToWait=3000
+
+## PostGRE SQL database settings
+JDBC.Driver=org.postgresql.Driver
+JDBC.ConnectionURL=jdbc:postgresql://localhost:5432/feedserver
+JDBC.Username=feedserveruser
+JDBC.Password=user123
+JDBC.Jar=postgresql-8.1-404.jdbc3.jar
+sqlFilePath=conf/database/sql/postgres/create-contact-table.sql
