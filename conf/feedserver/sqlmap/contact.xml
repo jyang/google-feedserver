@@ -6,37 +6,40 @@
 
 <sqlMap namespace="test">
 
-  <resultMap id="result-contact" class="java.util.HashMap">
+  <resultMap id="result-map" class="java.util.HashMap">
     <result property="id" column="id"/>
-    <result property="lastName" column="lastName"/>
-    <result property="firstName" column="firstName"/>
+     <result property="firstName" column="first_name"/>
+     <result property="lastName" column="last_name"/>
     <result property="email" column="email"/>
     <result property="rating" column="rating"/>
   </resultMap>
 
-  <select id="contact-get-feed" resultMap="result-contact">
-    select * from "Contact"
+  <select id="contact-get-feed" resultMap="result-map">
+    select * from Contact
+  </select>
+  
+  <select id="contact-get-entry" resultMap="result-map">
+    select * from Contact where id = #value#
   </select>
 
-  <select id="contact-get-entry" resultMap="result-contact">
-    select * from "Contact" where "id" = #value#
-  </select>
 
   <delete id="contact-delete-entry" >
-    delete from "Contact" where "id" = #value#
+    delete from Contact where id = #value#
   </delete>
   
   <insert id="contact-insert-entry" parameterClass="map">
-    insert into "Contact" ("lastName", "firstName", "email", "rating") values
-        (#lastName#, #firstName#, #email#, #rating:NUMERIC#)
-    <selectKey keyProperty="id" resultClass="long">
-      SELECT currval('"Contact_id_seq"')
+    insert into Contact (first_name,last_name,email,rating) values
+        (#firstName#,#lastName#,#email#,#rating:NUMERIC#)
+     <selectKey keyProperty="id" resultClass="long">
+      <!-- For MySQL:   SELECT LAST_INSERT_ID()-->
+      <!-- For Derby: --> values IDENTITY_VAL_LOCAL()
+      <!-- For PostGRE SQL: SELECT currval('"contact_id_seq"')  -->
     </selectKey>
   </insert>
 
   <update id="contact-update-entry" parameterClass="map">
-    update "Contact" set "lastName" = #lastName#, "firstName" = #firstName#,
-        "email" = #email#, "rating" = #rating:NUMERIC# where "id" = #id#
+    update Contact set last_name = #lastName#, first_name = #firstName#,
+        email = #email#, rating = #rating:NUMERIC# where id = #id#
   </update>
 
 </sqlMap>

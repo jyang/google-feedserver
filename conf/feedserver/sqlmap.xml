@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE sqlMapConfig      
     PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"      
     "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
 
 <sqlMapConfig>
+  <properties resource="database/dbConfig.properties"/>
 
   <typeHandler javaType="string" jdbcType="NUMERIC"
       callback="com.google.feedserver.ibatisCallbackHandlers.StringToNumericCallback" />
@@ -13,19 +14,17 @@
        app server, you probably want to use its transaction manager 
        and a managed datasource -->
   <transactionManager type="JDBC" commitRequired="false">
+    
     <dataSource type="SIMPLE">
-      <property name="JDBC.Driver" value="org.postgresql.Driver"/>
-      <property name="JDBC.ConnectionURL"
-          value="jdbc:postgresql://localhost:5432/test"/>
-      <property name="JDBC.Username" value="postgres"/>
-      <property name="JDBC.Password" value="postgres"/>
-      <property name="Pool.MaximumActiveConnections" value="10"/>
-      <property name="Pool.MaximumIdleConnections" value="5"/>
-      <property name="Pool.MaximumCheckoutTime" value="120000"/>
-      <property name="Pool.TimeToWait" value="10000"/>
+      <property name="JDBC.Driver" value="${JDBC.Driver}"/>
+      <property name="JDBC.ConnectionURL" value="${JDBC.ConnectionURL}"/>
+      <property name="JDBC.Username" value="${JDBC.Username}"/>
+      <property name="JDBC.Password" value="${JDBC.Password}"/>
+      <property name="Pool.MaximumActiveConnections" value="${Pool.MaximumActiveConnections}"/>
+      <property name="Pool.MaximumIdleConnections" value="${Pool.MaximumIdleConnections}"/>
+      <property name="Pool.MaximumCheckoutTime" value="${Pool.MaximumCheckoutTime}"/>
+      <property name="Pool.TimeToWait" value="${Pool.TimeToWait}"/>
     </dataSource>
   </transactionManager>
-
-  <sqlMap resource="feedserver/sqlmap/contact.xml"/>
-
+  
 </sqlMapConfig>
