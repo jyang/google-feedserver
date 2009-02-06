@@ -1,14 +1,18 @@
 #summary Steps to setup a sample feed, adapter configuration along with database configuration details
 
-=Database Configuration for a Feed=
---------------------------------------------------------------------------------
+<h1>Database Configuration for a Feed</h1>
+ 
 This document describes how to create a feed configuration, adpater configuration and configure database settings.
+----
+<h2>Contents</h2>
+<wiki:toc max_depth="4" />
+----
 
 = Creating a Mapping File in iBATIS Format =
 
 In the {{{conf/feedserver/sqlmap/}}} folder, create a mapping file for iBATIS to map Java objects to database queries and results on the table and view.
 
-eg: {{{contact.xml}}} mapping file:
+For example: {{{contact.xml}}} mapping file:
 
 {{{
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -54,7 +58,7 @@ eg: {{{contact.xml}}} mapping file:
 </sqlMap>
  }}}
 
-NOTE: All the {{{id}}} attributes in the previous XML file use the following naming conventions:
+<b>Note</b>: All the {{{id}}} attributes in the previous XML file use the following naming conventions:
 
   * To get a feed, id=`<feedname>`-get-feed
   * To get an entry, id=`<feedname>`-get-entry
@@ -63,7 +67,7 @@ NOTE: All the {{{id}}} attributes in the previous XML file use the following nam
   * To update an entry, id=`<feedname>`-update-entry
 
 The name of the file should be `<feedname>` for easy mapping and understanding.
-
+----
 = Creating an XML File with Database Connection Parameters for iBATIS =
 The following example creates the {{{sqlmap.xml}}} file:
 
@@ -107,11 +111,11 @@ The reference to {{{contact.xml}}} is inserted by the wrapper at runtime as show
 
 The value {{{sqlmap/contact.xml}}} is specified as part of feed configuration as explained in the following sections.
 
-= Create an adapter properties file =
+= Creating an Adapter Properties File =
 
 Create an adapter properties file in {{{conf/feedserver/{namespace}/Adapter/}}} dir.
 
-eg: {{{IBatisAdapter.properties}}}
+For example: {{{IBatisAdapter.properties}}}
 
 {{{
    className=com.google.feedserver.samples.adapters.IBatisCollectionAdapter
@@ -120,11 +124,11 @@ eg: {{{IBatisAdapter.properties}}}
    className is the fully qualified name of the adapter class that will interact with the datasource to perform CRUD operations
    isWrapper indicates whether the given adapter is a wrapper or simply an adapter
 }}}
-
+----
 = Creating an Adapter Configuration Properties File =
 Create an adapter configuration properties file in the {{{conf/feedserver/{namespace}/AdapterConfig/}}} folder.
 
-eg: {{{jdbcAdapterConfig.properties}}}
+For example: {{{jdbcAdapterConfig.properties}}}
 
 {{{
    type=IBatisAdapter
@@ -148,11 +152,11 @@ Attributes:
    adapter config values.
 
   * {{{mixins}}} is a pointer to the wrapper configurations to be applied over the target adapter
+----
+= Creating a Wrapper Config =
+Create an XML file under {{{conf/feedserver/{namespace}/AdapterConfig/}}} directory
 
-= Creating a wrapper config =
-Create an xml file under {{{conf/feedserver/{namespace}/AdapterConfig/}}} directory
-
-eg: {{{IBatisAdapterWrapper.xml}}}
+For example: {{{IBatisAdapterWrapper.xml}}}
 
 {{{
    <?xml version="1.0" encoding="UTF-8"?>
@@ -183,11 +187,11 @@ Attributes:
 
   * {{{isWrapper=true}}} identifies this adapter as wrapper
 
-
+----
 = Creating a Feed Properties File =
 Create a feed properties file in {{{conf/feedserver/{namespace}/FeedConfig/}}} folder.
 
-eg: {{{contact.properties}}}
+For example: {{{contact.properties}}}
 
 {{{
    subUri=contact
