@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * BeanUtil tests.
  * 
- * @author jyang@google.com (Jun Yang)
+ * @author jyang825@gmail.com (Jun Yang)
  */
 public class BeanUtilTest extends TestCase {
 

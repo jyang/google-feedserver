@@ -19,7 +19,7 @@ package com.google.feedserver.config;
 /**
  * An interface to get configurations for mixins.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public interface MixinConfiguration {

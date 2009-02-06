@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * A simple implementation of {@link PropertyInfo}.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class SimplePropertyInfo implements PropertyInfo {

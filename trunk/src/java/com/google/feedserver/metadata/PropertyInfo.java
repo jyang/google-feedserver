@@ -19,7 +19,7 @@ package com.google.feedserver.metadata;
 /**
  * Property info defines the property of a entry in feed.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public interface PropertyInfo {

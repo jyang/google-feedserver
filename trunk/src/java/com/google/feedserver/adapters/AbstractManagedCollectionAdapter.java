@@ -60,7 +60,7 @@ import javax.xml.transform.TransformerException;
  * Ideally all the code here should get pulled up into
  * {@link ManagedCollectionAdapter}.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public abstract class AbstractManagedCollectionAdapter extends ManagedCollectionAdapter {

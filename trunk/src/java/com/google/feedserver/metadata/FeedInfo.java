@@ -20,7 +20,7 @@ package com.google.feedserver.metadata;
 /**
  * It defines the properties of metadata type feed for a feed.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public interface FeedInfo {

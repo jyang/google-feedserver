@@ -24,7 +24,7 @@ import org.apache.abdera.protocol.server.provider.managed.ServerConfiguration;
 /**
  * This is server configuration per namespace.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class PerNamespaceServerConfiguration extends ServerConfiguration {

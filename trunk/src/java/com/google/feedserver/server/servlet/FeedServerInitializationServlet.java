@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServlet;
  * <p>
  * </p>
  * 
- * @author rakeshs (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public class FeedServerInitializationServlet extends HttpServlet {
 

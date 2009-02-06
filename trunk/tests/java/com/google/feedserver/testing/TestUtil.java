@@ -37,7 +37,7 @@ import java.util.Map;
 /**
  * Utility class for feed server tests.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class TestUtil {

@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
  * values to generate authz tokens and validate the same
  * </p>
  * 
- * @author rakeshs@google.com (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public interface TokenManager {
 

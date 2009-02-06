@@ -30,7 +30,7 @@ import java.net.URL;
 /**
  * Tests for the {@link FeedServerClient} class.
  * 
- * @author rayc@google.com (Ray Colline)
+ * @author raycolline@gmail.com (Ray Colline)
  */
 public class FeedServerClientTest extends TestCase {
 

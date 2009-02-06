@@ -30,7 +30,7 @@ import javax.servlet.ServletContextListener;
  * {@link GetAuthTokenServlet} and {@link SignedRequestFilter} for generating
  * authorization tokens and validating them resp.
  * 
- * @author rakeshs@google.com
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public class GuiceServletContextListener implements ServletContextListener {
 

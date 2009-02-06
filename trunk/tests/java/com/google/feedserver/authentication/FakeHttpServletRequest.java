@@ -33,7 +33,7 @@ import javax.servlet.http.HttpSession;
 /**
  * An implementation of {@link HttpServletRequest} for testing purposes
  * 
- * @author rakeshs@google.com (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  * 
  */
 public class FakeHttpServletRequest implements HttpServletRequest {

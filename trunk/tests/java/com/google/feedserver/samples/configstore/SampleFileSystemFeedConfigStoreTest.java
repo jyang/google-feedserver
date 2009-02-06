@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 /**
  * Test case for testing {@link SampleFileSystemFeedConfigStore}
  * 
- * @author rakeshs@google.com (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  * 
  */
 public class SampleFileSystemFeedConfigStoreTest extends TestCase {

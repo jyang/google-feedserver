@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 /**
  * Test cases for {@link SampleTokenManager}
  * 
- * @author rakeshs@google.com (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  * 
  */
 public class SampleTokenManagerTest extends TestCase {

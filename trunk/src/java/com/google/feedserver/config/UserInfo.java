@@ -20,7 +20,7 @@ package com.google.feedserver.config;
 /**
  * Preference for user accessing the feed.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public interface UserInfo {
@@ -28,7 +28,7 @@ public interface UserInfo {
   /**
    * Enumeration of properties that can be set in {@link UserInfo}.
    * 
-   * @author abhinavk@google.com (Abhinav Khandelwal)
+   * @author abhinavk@gmail.com (Abhinav Khandelwal)
    * 
    */
   public enum UserInfoProperties {

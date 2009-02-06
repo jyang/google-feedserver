@@ -31,7 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Hosted version of {@link CollectionAdapterManager}
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  */
 public class FeedServerAdapterManager extends CollectionAdapterManager {
 

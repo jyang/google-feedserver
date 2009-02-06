@@ -22,7 +22,7 @@ import org.apache.abdera.protocol.server.provider.managed.ServerConfiguration;
 /**
  * Sample server configuration for unit tests
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class SampleServerConfiguration extends ServerConfiguration {

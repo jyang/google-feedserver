@@ -33,7 +33,7 @@ import java.util.Map;
  * A wrapper over {@link AbderaServlet}. This exposes the {@link Provider} used
  * in {@link AbderaServlet}.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class FeedServerServlet extends AbderaServlet {

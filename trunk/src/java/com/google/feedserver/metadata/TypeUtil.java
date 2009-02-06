@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Utility class for type metadata feed.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class TypeUtil {

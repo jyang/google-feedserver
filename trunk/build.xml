@@ -80,7 +80,7 @@
         <attribute name="Implementation-Vendor" value="Google"/>
         <attribute 
             name="Main-Class"
-            value="com.google.feedserver.tools.SampleFeedTool"/>
+            value="com.google.feedserver.tools.FeedServerClientTool"/>
       </manifest>
     </jar>
   </target>
@@ -111,7 +111,7 @@
      <jar destfile="${dist.home}/feedserver.jar" basedir="${build.home}">
        <manifest>
          <attribute name="Main-Class"
-            value="com.google.feedserver.server.jetty.Main"/>
+            value="com.google.feedserver.server.jetty.StartFeedServerWithJetty"/>
        </manifest>
      </jar>
   </target>

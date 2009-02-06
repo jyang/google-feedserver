@@ -34,7 +34,7 @@ import java.util.Map;
  * Abdera for different namespaces. Unlike workspace, the namespaces are
  * resolved at run time.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class FeedServerProvider extends ManagedProvider {

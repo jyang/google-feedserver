@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 /**
  * The utility class for file based feed config stores
  * 
- * @author rakeshs@google.com (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public class FileSystemConfigStoreUtil extends ConfigStoreUtil {
 

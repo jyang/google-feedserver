@@ -20,13 +20,13 @@ package com.google.feedserver.configstore;
 /**
  * Exceptions for {@link FeedConfigStore}.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  */
 public class FeedConfigStoreException extends Exception {
   /**
    * Reason for {@link FeedConfigStoreException}.
    * 
-   * @author abhinavk@google.com (Abhinav Khandelwal)
+   * @author abhinavk@gmail.com (Abhinav Khandelwal)
    * 
    */
   public enum Reason {

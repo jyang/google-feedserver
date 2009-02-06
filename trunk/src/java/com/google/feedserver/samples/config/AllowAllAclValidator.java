@@ -22,7 +22,7 @@ import com.google.feedserver.config.AclValidator;
 import org.apache.abdera.protocol.server.RequestContext;
 
 /**
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class AllowAllAclValidator implements AclValidator {

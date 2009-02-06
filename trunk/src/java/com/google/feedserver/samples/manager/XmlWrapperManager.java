@@ -30,7 +30,7 @@ import com.google.feedserver.samples.config.XmlMixinConfiguration;
  * wrapper then Wrapper manager finds its target adapter and applies this
  * wrapper over the target adapter.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class XmlWrapperManager extends AbstractWrapperManager {

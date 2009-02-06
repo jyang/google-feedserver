@@ -28,7 +28,7 @@ import com.google.inject.Scopes;
  * {@link TokenManager} instance.
  * </p>
  * 
- * @author rakeshs@google.com (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public class TokenManagerDIModule implements Module {
 

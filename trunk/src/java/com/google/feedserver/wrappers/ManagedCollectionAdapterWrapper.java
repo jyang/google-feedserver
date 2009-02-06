@@ -32,7 +32,7 @@ import org.apache.abdera.protocol.server.provider.managed.ServerConfiguration;
 /**
  * A wrapper framework around {@link AbstractManagedCollectionAdapter}'s.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  */
 public class ManagedCollectionAdapterWrapper extends AbstractManagedCollectionAdapter {
   protected AbstractManagedCollectionAdapter targetAdapter;

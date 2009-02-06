@@ -45,7 +45,7 @@ import javax.xml.transform.stream.StreamResult;
 /**
  * Utility functions for feedserver.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  */
 public class FeedServerUtil {
   private FeedServerUtil() {

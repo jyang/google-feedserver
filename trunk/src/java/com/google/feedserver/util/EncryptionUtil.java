@@ -40,7 +40,7 @@ import javax.crypto.NoSuchPaddingException;
  * string to byte and then decrypts it to the original string
  * </p>
  * 
- * @author rakeshs@google.com (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public class EncryptionUtil {
 

@@ -52,7 +52,7 @@ import javax.xml.transform.TransformerException;
  * in question
  * </p>
  * 
- * @author rakeshs@google.com (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public class IBatisAdapterWrapper extends ManagedCollectionAdapterWrapper {
 

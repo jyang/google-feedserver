@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServlet;
 /**
  * The {@link FilterChain} implementation for testing
  * 
- * @author rakeshs@google.com (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public class FakeFilterChainImpl implements FilterChain {
 

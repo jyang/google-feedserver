@@ -20,7 +20,7 @@ package com.google.feedserver.authentication;
 /**
  * The exception class to be used with {@link TokenManager}
  * 
- * @author rakeshs@google.com (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  * 
  */
 public class TokenManagerException extends Exception {
