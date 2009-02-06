@@ -79,10 +79,12 @@ The wrapper name is actually the name of the adapter (remember wrapper is also a
    configValue=""
    configType=XML
    isWrapper=true
-
-   'className' is the fully qualified classname of the wrapper
-   'isWrapper' attribute identifies if the given adapter is a wrapper or simply an adapter
 }}}
+
+Where:
+  * {{{className}}}. The fully-qualified class name of the wrapper.
+  * {{{isWrapper}}}. The attribute identifies it if the adapter is a wrapper or simply an adapter.
+
 
 You can also define a wrapper configuration as follows:
 
@@ -92,13 +94,15 @@ You can also define a wrapper configuration as follows:
      <adapterName>testAdapterWithWrapper</adapterName>
      <wrapperConfig>zxcvzxcv</wrapperConfig>
    </mixin>
-
-   '<adapterName>' points to a adapter configuration which has the details of the target adapter 
 }}}
 
-The wrapper name will be set as the target adapter in the original adapter configuration that will use the above wrapper config. This is the way you configure wrappers & adapters to embed feed under another feed.
+Where:
+  * {{{adapterName}}} points to a adapter configuration that contains the details of the target adapter.
 
-The 'testAdapterWithWrapper' adapter configuration:
+
+The wrapper name is set to the target adapter in the original adapter configuration that uses the wrapper configuration. In this way, you can configure wrappers and adapters to embed a feed under another feed.
+
+The {{{testAdapterWithWrapper}}} adapter configuration:
 
 {{{
    type=SampleBasicAdapter
@@ -106,10 +110,10 @@ The 'testAdapterWithWrapper' adapter configuration:
    configValueType=xml
 }}}
 
-The 'SampleBasicAdapter' is the target adapter over which the wrapper will be applied. You could even configure more wrappers over here as well!
+The <b>SampleBasicAdapter</b> is the target adapter over which the wrapper is applied. You can configure additional wrappers as needed.
 
-==== Defining implicit mixins with adapters ====
-The adapters can define and use implicit mixins which are pointers to adapters.
+==== Defining Implicit Mixins with Adapters ====
+The adapters can define and use implicit mixins as pointers to adapters:
 
 {{{
    className=com.google.feedserver.samples.adapters.IBatisCollectionAdapter
@@ -117,7 +121,7 @@ The adapters can define and use implicit mixins which are pointers to adapters.
    isWrapper=false
 }}}
 
-Implicit mixins are supposed to be configured for adapters and not wrappers (and hence isWrapper=false)
+You can configure implicit mixins for adapters and not wrappers by setting {{{isWrapper=false}}}.
 
 == Feed Config Store ==
 
@@ -125,27 +129,39 @@ To provide loose coupling between the feed and adapter configuration, the framew
 
 The Feed Server provides a sample file system based feed config store: {{{SampleFileSystemFeedConfigStore}}}.
 This implementation reads and updates the feed and adapter configurations using property files that are stored on the file system.
+
+Store the feed configuration:
 {{{
-/conf/feedserver/{namepsace}/FeedConfig/<<feedId>>.properties stores the feed configuration. 
+/conf/feedserver/{namepsace}/FeedConfig/<<feedId>>.properties
+}}}  
 
-/conf/feedserver/{namepsace}/AdapterConfig/<<adapterName>>.properties stores the adapter configuration. 
+Store the adapter configuration:
+{{{
+/conf/feedserver/{namepsace}/AdapterConfig/<<adapterName>>.properties
+}}}
 
-/conf/feedserver/{namepsace}/Adapter/<<adapter>>.properties stores the adapter details. The <<feedId>>.properties has the link to the adapter configuration that should be used to initialize the adapter (defined in Adapter/<<adapter>>.properties) and interact with the datasource for CRUD operations. 
+Store the adapter details. The <i>feedid</i>.properties has the link to the adapter configuration that should be used to initialize the adapter (defined in Adapter/<i>adapter</i>.properties) and interact with the datasource for CRUD operations.
 
-/conf/feedserver/{namepsace}/AdapterConfig/<<mixinName>>.xml stores the wrapper configurations used by adapter configurations.
+{{{
+/conf/feedserver/{namepsace}/Adapter/<<adapter>>.properties 
+}}} 
+
+Store the wrapper configurations used by adapter configurations:
+{{{
+/conf/feedserver/{namepsace}/AdapterConfig/<<mixinName>>.xml 
 }}}
 
 In the earlier release of the Google Feed Server, both the feed and adapter configuration were stored as part of single configuration and were read by the {{{AdapterManager}}}.
 
-_Note: You can have an implementation with just FeedConfig and AdapterConfig as well. But you will lose the flexibility of using wrappers!_ 
+<b>Note:</b> You can have an implementation with just {{{FeedConfig}}} and {{{AdapterConfig}}}, but you lose the flexibility of using wrappers.
 
 == Support for Signed Requests ==
 
-The Google Feed Server handles signed requests using Google !ClientLogin and OAuth.
+The Google Feed Server handles signed requests using 
+[http://code.google.com/apis/gdata/auth.html#ClientLogin Google ClientLogin] and 
+[http://code.google.com/apis/accounts/docs/OAuth.html OAuth].
 
 === Signed Requests Using Google !ClientLogin ===
-
-See http://code.google.com/apis/gdata/auth.html#ClientLogin
 
 Use the Google !ClientLogin for clients such as a standalone single-user "installed" application (for example, a desktop application). The Google Feed Server ships with the {{{GetAuthTokenServlet}}} servlet that authenticates a user and issues authorization tokens to be used with requests for authorization. The {{{SignedRequestFilter}}} filter validates each request to check if the request is signed with a valid authorization token. 
 
@@ -154,9 +170,7 @@ For a more robust authentication and authorization mechanism, you can plug in a 
 
 === Signed Requests Using OAuth ===
 
-See http://code.google.com/apis/accounts/docs/OAuth.html
-
-OAuth signed requests are authorized by the {{{OAuthFilter}}}. The key assumes Google as the default service provider with a Google public key. The easiest way to test this is to write a OAuth gadget. See http://code.google.com/apis/gadgets/docs/oauth.html. You can plug in a domain-specific key with the {{{SimpleKeyMananger}}} without changing OAuth signed requests .
+OAuth signed requests are authorized by the {{{OAuthFilter}}}. The key assumes Google as the default service provider with a Google public key. The easiest way to test this is to write a OAuth gadget. See http://code.google.com/apis/gadgets/docs/oauth.html. You can plug in a domain-specific key with the {{{SimpleKeyMananger}}} without changing OAuth signed requests.
 
 
 == Work Flow ==
