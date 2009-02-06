@@ -1,4 +1,18 @@
-// Copyright 2007 Google Inc.  All Rights Reserverd.
+/*
+ * Copyright 2008 Google Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 
 package com.google.feedserver.util;
 
@@ -6,16 +20,19 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
 /**
- * XML parser handler for parsing input data.  Only handles one level of
- * elements (does not handle nested elements).
- *
+ * XML parser handler for parsing input data. Only handles one level of elements
+ * (does not handle nested elements).
+ * 
  * An empty element is parsed as a null value for that property (e.g.,
  * <string></string> will set the property "string" to null).
+ * 
+ * @author jyang@google.com (Jun Yang)
  */
 public class XmlHandler extends DefaultHandler {
 
@@ -60,13 +77,14 @@ public class XmlHandler extends DefaultHandler {
   }
 
   @Override
-  public void startElement(String uri, String localName, String name,
-      Attributes attributes) throws SAXException {
+  public void startElement(String uri, String localName, String name, Attributes attributes)
+      throws SAXException {
     super.startElement(uri, localName, name, attributes);
 
     if (!(topLevelElement.equals(name) && currentElementStack.size() == 0)) {
       if (!name.equals(lastElement)) {
         isRepeatable = "true".equals(attributes.getValue(REPEATABLE));
+        lastElement = null;
       }
       currentElementStack.push(name);
       elementRepetableStack.push(isRepeatable);
@@ -90,8 +108,7 @@ public class XmlHandler extends DefaultHandler {
   }
 
   @Override
-  public void endElement(String uri, String localName, String name)
-      throws SAXException {
+  public void endElement(String uri, String localName, String name) throws SAXException {
     super.endElement(uri, localName, name);
 
     if (currentElementStack.size() > 0) {
@@ -134,8 +151,9 @@ public class XmlHandler extends DefaultHandler {
   /**
    * Coalesces the most recently processed XML element into the property
    * collection
-   * @throws SAXException If an element is repeated without the
-   *     {@code repeatable} attribute being present
+   * 
+   * @throws SAXException If an element is repeated without the {@code
+   *         repeatable} attribute being present
    */
   protected void collectValues() throws SAXException {
     if (value instanceof StringBuilder) {
@@ -148,22 +166,33 @@ public class XmlHandler extends DefaultHandler {
       if (value == null) {
         value = "";
       }
-      Object[] array = (Object[]) getValueMap().get(elementToBeUpdated);
-      if (array == null) {
-        array = new Object[]{value};
+
+      if (value instanceof Map) {
+        updateValueInArray(new Map[0], elementToBeUpdated);
       } else {
-        Object[] newArray = new Object[array.length + 1];
-        for (int i = 0; i < array.length; i++) {
-          newArray[i] = array[i];
-        }
-        newArray[array.length] = value;
-        array = newArray;
+        updateValueInArray(new String[0], elementToBeUpdated);
       }
-      getValueMap().put(elementToBeUpdated, array);
     } else if (getValueMap().containsKey(elementToBeUpdated)) {
       throw new SAXException("Repeated element " + currentElementStack);
     } else {
       getValueMap().put(elementToBeUpdated, value);
     }
+  }
+
+  @SuppressWarnings( {"unchecked"})
+  private <T> void updateValueInArray(T[] dummy, String elementToBeUpdated) {
+    T[] array = (T[]) getValueMap().get(elementToBeUpdated);
+    if (array == null) {
+      array = (T[]) Array.newInstance(value.getClass(), 1);
+      Array.set(array, 0, value);
+    } else {
+      T[] newArray = (T[]) Array.newInstance(value.getClass(), array.length + 1);
+      for (int i = 0; i < array.length; i++) {
+        newArray[i] = array[i];
+      }
+      newArray[array.length] = (T) value;
+      array = newArray;
+    }
+    getValueMap().put(elementToBeUpdated, array);
   }
 }
