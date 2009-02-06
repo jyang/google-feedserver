@@ -1,4 +1,18 @@
-// Copyright 2008 Google Inc.  All Rights Reserved.
+/*
+ * Copyright 2008 Google Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 
 package com.google.feedserver.util;
 
@@ -9,7 +23,7 @@ import java.util.Map;
 
 /**
  * BeanUtil tests.
- *
+ * 
  * @author jyang@google.com (Jun Yang)
  */
 public class BeanUtilTest extends TestCase {
@@ -119,9 +133,9 @@ public class BeanUtilTest extends TestCase {
     Map<String, Object> properties = new HashMap<String, Object>();
     properties.put("int", "invalidint");
     properties.put("long", 5678L);
-    properties.put("strings", new String[]{"string0", "string1"});
-    properties.put("ints", new int[]{100, 200});
-    properties.put("longs", new long[]{300L, 400L});
+    properties.put("strings", new String[] {"string0", "string1"});
+    properties.put("ints", new int[] {100, 200});
+    properties.put("longs", new long[] {300L, 400L});
     try {
       beanUtil.convertPropertiesToBean(properties, bean);
     } catch (IllegalArgumentException e) {
@@ -137,12 +151,12 @@ public class BeanUtilTest extends TestCase {
     Map<String, Object> properties = new HashMap<String, Object>();
     properties.put("int", 1234);
     properties.put("long", 5678L);
-    properties.put("strings", new String[]{"string0", "string1"});
-    properties.put("ints", new int[]{100, 200});
-    properties.put("longs", new long[]{300L, 400L});
+    properties.put("strings", new String[] {"string0", "string1"});
+    properties.put("ints", new int[] {100, 200});
+    properties.put("longs", new long[] {300L, 400L});
 
     Map<String, Object> internalProperties = new HashMap<String, Object>();
-    internalProperties.put("strings", new String[]{"string0", "string1"});
+    internalProperties.put("strings", new String[] {"string0", "string1"});
 
     properties.put("internalBean", internalProperties);
     properties.put("internalBeans", new Map[] {internalProperties});
@@ -190,12 +204,12 @@ public class BeanUtilTest extends TestCase {
     bean.setString("string0");
     bean.setInt(1234);
     bean.setLong(5678L);
-    bean.setStrings(new String[]{"string0", "string1"});
-    bean.setInts(new int[]{100, 200});
-    bean.setLongs(new long[]{300L, 400L});
+    bean.setStrings(new String[] {"string0", "string1"});
+    bean.setInts(new int[] {100, 200});
+    bean.setLongs(new long[] {300L, 400L});
 
     InternalBean internalBean = new InternalBean();
-    internalBean.setStrings(new String[]{"string0", "string1"});
+    internalBean.setStrings(new String[] {"string0", "string1"});
     bean.setInternalBean(internalBean);
     bean.setInternalBeans(new InternalBean[] {internalBean, internalBean});
 
@@ -221,8 +235,7 @@ public class BeanUtilTest extends TestCase {
     assertEquals(300L, longs[0]);
     assertEquals(400L, longs[1]);
 
-    Map<String, Object> internalBeanMap =
-        (Map<String, Object>) properties.get("internalBean");
+    Map<String, Object> internalBeanMap = (Map<String, Object>) properties.get("internalBean");
     strings = (String[]) internalBeanMap.get("strings");
     assertEquals(2, strings.length);
     assertEquals("string0", strings[0]);
@@ -246,9 +259,9 @@ public class BeanUtilTest extends TestCase {
     properties.put("string", "string0");
     properties.put("int", 1234);
     properties.put("long", 5678L);
-    properties.put("strings", new String[]{"string0", "string1"});
-    properties.put("ints", new int[]{100, 200});
-    properties.put("longs", new long[]{300L, 400L});
+    properties.put("strings", new String[] {"string0", "string1"});
+    properties.put("ints", new int[] {100, 200});
+    properties.put("longs", new long[] {300L, 400L});
     Bean bean = new Bean();
     beanUtil.convertPropertiesToBean(properties, bean);
 
@@ -272,15 +285,14 @@ public class BeanUtilTest extends TestCase {
     assertEquals(400L, longs[1]);
   }
 
-  public void testConvertPropertiesToBeanWithTypeConversions()
-      throws Exception {
+  public void testConvertPropertiesToBeanWithTypeConversions() throws Exception {
     Map<String, Object> properties = new HashMap<String, Object>();
     properties.put("string", "string0");
     properties.put("int", "1234");
     properties.put("long", "5678");
-    properties.put("strings", new String[]{"string0", "string1"});
-    properties.put("ints", new String[]{"100", "200"});
-    properties.put("longs", new String[]{"300", "400"});
+    properties.put("strings", new String[] {"string0", "string1"});
+    properties.put("ints", new String[] {"100", "200"});
+    properties.put("longs", new String[] {"300", "400"});
     Bean bean = new Bean();
     beanUtil.convertPropertiesToBean(properties, bean);
 
