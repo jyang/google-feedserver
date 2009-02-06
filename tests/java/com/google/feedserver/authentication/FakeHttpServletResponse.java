@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * An implemntation of {@link HttpServletResponse} for testing purposes
  * 
- * @author rakeshs@google.com (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public class FakeHttpServletResponse implements HttpServletResponse {
 

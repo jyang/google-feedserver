@@ -25,7 +25,7 @@ import java.util.Properties;
 /**
  * The utiltiy class for {@link FeedConfigStore} implementations
  * 
- * @author rakeshs@google.com (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public class ConfigStoreUtil {
 

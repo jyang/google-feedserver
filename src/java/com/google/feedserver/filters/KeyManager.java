@@ -25,7 +25,7 @@ import java.util.Collection;
 /**
  * It stores public keys for OAuth Verification.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  */
 public interface KeyManager {
 

@@ -26,7 +26,7 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class SimpleFeedInfo implements FeedInfo {

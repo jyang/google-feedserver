@@ -24,7 +24,7 @@ import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
 /**
  * Interface to make a hosted server that uses abdera adapters.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public interface GlobalServerConfiguration {

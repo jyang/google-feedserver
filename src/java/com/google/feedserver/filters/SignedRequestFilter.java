@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletResponse;
  * using the {@link TokenManager}. For configuring a concrete instance of
  * {@link TokenManager} please refer to {@link TokenManagerDIModule}
  * 
- * @author rakeshs@google.com (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public class SignedRequestFilter implements Filter {
 

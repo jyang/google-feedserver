@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * Hosted version of {@link FeedConfiguration}
  * 
- * @author abhinavk@google.com (Abhinav kHandelwal)
+ * @author abhinavk@gmail.com (Abhinav kHandelwal)
  * 
  */
 public class NamespacedFeedConfiguration extends FeedConfiguration {
@@ -101,7 +101,6 @@ public class NamespacedFeedConfiguration extends FeedConfiguration {
    * Gets the adaptor name for the {@link FeedConfiguration}
    */
   public String getAdapterName() {
-    // return getAdapterConfiguration().getAdapterName();
     return getFeedConfigLocation();
   }
 
@@ -152,7 +151,6 @@ public class NamespacedFeedConfiguration extends FeedConfiguration {
    */
   @Override
   public String getAdapterClassName() {
-    // return getAdapterConfiguration().getAdapterClassName();
     return getAdapterConfiguration().getAdapterType();
   }
 

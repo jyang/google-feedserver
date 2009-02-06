@@ -21,7 +21,7 @@ import java.util.Collection;
 /**
  * Defines a custom type.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public interface TypeInfo {

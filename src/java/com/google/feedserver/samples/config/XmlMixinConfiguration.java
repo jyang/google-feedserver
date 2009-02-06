@@ -44,7 +44,7 @@ import org.w3c.dom.NodeList;
  * &lt;/mixin&gt;
  * </pre>
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class XmlMixinConfiguration implements MixinConfiguration {

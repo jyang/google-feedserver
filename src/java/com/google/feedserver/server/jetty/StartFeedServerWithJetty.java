@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 /**
  * Starts the Google FeedServer server using Jetty
  * 
- * @author rakeshs
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public class StartFeedServerWithJetty {
   static Logger log = Logger.getLogger(StartFeedServerWithJetty.class.getName());

@@ -46,7 +46,7 @@ import javax.servlet.http.HttpServletResponse;
  * For configuring a concrete instance of {@link TokenManager} please refer to
  * {@link TokenManagerDIModule}
  * 
- * @author rakeshs@google.com (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public class GetAuthTokenServlet extends HttpServlet {
   /**

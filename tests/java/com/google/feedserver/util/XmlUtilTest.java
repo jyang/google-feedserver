@@ -16,8 +16,6 @@
 
 package com.google.feedserver.util;
 
-import com.google.feedserver.util.XmlUtil;
-
 import junit.framework.TestCase;
 
 import org.xml.sax.SAXException;
@@ -28,7 +26,7 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class XmlUtilTest extends TestCase {

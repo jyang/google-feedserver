@@ -38,7 +38,7 @@ import javax.servlet.ServletException;
  * {@link SignedRequestFilter} for authenticating and authorizing requests using
  * Google Client Login mechanism
  * 
- * @author rakeshs@google.com (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public class GoogleClientLoginTest extends TestCase {
 

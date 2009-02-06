@@ -22,8 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * Sample map based implementation for {@link MixinConfiguration}
  * 
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  */
 public class MapMixinConfiguration implements MixinConfiguration {
 

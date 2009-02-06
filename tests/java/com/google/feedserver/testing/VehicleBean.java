@@ -3,7 +3,7 @@
 package com.google.feedserver.testing;
 
 /**
- * @author rakeshs@google.com (Your Name Here)
+ * @author rakeshs101981@gmail.com (Your Name Here)
  * 
  */
 public class VehicleBean {

@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * Configuration file for FeedServer
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class FeedServerConfiguration implements GlobalServerConfiguration {

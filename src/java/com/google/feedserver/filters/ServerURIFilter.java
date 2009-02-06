@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
  * This filter sets the serverURI in the feed server configuration that is
  * required to be included as part of feed entry id
  * 
- * @author rakeshs@google.com (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  * 
  */
 public class ServerURIFilter implements Filter {

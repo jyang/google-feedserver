@@ -36,7 +36,7 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Wrapper manager helps to manage wrappers over adapters.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public abstract class AbstractWrapperManager extends ManagedCollectionAdapterWrapper {

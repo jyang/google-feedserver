@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 /**
  * Unit test for {@link MethodOverridableRequest}.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 

@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 /**
  * Unit tests for {@link ManagedCollectionAdapterWrapper}.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 

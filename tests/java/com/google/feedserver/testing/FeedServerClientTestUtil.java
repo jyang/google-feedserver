@@ -168,7 +168,7 @@ public class FeedServerClientTestUtil {
    * Entry equivalence argument matcher for easymock to check {@link Entry}
    * objects.
    * 
-   * @author rayc@google.com (Ray Colline)
+   * @author r@kuci.org (Ray Colline)
    */
   public static class EntryEquals implements IArgumentMatcher {
 

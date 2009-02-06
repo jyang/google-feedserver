@@ -26,7 +26,7 @@ import java.util.Map;
  * A store that keeps the {@link FeedConfiguration} and
  * {@link CollectionAdapterConfiguration} for the HostedServer.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public interface FeedConfigStore {

@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * Hosted version of {@link CollectionAdapterConfiguration}.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class NamespacedAdapterConfiguration extends CollectionAdapterConfiguration {

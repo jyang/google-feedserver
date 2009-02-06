@@ -58,8 +58,9 @@ import java.util.logging.Logger;
  * <li>conf
  * <ul>
  * <li>feedserver<ul><li>FeedConfig<ul><li>'%feedId%'.properties -- The file with feed
- * configuration values </li></ul></li></ul> <ul><li>AdapterConfig<ul><li>'%adapterName%'.properties -- The
- * file with adapter configuration values</li></ul></li></ul></li>
+ * configuration values </li></ul></li></ul> <ul><li>AdapterConfig<ul><li>'%adapterConfigName%'.properties -- The
+ * file with adapter configuration values</li></ul><li>Adapter<ul><li>'%adapterName%'.properties -- The
+ * file with adapter values</li></li></ul></li>
  * </ul>
  * </li>
  * </ul>
@@ -67,7 +68,7 @@ import java.util.logging.Logger;
  * </ul>
  * </p>
  * 
- * @author rakeshs@google.com (Rakesh Shete)
+ * @author rakeshs101981@gmail.com (Rakesh Shete)
  * 
  */
 public class SampleFileSystemFeedConfigStore implements FeedConfigStore {

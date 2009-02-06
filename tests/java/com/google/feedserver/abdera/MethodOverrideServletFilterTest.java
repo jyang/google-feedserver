@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Unit tests for {@link MethodOverrideServletFilter}.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class MethodOverrideServletFilterTest extends TestCase {

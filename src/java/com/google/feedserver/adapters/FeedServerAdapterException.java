@@ -20,14 +20,14 @@ package com.google.feedserver.adapters;
 /**
  * Exceptions thrown by feedserver adapters.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class FeedServerAdapterException extends Exception {
   /**
    * Reason for {@link FeedServerAdapterException}.
    * 
-   * @author abhinavk@google.com (Abhinav Khandelwal)
+   * @author abhinavk@gmail.com (Abhinav Khandelwal)
    * 
    */
   public enum Reason {

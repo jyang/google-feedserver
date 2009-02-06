@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 /**
  * Unit tests for {@link XmlWrapperManager}
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 

@@ -32,7 +32,7 @@ import java.util.Stack;
  * An empty element is parsed as a null value for that property (e.g.,
  * <string></string> will set the property "string" to null).
  * 
- * @author jyang@google.com (Jun Yang)
+ * @author jyang825@gmail.com (Jun Yang)
  */
 public class XmlHandler extends DefaultHandler {
 

@@ -21,7 +21,7 @@ import java.util.Collection;
 /**
  * EntityInfo defines the property and their types for this feed.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public interface EntityInfo {

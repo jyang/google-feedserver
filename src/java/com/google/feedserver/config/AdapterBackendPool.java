@@ -23,7 +23,7 @@ import java.util.Map;
  * A pool to store the backed server connectores. So that they can be re-used in
  * different adapter instances.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class AdapterBackendPool<T> {

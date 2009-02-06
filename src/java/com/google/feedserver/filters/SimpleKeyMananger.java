@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * A simple key manager for signed-fetch.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class SimpleKeyMananger implements KeyManager {

@@ -25,7 +25,7 @@ import java.util.Map;
  * which has two entries corresponding to array of {@link PropertyInfo} and
  * {@link TypeInfo} for this entity.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class SimpleEntityInfo implements EntityInfo {

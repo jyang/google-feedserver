@@ -23,7 +23,7 @@ import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
 /**
  * Sample {@link FeedConfiguration} to be used for testing.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  */
 public class SampleFeedConfig extends FeedConfiguration {
   public static final String FEED_ID = "sample";

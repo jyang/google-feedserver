@@ -47,7 +47,7 @@ import javax.servlet.http.HttpServletResponse;
  * OAuth filter for FeedServer. It uses {@link KeyManager} to store the public
  * consumer keys.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class OAuthFilter implements Filter {

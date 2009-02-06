@@ -35,7 +35,7 @@ import java.util.List;
  * A {@link ManagedWorkspace} that uses {@link FeedConfigStore} to store the
  * feed configuration and also supports dynamic namespaces.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class FeedServerWorkspace extends ManagedWorkspace {

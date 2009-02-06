@@ -21,7 +21,7 @@ import org.apache.abdera.protocol.server.RequestContext;
 /**
  * {@code AclValidator} validates the incoming requests for access control.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public interface AclValidator {

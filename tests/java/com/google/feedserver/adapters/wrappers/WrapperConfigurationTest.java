@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * Unit tests for {@link XmlMixinConfiguration}.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class WrapperConfigurationTest extends TestCase {

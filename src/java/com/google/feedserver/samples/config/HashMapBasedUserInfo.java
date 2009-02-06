@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Sample hash map based implementation of {@link UserInfo}.
  * 
- * @author abhinavk@google.com (Abhinav Khandelwal)
+ * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
 public class HashMapBasedUserInfo implements UserInfo {
