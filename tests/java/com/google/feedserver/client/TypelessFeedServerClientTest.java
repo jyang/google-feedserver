@@ -12,12 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.google.feedserver.client;
 
 import com.google.feedserver.testing.FeedServerClientTestUtil;
 import com.google.feedserver.util.FeedServerClientException;
 import com.google.gdata.client.GoogleService;
-import com.google.gdata.data.Entry;
 
 import junit.framework.TestCase;
 
@@ -25,7 +25,6 @@ import org.easymock.classextension.EasyMock;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,8 +34,8 @@ import java.util.Map;
  */
 public class TypelessFeedServerClientTest extends TestCase {
   
-  private String BASE_URL = "http://sample.com/feed";
-  private String TEST_FEED_URL = BASE_URL + "/vehicle0";
+  private String TEST_FEED_URL = "http://sample.com/feed";
+  private String TEST_ENTRY_URL = TEST_FEED_URL + "/vehicle0";
   
   private FeedServerClientTestUtil testUtil;
   private GoogleService mockService;
@@ -60,7 +59,7 @@ public class TypelessFeedServerClientTest extends TestCase {
 
   public void testGetEntry() throws Exception {
     // Setup
-    URL testUrl = new URL(TEST_FEED_URL);
+    URL testUrl = new URL(TEST_ENTRY_URL);
     EasyMock.expect(mockService.getEntry(testUrl, FeedServerEntry.class)).andReturn(
         testUtil.getVehicleEntry());
     EasyMock.replay(mockService);
@@ -83,6 +82,7 @@ public class TypelessFeedServerClientTest extends TestCase {
     
     // Perform Test
     try {
+      @SuppressWarnings("unused")
       Map<String, Object> fetchedMap = feedServerClient.getEntry(badUrl);
     } catch (FeedServerClientException e) {
       assertTrue(e.getCause().getMessage().equals(errorMsg));
@@ -94,12 +94,12 @@ public class TypelessFeedServerClientTest extends TestCase {
   
   public void testDeleteEntry() throws Exception {
     // Setup
-    mockService.delete(new URL(TEST_FEED_URL));
+    mockService.delete(new URL(TEST_ENTRY_URL));
     EasyMock.expectLastCall();
     EasyMock.replay(mockService);
     
     // Perform Test
-    feedServerClient.deleteEntry(new URL(BASE_URL), testUtil.getSampleVehicleMap());
+    feedServerClient.deleteEntry(new URL(TEST_ENTRY_URL));
     
     // Verify
     EasyMock.verify(mockService);
@@ -107,13 +107,13 @@ public class TypelessFeedServerClientTest extends TestCase {
   
   public void testInsertEntry() throws Exception {
     // Setup
-    mockService.insert(EasyMock.eq(new URL(BASE_URL)), FeedServerClientTestUtil.eqEntry(
+    mockService.insert(EasyMock.eq(new URL(TEST_FEED_URL)), FeedServerClientTestUtil.eqEntry(
         testUtil.getVehicleEntry()));
     EasyMock.expectLastCall().andReturn(testUtil.getVehicleEntry());
     EasyMock.replay(mockService);
     
     // Perform Test
-    feedServerClient.insertEntry((new URL(BASE_URL)), testUtil.getSampleVehicleMap());
+    feedServerClient.insertEntry((new URL(TEST_FEED_URL)), testUtil.getSampleVehicleMap());
     
     // Verify
     EasyMock.verify(mockService);
@@ -121,20 +121,20 @@ public class TypelessFeedServerClientTest extends TestCase {
   
   public void testUpdateEntry() throws Exception {
     // Setup
-    mockService.update(EasyMock.eq(new URL(TEST_FEED_URL)), FeedServerClientTestUtil.eqEntry(
-        testUtil.getVehicleEntry()));
+    mockService.update(EasyMock.eq(new URL(TEST_ENTRY_URL)),
+    	FeedServerClientTestUtil.eqEntry(testUtil.getVehicleEntry()));
     EasyMock.expectLastCall().andReturn(testUtil.getVehicleEntry());
     EasyMock.replay(mockService);
     
     // Perform Test
-    feedServerClient.updateEntry(new URL(BASE_URL), testUtil.getSampleVehicleMap());
+    feedServerClient.updateEntry(new URL(TEST_ENTRY_URL), testUtil.getSampleVehicleMap());
     
     // Verify
     EasyMock.verify(mockService);
   }
   
  public void testFillMapFromXml() throws Exception {
-   Map<String, Object> map = feedServerClient.getTypelessMapFromXml(
+   Map<String, Object> map = feedServerClient.getMapFromXml(
        FeedServerClientTestUtil.ENTRY_XML);
    assertTrue(testUtil.isEqual(testUtil.getSampleVehicleMap(), map));
  }
