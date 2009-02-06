@@ -5,7 +5,8 @@
 
 This document is for developers who want to understand the Google Feed Server framework and to write sample implementations.
 
-The following sections require an understanding of the Abdera framework. See http://cwiki.apache.org/confluence/display/ABDERA/Documentation.
+The following sections require an understanding of the 
+[http://cwiki.apache.org/confluence/display/ABDERA/Documentation Apache Abdera framework].
 
 == Implementation Tasks ==
 
@@ -22,9 +23,9 @@ The following sections require an understanding of the Abdera framework. See htt
   * Data adapter framework
   Adapters interface with the data sources to perform CRUD (Create, Retrieve, Update, and  Delete) operations on data. Adapters working with new data sources can be written simply by implementing the {{{CollectionAdapter}}} interface (or extending {{{AbstractCollectionAdapter}}} OR {{{AbstractEntityCollectionAdapter}}})
 
-== Support for Multiple Name Spaces ==
+== Support for Multiple Namespaces ==
 
-The Google Feed Server supports multiple name spaces on a single server. This is achieved with collection adapters and server configurations that understand namespaces. The feed and adapter configurations are stored for each namespace.
+The Google Feed Server supports multiple namespaces on a single server. This is achieved with collection adapters and server configurations that understand namespaces. The feed and adapter configurations are stored for each namespace.
   * {{{PerNamespaceServerConfiguration}}} -- A server configuration implementation with support for namespaces.
   * {{{NamespacedFeedConfiguration}}} -- A feed configuration implementation with support for namespaces.
   * {{{NamespacedAdapterConfiguration}}} -- An adapter configuration implementation with support for namespaces.
