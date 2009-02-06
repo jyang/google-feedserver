@@ -1,18 +1,20 @@
 <project name="Google FeedServer" default="all" basedir=".">
 
   <property file="build.properties"/>
-  
-  <property name="app.name"        value="feedserver"/>
+  <property file="conf/database/dbConfig.properties"/> 
 
+  <property name="app.name"        value="feedserver"/>
   <property name="build.home"         value="${basedir}/build"/>
   <property name="dist.home"          value="${basedir}/dist"/>
   <property name="src.home"           value="${basedir}/src/java"/>
   <property name="conf.home"          value="${basedir}/conf"/>
   <property name="web.home"           value="${basedir}/web"/>
   <property name="lib.home"           value="${basedir}/lib"/>
+  <property name="dist" value="${basedir}/distribution"/>
+  
 
   <!-- Client Properties -->
-  <property name="client.version" value="1.0"/>
+  <property name="client.version" value="2.0"/>
   <property 
       name="client.jarfile"     
       value="${dist.home}/google-feedserver-java-client-${client.version}.jar"/>
@@ -63,7 +65,7 @@
 
   <!-- Client targets -->
 
-  <target name="client_jar" depends="compile">
+  <target name="client" depends="compile">
     <tstamp/>
     <mkdir dir="${dist.home}"/>
     <jar jarfile="${client.jarfile}">
@@ -83,7 +85,8 @@
     </jar>
   </target>
 
-  <target name="client-source-distro" depends="client_jar">
+  <target name="client-source-distro" depends="client">
+      <mkdir dir="${dist}"/>
     <tar 
         destfile="${dist}/google-feedserver-java-client-${client.version}-src.tar.gz"
         longfile="gnu"
@@ -97,10 +100,6 @@
         <include name="lib/commons-*/**"/>
         <include name="lib/guice-*/**"/>
         <include name="lib/gdata-*/**"/>
-      </tarfileset>
-      <tarfileset dir="." mode="755">
-        <include name="runfeedtool.sh"/>
-        <include name="runtypelessfeedtool.sh"/>
       </tarfileset>
     </tar>
   </target>
@@ -130,7 +129,7 @@
          please check the wiki page at http://code.google.com/p/google-feedserver/wiki/DeveloperSetup"/>
   </target>
 
-  <target name="tomcat-all" depends="tomcat-path,war,undeploy,deploy" if="catalina.home"
+  <target name="tomcat-all" depends="clean,tomcat-path,war,undeploy,deploy" if="catalina.home"
     description="Set paths, then compile and build war file"/>
 
   <target name="tomcat-path">
@@ -158,13 +157,18 @@
   <!-- Build a war file for Tomcat -->
   <target name="war" depends="compile,javadoc"
        description="Create binary distribution">
-
+  	<copydir dest="${dist.home}/conf/conf" src="${conf.home}" description="Copy the conf folder as is under dist/conf and then bundle it with war">
+  	</copydir>
+      <replace dir="${dist.home}/conf/conf" value="conf/database/dbConfig.properties" description="Append 'conf' to the path of 'dbConfig.properties' so that it can be found when deployed in Tomcat">
+              <include name="**/sqlmap.xml"/>
+              <replacetoken><![CDATA[database/dbConfig.properties]]></replacetoken>
+           </replace>
     <!-- Create application WAR file -->
     <war destfile="${dist.home}/${app.name}.war"
       webxml="${web.home}/WEB-INF/web.xml">
       <fileset dir="${web.home}" excludes="WEB-INF/**"/>
       <fileset dir="${dist.home}/docs"/>
-      <classes dir="${conf.home}"/>
+      <classes dir="${dist.home}/conf"/>
       <classes dir="${build.home}"/>
       <lib dir="${lib.home}" excludes="servlet-api.jar"/>
     </war>
@@ -200,6 +204,8 @@
            path="/${app.name}"
             war="${dist.home}/${app.name}.war"/>
   </target>
+    
+    
   <!-- End of Tomcat targets -->
 
   <!-- Start of Testing-related stuff -->
@@ -223,7 +229,7 @@
   
   <target name="test" depends="cleanTests,compileTests">
       <mkdir    dir="${testOutput.home}"/>
-      <junit haltonfailure="yes" printsummary="yes">
+      <junit haltonfailure="no" printsummary="yes">
         <classpath refid="classpath.test"/>
         <formatter type="plain" usefile="true" />
         <batchtest todir="${testOutput.home}">
@@ -246,6 +252,19 @@
     <delete dir="${testClasses.home}"/>
     <delete dir="${testOutput.home}"/>
   </target>
-
   <!-- End of Testing-related stuff -->
+
+    <!-- Testing related stuff -->
+    <target name="createDb" description="Creates a the database tables required for the feed. It may be populated with data as well if the SQL file has SQL commnads for the same">
+        <sql driver="${JDBC.Driver}" password="${JDBC.Password}" url="${JDBC.ConnectionURL}" userid="${JDBC.Username}" src="${sqlFilePath}"
+            print="yes"
+            output="db_output.txt">
+            <classpath>
+                      <pathelement location="lib/${JDBC.Jar}"/>
+            </classpath>
+        </sql>
+    </target>
+    
+   
+    
 </project>
