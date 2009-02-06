@@ -1,7 +1,7 @@
-The Google FeedServer is an open-source Atom Publishing provider based on the 
+The Google FeedServer is an open-source Atom Publishing provider based on the
 Abdera Framework. Google FeedServer implements simple backend data
-adapters that allow the developer to quickly deploy a feed for an existing 
-data source such as a database. The FeedSever makes it easy to create these 
+adapters that allow the developer to quickly deploy a feed for an existing
+data source such as a database. The FeedSever makes it easy to create these
 adapters.
 
 The home of the project is at:
