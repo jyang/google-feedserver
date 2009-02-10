@@ -16,6 +16,7 @@ To build code and run it, ensure that you have the following environment setup:
       * http://ant.apache.org/bindownload.cgi
     * Jetty is included and is the default servlet engine
     * Abdera is included as a library
+      * Currently Abdera 1.0 snapshot build (built on Jan 29 2008) is included. This will be updated later with newer snapshot build till we have the Abdera 1.0 public release 
 
 Optional:
     * Apache Tomcat 6
@@ -352,4 +353,3 @@ You can check out the Wiki separately as follows:
 {{{
 svn checkout https://google-feedserver.googlecode.com/svn/wiki/ google-feedserver-wiki
 }}}
-
