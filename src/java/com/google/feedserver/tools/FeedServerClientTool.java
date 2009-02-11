@@ -1,12 +1,12 @@
 /*
  * Copyright 2008 Google Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  * Generic Google Feed Server Client Tool. See files in tests/clientTool for
  * examples of how to invoke it with various command line arguments and the
  * format of the input files.
- * 
+ *
  */
 public class FeedServerClientTool {
   public static final String OPERATION_GET_FEED = "getFeed";
@@ -157,7 +157,7 @@ public class FeedServerClientTool {
   /**
    * Gets user name and password from command line, or if missing, from console
    * and sets it on FeedServer client
-   * 
+   *
    * @throws AuthenticationException
    */
   protected void getUserCredentials() throws AuthenticationException {
@@ -178,7 +178,7 @@ public class FeedServerClientTool {
 
   /**
    * Gets a feed at the given URL
-   * 
+   *
    * @param url URL of the feed
    * @return A feed of entries as a List of Maps
    * @throws MalformedURLException
@@ -191,7 +191,7 @@ public class FeedServerClientTool {
 
   /**
    * Gets an entry at the given URL
-   * 
+   *
    * @param url URL of the entry
    * @return The entity as a Map
    * @throws MalformedURLException
@@ -205,7 +205,7 @@ public class FeedServerClientTool {
   /**
    * Inserts a new entry into a feed given a file containing its Atom XML
    * representation
-   * 
+   *
    * @param url URL to the feed
    * @param entryFile File containing the Atom XML representation of the new
    *        entry
@@ -221,7 +221,7 @@ public class FeedServerClientTool {
 
   /**
    * Inserts a new entry into a feed given its Atom XML representation
-   * 
+   *
    * @param url URL to the feed
    * @param entryXml Atom XML representation of the new entry
    * @return The inserted entity as a Map
@@ -236,7 +236,7 @@ public class FeedServerClientTool {
 
   /**
    * Inserts a new entry into a feed given the entry as a Map
-   * 
+   *
    * @param url URL to the feed
    * @param entity Entity to insert into feed
    * @return The inserted entity as a Map
@@ -251,7 +251,7 @@ public class FeedServerClientTool {
 
   /**
    * Updates an entry given the file to its Atom XML representation
-   * 
+   *
    * @param url URL to the entry
    * @param entryFile File containing the Atom XML representation of the new
    *        entry
@@ -267,7 +267,7 @@ public class FeedServerClientTool {
 
   /**
    * Updates an entry given its Atom XML representation
-   * 
+   *
    * @param url URL to the entry
    * @param entryXml Atom XML representation of the entry
    * @return Updated entity as a Map
@@ -282,7 +282,7 @@ public class FeedServerClientTool {
 
   /**
    * Updates an entry given its entity
-   * 
+   *
    * @param url URL to entry
    * @param entity Entity to update to for the entry
    * @return Updated entity as a Map
@@ -297,7 +297,7 @@ public class FeedServerClientTool {
 
   /**
    * Deletes an entry at the give URL
-   * 
+   *
    * @param url URL to the entry to delete
    * @throws FeedServerClientException
    * @throws MalformedURLException
@@ -308,7 +308,7 @@ public class FeedServerClientTool {
 
   /**
    * Prints a feed
-   * 
+   *
    * @param feed Feed to print as a List of Maps
    */
   public void printFeed(List<Map<String, Object>> feed) {
@@ -317,7 +317,7 @@ public class FeedServerClientTool {
 
   /**
    * Prints a feed on a stream
-   * 
+   *
    * @param feed Feed to print
    * @param out Stream to print on
    */
@@ -343,7 +343,7 @@ public class FeedServerClientTool {
 
   /**
    * Prints an entry
-   * 
+   *
    * @param entry Entry to print
    */
   public void printEntry(Map<String, Object> entry) {
@@ -352,7 +352,7 @@ public class FeedServerClientTool {
 
   /**
    * Prints an entry on a stream
-   * 
+   *
    * @param entry Entry to print
    * @param out Stream to print on
    */
@@ -433,7 +433,7 @@ public class FeedServerClientTool {
 
   /**
    * Helper function that reads contents of specified file into a String.
-   * 
+   *
    * @param file File to read.
    * @return string with file contents.
    * @throws IOException if any file operations fail.
@@ -447,7 +447,7 @@ public class FeedServerClientTool {
 
   /**
    * Reads a file and returns its content as a string
-   * 
+   *
    * @param directory Directory relative to which the file is
    * @param filePath Path to file relative to directory
    * @return Content of file
@@ -469,7 +469,7 @@ public class FeedServerClientTool {
    * embeddedFilePath<".  For example, if file "abc.xml"'s content is "
    * <abc>value</abc>", then "<xyz>@abc.xml</xyz>" becomes
    * "<xyz>&lt;abc&gt;value&lt;/abc&gt;".
-   * 
+   *
    * @param content Input content
    * @param directory Directory where embedded files are to be found
    * @return Content with all content of embedded files
