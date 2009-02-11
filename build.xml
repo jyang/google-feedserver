@@ -1,4 +1,4 @@
-<project name="Google FeedServer" default="all" basedir=".">
+<project name="Google FeedServer" default="server" basedir=".">
 
   <property file="build.properties"/>
   <property file="conf/database/dbConfig.properties"/>
@@ -27,7 +27,7 @@
     <fileset dir="${lib.home}" includes="**/*.jar"/>
   </path>
 
-  <target name="all" depends="clean,jetty"
+  <target name="server" depends="clean,jetty"
      description="The default Jetty-based build, with conditional Tomcat."/>
 
   <target name="jetty" description="Compile and build jar file">
