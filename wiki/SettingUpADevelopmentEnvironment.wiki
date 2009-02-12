@@ -173,7 +173,7 @@ When running each  script, you are prompted for a username and password. For the
 Update the {{{setupEnv.sh}}} script with a domain name for the feeds and the other parameters required for authentication and authorization:
   * FSCT_DOMAIN -- Domain name
   * FSCT_FEED_BASE -- The feed URL
-  * AUTHN_SERVICE_NAME -- The name of the Google service to which your are connecting. For the sample feeds, it is {{{test}}}.
+  * SERVICE_NAME -- The name of the service with which the user account is associated. For the sample feeds, it is {{{test}}}.
   * AUTHN_URL_PROTOCOL -- Name of the protocol to use for authentication, either {{{http}}} or {{{https}}}.
   * AUTHN_URL -- The end point that handles authentication and grants authorization tokens to be used with each request.
 _Note: If the Feed Server is running on Tomcat, ensure that you include the correct application root in the FSCT_FEED_BASE and AUTHN_URL_ parameters.
