@@ -76,7 +76,7 @@ The sections that follow explain how to run the Feed Server.
 <p>If you are deploying on Tomcat with Derby, ensure that you make the following entry in {{{%CATALINA_HOME%/conf/catalina.properties}}}:</p>
 <p>{{{derby.system.home=}}}{absolute path to the directory where the derby database has been created}</p>
 <p>For example, set the default project directory to {{{/home/GoogleFeedServer}}}.
-The {{{createDB}}} command creates the {{{feedserver}}} database in this directory entry in:</p><p>{{{%CATALINA_HOME%/conf/catalina.properties:derby.system.home=/home/GoogleFeedServer}}}</p></li>
+The {{{createDb}}} command creates the {{{feedserver}}} database in this directory entry in:</p><p>{{{%CATALINA_HOME%/conf/catalina.properties:derby.system.home=/home/GoogleFeedServer}}}</p></li>
 <li>Based on the database server being used, modify the query that will get the newly generated iID from the database for a new feed entry. The ID will be part of the {{{contact-insert-entry}}} node in {{{conf/feedserver/sqlmap/contact.xml}}}</li>
 </ol>
 
@@ -154,10 +154,10 @@ Before building the code base, uncomment the following lines in the {{{web/WEB-I
 
 Build and deploy the WAR file for Tomcat, use the {{{ant tomcat}}} command.
 
-To test signed requests, you can use a the {{{FeedServerClientTool}}} using the following scripts in the {{{tests/clientTool/demo}}} folder:
+To test signed requests, you can use a the {{{FeedServerClientTool}}} using the following scripts in the {{{resources/clientTool}}} folder:
   * {{{setupEnv.sh}}} -- Set up the parameter values required by all other scripts
   * {{{getFeed.sh}}} -- The script to retrieve a feed
-  * {{{getFeedEntry.sh}}} -- The script to retrieve a particular entry
+  * {{{getEntry.sh}}} -- The script to retrieve a particular entry
   * {{{insertEntry.sh}}} -- To add a new entry to the feed
   * {{{updateEntry.sh}}} -- Update an existing entry
   * {{{deleteEntry.sh}}} -- Delete an existing entry
@@ -206,14 +206,14 @@ The output appears as:
 </entities>
 }}}
 
-=== getFeedEntry.sh ===
+=== getEntry.sh ===
 
-The {{{getFeedEntry.sh}}} script fetchs a specific entry for a feed
+The {{{getEntry.sh}}} script fetchs a specific entry for a feed
 Run this script as follows:
 {{{
-$> ./getFeedEntry.sh <<feed_name>>/<<entry_id>>
+$> ./getEntry.sh <<feed_name>>/<<entry_id>>
 }}}
-For example: {{{/getFeedEntry.sh contact/1}}}
+For example: {{{/getEntry.sh contact/1}}}
 The output appears as:
 {{{
 <entity>
