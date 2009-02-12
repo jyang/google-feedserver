@@ -57,7 +57,6 @@ CodePress = function(obj) {
   }
 
   self.edit = function(id,language) {
-    console.log('edit()');
     if(id) self.textarea.value = document.getElementById(id).value;
     if(!self.textarea.disabled) return;
     self.language = language ? language : self.options.replace(/ ?codepress ?| ?readonly-on ?| ?autocomplete-off ?| ?linenumbers-off ?/g,'');
@@ -68,17 +67,11 @@ CodePress = function(obj) {
     contentDoc.write(codePressEmptyIframeContent);
     contentDoc.close();
     contentDoc.location.reload();
-    console.log('codePressEmptyIframeContent:');
-    console.log(codePressEmptyIframeContent);
-    console.log('contentDoc.innerHTML:');
-    console.log(contentDoc.innerHTML);
 
     contentDoc.open();
     contentDoc.write(codePressEmptyIframeContent);
     contentDoc.close();
     contentDoc.location.reload();
-    console.log('contentDoc.innerHTML2:');
-    console.log(contentDoc.innerHTML);
 
     if(self.attachEvent) self.attachEvent('onload',self.initialize);
     else self.addEventListener('load',self.initialize,false);
@@ -159,7 +152,6 @@ CodePress.getEngine = function() {
 }
 
 CodePress.run = function() {
-  console.log('run()');
   CodePress.engine = CodePress.getEngine();
   var s = document.getElementsByTagName('script');
 //  for(var i=0,n=s.length;i<n;i++) {
