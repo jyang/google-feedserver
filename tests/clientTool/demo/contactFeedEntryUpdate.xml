@@ -1,7 +1,0 @@
-<entity xmlns="">
-	<id>2</id>
-	<firstName>John</firstName>
-  <lastName>Doe</lastName>
-	<email>johndoe@example.com</email>
-	<rating>22</rating>
-</entity>
