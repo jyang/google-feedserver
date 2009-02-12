@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+<ModulePrefs title="Private Gadget Editor" >
+  <Require feature="dynamic-height"/>
+  <Require feature="setprefs"/>
+  <Require feature="tabs"/>
+</ModulePrefs>
+<UserPref name="domainName" display_name="Domain Name" datatype="string"/>
+<Content type="html"><![CDATA[
+<style>
+#editor {
+  width: 100%;
+  height: 400px;
+}
+
+#button-bar {
+  padding: 4px;
+}
+
+#gadget-list {
+  font-size: 10pt;
+}
+</style>
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript">
+var service = null;
+var privateGadgetNames = null;
+var nameOfGadgetBeingEdited = '';
+var entryOfGadgetBeingEdited = null;
+var privateGadgetSpecFeedUrl = null;
+
+var log = (window.console && typeof(console.log) == "function") ? console.log : function() {};
+
+function initEditor() {
+  if (privateGadgetSpecFeedUrl) {
+    initGadgetNameList();
+  }
+};
+
+function initGadgetNameList() {
+  service = new google.gdata.client.FeedServerService('PrivateGadgetSpec', 'GadgetEditor');
+  service.setGadgetsAuthentication('SIGNED');
+  service.getFeed(
+      privateGadgetSpecFeedUrl,
+      function(response) {
+        if (response) {
+          var entries = response.feed.entry || [];
+          showPrivateGadgetNames(setPrivateGadgetNames(entries));
+        }
+      },
+      log);
+};
+
+function setPrivateGadgetNames(entries) {
+  privateGadgetNames = [];
+  for (var i = 0; i < entries.length; i++) {
+    var name = entries[i].id.$t;
+    name = name.substring(name.lastIndexOf('/') + 1);
+    privateGadgetNames.push(name);
+  }
+  return privateGadgetNames;
+};
+
+function showPrivateGadgetNames() {
+  var html = ['<select id="gadget-select" onchange="editSelectedGadget()">'];
+  html.push('<option value="">Select to load</option>');
+  for (var i = 0; i < privateGadgetNames.length; i++) {
+    var privateGadgetName = privateGadgetNames[i];
+    html.push('<option ' + (privateGadgetName == nameOfGadgetBeingEdited ? 'selected' : '') + '>', privateGadgetName, '</option>');
+  }
+  document.getElementById('gadget-list').innerHTML = html.join('');
+};
+
+function getSelectedGadgetName() {
+  return document.getElementById('gadget-select').value;
+};
+
+function editSelectedGadget() {
+  var name = getSelectedGadgetName();
+  if (name) {
+    service.getEntry(privateGadgetSpecFeedUrl + '/' + name, function(response) {
+      nameOfGadgetBeingEdited = name;
+      entryOfGadgetBeingEdited = response.entry;
+      editor.setCode(response.entry.content.entity.specContent);
+      editor.editor.syntaxHighlight('init');
+    }, log);
+  } else {
+    newGadget();
+  }
+};
+
+function deleteSelectedGadget() {
+  var name = getSelectedGadgetName();
+  if (name) {
+    service.deleteEntry(privateGadgetSpecFeedUrl + '/' + name, function(response) {
+      initEditor();
+      newGadget();
+    }, log);
+  } else {
+    alert('No gadget selected');
+  }
+};
+
+function newGadget() {
+  nameOfGadgetBeingEdited = '';
+  editor.setCode(getGadgetSpecTemplate());
+  editor.editor.syntaxHighlight('init');
+  showPrivateGadgetNames();
+  entryOfGadgetBeingEdited = {xmlns: 'http://www.w3.org/2005/Atom', content: {
+      type: 'application/xml', entity: {name: '', specContent: ''}}};
+};
+
+function saveGadget() {
+  entryOfGadgetBeingEdited.content.entity.specContent = editor.getCode();
+  if (nameOfGadgetBeingEdited) {
+    service.updateEntry(privateGadgetSpecFeedUrl + '/' + nameOfGadgetBeingEdited, entryOfGadgetBeingEdited, console.log, console.log);
+  } else {
+    nameOfGadgetBeingEdited = prompt('Please enter name of gadget (e.g. hello.xml)');
+    if (nameOfGadgetBeingEdited) {
+      entryOfGadgetBeingEdited.content.entity.name = nameOfGadgetBeingEdited;
+      service.insertEntry(privateGadgetSpecFeedUrl, entryOfGadgetBeingEdited, function(response) {
+        log(response);
+        privateGadgetNames.push(nameOfGadgetBeingEdited);
+        showPrivateGadgetNames();
+      }, log);
+    }
+  }
+};
+
+function getGadgetSpecTemplate() {
+  var textArea = document.getElementById('gadget-spec-template');
+  return textArea.value || textArea.defaultValue;
+};
+
+google.load('gdata', '1.x', {packages: ['core']});
+google.setOnLoadCallback(initEditor);</script>
+
+<script src="http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/private-gadget-editor/codepress.js" type="text/javascript"></script>
+<script src="http://www.google.com/ig/modules/codepress/codepress_wrapper.js?ts=092908" type="text/javascript"></script>
+
+<script type="text/javascript">
+function initCodePress() {
+  editor.style.height = '400px';
+  CodePressWrapper.init();
+};
+
+function initGadget() {
+  var domainName = new gadgets.Prefs().getString("domainName");
+  if (domainName) {
+    privateGadgetSpecFeedUrl = 'http://www.google.com/a/feeds/server/g/domain/' + domainName + '/PrivateGadgetSpec';
+  } else {
+    console.log('domain name missing'); // TODO: show error on status bar
+  }
+
+  _IG_AdjustIFrameHeight();
+};
+
+function init() {
+  initGadget();
+  initEditor();
+  initCodePress();
+};
+
+_IG_RegisterOnloadHandler(init);
+</script>
+
+<div id="button-bar">
+  <span id="gadget-list">Loading ...</span>
+  <button onclick="javascript:saveGadget()">Save</button>
+  <button onclick="javascript:deleteSelectedGadget()">Delete</button> |
+  <button onclick="javascript:newGadget()">New</button>
+</div>
+
+<textarea id="editor" class="codepress gadget"></textarea>
+<iframe id="codepress-iframe"></iframe>
+
+<textarea id="gadget-spec-template" style="display:none">
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+<ModulePrefs title="hello world example" author_email="developer@example.com" />
+<Content type="html">
+Hello, private world!
+</Content>
+</Module>
+</textarea>
+]]></Content>
+</Module>
