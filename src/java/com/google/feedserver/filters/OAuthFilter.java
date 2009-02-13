@@ -18,6 +18,7 @@ package com.google.feedserver.filters;
 
 import com.google.feedserver.adapters.AbstractManagedCollectionAdapter;
 import com.google.feedserver.config.UserInfo;
+import com.google.feedserver.config.UserInfo.UserInfoProperties;
 import com.google.feedserver.samples.config.HashMapBasedUserInfo;
 
 import net.oauth.OAuthAccessor;
@@ -33,6 +34,8 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -120,12 +123,19 @@ public class OAuthFilter implements Filter {
     OAuthAccessor accessor = new OAuthAccessor(consumer);
     message.validateMessage(accessor, validator);
 
-    // Retrieve and set the user info
-    String userinfo = message.getParameter("opensocial_viewer_id");
-    UserInfo userInfo = new HashMapBasedUserInfo();
-    userInfo.setEmail(userinfo);
+    // Retrieve and set the user info with the OAuth parameters
+    Map<UserInfoProperties, Object> oauthParams = new HashMap<UserInfoProperties, Object>();
+    oauthParams.put(UserInfoProperties.EMAIL, message.getParameter("opensocial_viewer_email"));
+    oauthParams.put(UserInfoProperties.VIEWER_ID, message.getParameter("opensocial_viewer_id"));
+    oauthParams.put(UserInfoProperties.OWNER_EMAIL, message.getParameter("opensocial_owner_email"));
+    oauthParams.put(UserInfoProperties.OWNER_ID, message.getParameter("opensocial_owner_id"));
+    oauthParams.put(UserInfoProperties.APPLICATION_ID, message.getParameter("opensocial_app_id"));
+    oauthParams.put(UserInfoProperties.APPLICATION_URL, message.getParameter("opensocial_app_url"));
+
+    UserInfo userInfo = new HashMapBasedUserInfo(oauthParams);
     request.setAttribute(AbstractManagedCollectionAdapter.USER_INFO, userInfo);
-    return userinfo;
+
+    return message.getParameter("opensocial_viewer_id");
   }
 
   protected void sendError(ServletResponse response, int errorCode) throws IOException {

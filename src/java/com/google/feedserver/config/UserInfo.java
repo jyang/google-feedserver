@@ -33,7 +33,8 @@ public interface UserInfo {
    */
   public enum UserInfoProperties {
     NICK_NAME("nick"), FIRST_NAME("fname"), LAST_NAME("lname"), COUTNRY("country"),
-    LANGUAGE("lang"), LOCALE("local"), EMAIL("email");
+    LANGUAGE("lang"), LOCALE("local"), EMAIL("email"), OWNER_EMAIL("owner_email"), VIEWER_ID(
+        "viewer_id"), OWNER_ID("owner_id"), APPLICATION_ID("app_id"), APPLICATION_URL("app_url");
 
     private String prefName;
 
@@ -62,6 +63,16 @@ public interface UserInfo {
 
   public String getEmail();
 
+  public String getOwnerEmail();
+
+  public String getViewerId();
+
+  public String getOwnerId();
+
+  public String getApplicationId();
+
+  public String getApplicationUrl();
+
   public void setPrefrence(UserInfoProperties property, Object value);
 
   public void setNickName(String nickName);
@@ -77,4 +88,14 @@ public interface UserInfo {
   public void setLocale(String locale);
 
   public void setEmail(String email);
+
+  public void setOwnerEmail(String ownerEmail);
+
+  public void setViewerId(String veiwerId);
+
+  public void setOwnerId(String ownerId);
+
+  public void setApplicationId(String appId);
+
+  public void setApplicationUrl(String appUrl);
 }

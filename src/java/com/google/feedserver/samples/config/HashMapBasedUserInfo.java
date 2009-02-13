@@ -80,6 +80,31 @@ public class HashMapBasedUserInfo implements UserInfo {
   }
 
   @Override
+  public String getApplicationId() {
+    return getStringValue(prefs.get(UserInfoProperties.APPLICATION_ID));
+  }
+
+  @Override
+  public String getApplicationUrl() {
+    return getStringValue(prefs.get(UserInfoProperties.APPLICATION_URL));
+  }
+
+  @Override
+  public String getOwnerEmail() {
+    return getStringValue(prefs.get(UserInfoProperties.OWNER_EMAIL));
+  }
+
+  @Override
+  public String getOwnerId() {
+    return getStringValue(prefs.get(UserInfoProperties.OWNER_ID));
+  }
+
+  @Override
+  public String getViewerId() {
+    return getStringValue(prefs.get(UserInfoProperties.VIEWER_ID));
+  }
+
+  @Override
   public void setCountry(String country) {
     prefs.put(UserInfoProperties.COUTNRY, country);
   }
@@ -119,6 +144,32 @@ public class HashMapBasedUserInfo implements UserInfo {
     prefs.put(property, value);
   }
 
+  @Override
+  public void setApplicationId(String appId) {
+    prefs.put(UserInfoProperties.APPLICATION_ID, appId);
+  }
+
+  @Override
+  public void setApplicationUrl(String appUrl) {
+    prefs.put(UserInfoProperties.APPLICATION_URL, appUrl);
+  }
+
+  @Override
+  public void setOwnerEmail(String ownerEmail) {
+    prefs.put(UserInfoProperties.OWNER_EMAIL, ownerEmail);
+
+  }
+
+  @Override
+  public void setOwnerId(String ownerId) {
+    prefs.put(UserInfoProperties.OWNER_ID, ownerId);
+  }
+
+  @Override
+  public void setViewerId(String veiwerId) {
+    prefs.put(UserInfoProperties.VIEWER_ID, veiwerId);
+  }
+
   private String getStringValue(Object value) {
     if (null == value) {
       return null;
@@ -126,4 +177,6 @@ public class HashMapBasedUserInfo implements UserInfo {
       return value.toString();
     }
   }
+
+
 }
