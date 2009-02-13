@@ -3,7 +3,7 @@
 <ModulePrefs title="Private Gadget Editor" >
   <Require feature="dynamic-height"/>
   <Require feature="setprefs"/>
-  <Require feature="tabs"/>
+  <Require feature="minimessage"/>
 </ModulePrefs>
 <UserPref name="domainName" display_name="Domain Name" datatype="string"/>
 <Content type="html"><![CDATA[
@@ -29,8 +29,6 @@ var nameOfGadgetBeingEdited = '';
 var entryOfGadgetBeingEdited = null;
 var privateGadgetSpecFeedUrl = null;
 
-var log = (window.console && typeof(console.log) == "function") ? console.log : function() {};
-
 function initEditor() {
   if (privateGadgetSpecFeedUrl) {
     initGadgetNameList();
@@ -48,7 +46,7 @@ function initGadgetNameList() {
           showPrivateGadgetNames(setPrivateGadgetNames(entries));
         }
       },
-      log);
+      showMessage);
 };
 
 function setPrivateGadgetNames(entries) {
@@ -83,7 +81,7 @@ function editSelectedGadget() {
       entryOfGadgetBeingEdited = response.entry;
       editor.setCode(response.entry.content.entity.specContent);
       editor.editor.syntaxHighlight('init');
-    }, log);
+    }, showMessage);
   } else {
     newGadget();
   }
@@ -95,7 +93,7 @@ function deleteSelectedGadget() {
     service.deleteEntry(privateGadgetSpecFeedUrl + '/' + name, function(response) {
       initEditor();
       newGadget();
-    }, log);
+    }, showMessage);
   } else {
     alert('No gadget selected');
   }
@@ -116,16 +114,15 @@ function saveGadget(changeName) {
     if (changeName) {
       nameOfGadgetBeingEdited = prompt('Please enter new name of gadget (e.g. hello.xml)');
     }
-    service.updateEntry(privateGadgetSpecFeedUrl + '/' + nameOfGadgetBeingEdited, entryOfGadgetBeingEdited, console.log, console.log);
+    service.updateEntry(privateGadgetSpecFeedUrl + '/' + nameOfGadgetBeingEdited, entryOfGadgetBeingEdited, showMessage, showMessage);
   } else {
     nameOfGadgetBeingEdited = prompt('Please enter name of gadget (e.g. hello.xml)');
     if (nameOfGadgetBeingEdited) {
       entryOfGadgetBeingEdited.content.entity.name = nameOfGadgetBeingEdited;
       service.insertEntry(privateGadgetSpecFeedUrl, entryOfGadgetBeingEdited, function(response) {
-        log(response);
         privateGadgetNames.push(nameOfGadgetBeingEdited);
         showPrivateGadgetNames();
-      }, log);
+      }, showMessage);
     }
   }
 };
@@ -137,7 +134,7 @@ function openGadgetByUrl() {
     params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.TEXT;
     gadgets.io.makeRequest(gadgetSpecUrl, function(response) {
       if (response.rc > 299) {
-        console.log(response.errors);  // TODO
+        showMessage('error: ' + response.errors);
       } else {
         nameOfGadgetBeingEdited = null;
         entryOfGadgetBeingEdited = {xmlns: 'http://www.w3.org/2005/Atom', content: {
@@ -152,6 +149,11 @@ function openGadgetByUrl() {
 function getGadgetSpecTemplate() {
   var textArea = document.getElementById('gadget-spec-template');
   return textArea.value || textArea.defaultValue;
+};
+
+function showMessage(message) {
+  var miniMessage = new gadgets.MiniMessage(__MODULE_ID__, document.getElementById('message-box'));
+  miniMessage.createDismissibleMessage(message);
 };
 
 google.load('gdata', '1.x', {packages: ['core']});
@@ -171,7 +173,7 @@ function initGadget() {
   if (domainName) {
     privateGadgetSpecFeedUrl = 'http://www.google.com/a/feeds/server/g/domain/' + domainName + '/PrivateGadgetSpec';
   } else {
-    console.log('domain name missing'); // TODO: show error on status bar
+    showMessage('domain name missing');
   }
 
   _IG_AdjustIFrameHeight();
@@ -186,14 +188,19 @@ function init() {
 _IG_RegisterOnloadHandler(init);
 </script>
 
-<div id="button-bar">
-  <span id="gadget-list">Loading ...</span>
-  <button onclick="javascript:saveGadget(false)">Save</button>
-  <button onclick="javascript:saveGadget(true)">Save as</button>
-  <button onclick="javascript:deleteSelectedGadget()">Delete</button> |
-  <button onclick="javascript:newGadget()">New</button>
-  <button onclick="javascript:openGadgetByUrl()">Open URL</button>
-</div>
+<table width="100%">
+  <tr>
+    <td id="button-bar">
+      <span id="gadget-list">Loading ...</span>
+      <button onclick="javascript:saveGadget(false)">Save</button>
+      <button onclick="javascript:saveGadget(true)">Save as</button>
+      <button onclick="javascript:deleteSelectedGadget()">Delete</button> |
+      <button onclick="javascript:newGadget()">New</button>
+      <button onclick="javascript:openGadgetByUrl()">Open URL</button>
+    </td>
+    <td id="message-box" align="right"></td>
+  </tr>
+</table>
 
 <textarea id="editor" class="codepress gadget"></textarea>
 <iframe id="codepress-iframe"></iframe>
