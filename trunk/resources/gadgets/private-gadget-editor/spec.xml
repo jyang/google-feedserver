@@ -180,12 +180,12 @@ function initGadget() {
 };
 
 function init() {
+  initCodePress();
   initGadget();
   initEditor();
-  initCodePress();
 };
 
-gadgets.util.registerOnLoadHandler(init);
+_IG_RegisterOnloadHandler(init);
 </script>
 
 <table width="100%">
