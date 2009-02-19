@@ -12,7 +12,7 @@ AUTHN_URL_PROTOCOL=http
 AUTHN_URL=localhost:8080
 
 ### Use with hosted Google FeedServer
-# FSCT_FEED_BASE=http://www.google.com/a/feeds/server/g/domain/$FSCT_DOMAIN
+# FSCT_FEED_BASE=http://feedserver-enterprise.googleusercontent.com/a/$FSCT_DOMAIN/g
 # SERVICE_NAME=esp
 # AUTHN_URL_PROTOCOL=https
 # AUTHN_URL=www.google.com
