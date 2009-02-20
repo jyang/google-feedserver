@@ -136,15 +136,15 @@ public class FeedServerAdapterManager extends CollectionAdapterManager {
         new Class[] {Abdera.class, FeedConfiguration.class}, abdera, config);
   }
 
-/**
+  /**
    * Creates {@link CollectionAdapter}.
-   *
+   * 
    * @param adapterType fully qualified class name for the adapter.
-   * @param paramClasses the class's for parameters in the constructor
-   *                     of the adapter (in order).
-   * @param objects the objects that need to be passed to the constructor
-   *                (in order).
-   * @return an instance of type {@link adapterType)
+   * @param paramClasses the class's for parameters in the constructor of the
+   *        adapter (in order).
+   * @param objects the objects that need to be passed to the constructor (in
+   *        order).
+   * @return an instance of type {@link CollectionAdapter}
    * @throws ClassNotFoundException
    * @throws SecurityException
    * @throws NoSuchMethodException

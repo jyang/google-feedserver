@@ -289,7 +289,7 @@ public class TypelessFeedServerClient {
    * Converts raw XML representation of a feed entry into a "typeless" map.
    * 
    * @param xmlText raw XML entry.
-   * @returns a "typeless" map representing an entry.
+   * @return a "typeless" map representing an entry.
    * @throws FeedServerClientException if the Xml cannot be parsed.
    */
   public Map<String, Object> getMapFromXml(String xmlText) throws FeedServerClientException {
