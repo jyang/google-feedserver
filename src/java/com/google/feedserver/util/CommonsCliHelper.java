@@ -1,16 +1,17 @@
-/* Copyright 2008 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+/*
+ * Copyright 2008 Google Inc.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.google.feedserver.util;
 
@@ -26,49 +27,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Uses reflection to scan registered classes for any String or boolean ending in "_FLAG" or
- * "_HELP" and creates command line flags for these fields.  Use {@linke #register(Class)} to 
- * register a classes flag Fields and {@link #parse} to parse the command line args.
+ * Uses reflection to scan registered classes for any String or boolean ending
+ * in "_FLAG" or "_HELP" and creates command line flags for these fields. Use
+ * {@link #register(Class)} to register a classes flag Fields and {@link #parse}
+ * to parse the command line args.
  * 
- * Fields must be static and only String and boolean are currently supported.   The field name
- * up to the "_" is used as the flag name and its value is the default.
+ * Fields must be static and only String and boolean are currently supported.
+ * The field name up to the "_" is used as the flag name and its value is the
+ * default.
  * 
- * example:
- * to setup --filename as a flag. in class Foo with flag help.
+ * example: to setup --filename as a flag. in class Foo with flag help.
  * 
- * public class Foo { 
- *   public static String filename_FLAG = "/tmp/defaultfile";
- *   public static String filename_HELP = "filename to access";
- *   
- *   public static void main(String[] args) {
- *     CommonsCliHelper cliHelper = new CommonsCliHelper();
- *     cliHelper.register(Foo.class);
- *     cliHelper.parse(args);
- *     System.stdout.println("Filename is " + filename_FLAG);
- *   }
+ * public class Foo { public static String filename_FLAG = "/tmp/defaultfile";
+ * public static String filename_HELP = "filename to access";
+ * 
+ * public static void main(String[] args) { CommonsCliHelper cliHelper = new
+ * CommonsCliHelper(); cliHelper.register(Foo.class); cliHelper.parse(args);
+ * System.stdout.println("Filename is " + filename_FLAG); }
  * 
  * @author r@kuci.org (Ray Colline)
  */
 public class CommonsCliHelper {
-  
+
   @SuppressWarnings("unchecked")
   private List<Class> classes;
   private CommandLine flags;
   private Options options;
-  
+
   @SuppressWarnings("unchecked")
   public CommonsCliHelper() {
     classes = new ArrayList<Class>();
   }
-  
+
   @SuppressWarnings("unchecked")
   public void register(Class flagClass) {
-    classes.add(flagClass); 
+    classes.add(flagClass);
   }
-  
+
   /**
-   * With provided command line string, populates all registered classes _FLAG fields with their
-   * command-line values.
+   * With provided command line string, populates all registered classes _FLAG
+   * fields with their command-line values.
    * 
    * @param args command-line.
    */
@@ -81,7 +79,7 @@ public class CommonsCliHelper {
       usage();
       throw new RuntimeException(e);
     }
-    
+
     /*
      * Print help text and exit.
      */
@@ -91,25 +89,25 @@ public class CommonsCliHelper {
     }
     populateClasses();
   }
-  
+
   /**
    * Prints usage information.
    */
   public void usage() {
     new HelpFormatter().printHelp("Usage", options);
   }
-  
+
   /**
-   * Loop through each registered class and parse the command line for their flags.  If
-   * option isnt specified we leave the default.
+   * Loop through each registered class and parse the command line for their
+   * flags. If option isnt specified we leave the default.
    */
   @SuppressWarnings("unchecked")
   private void populateClasses() {
     for (Class flagClass : classes) {
       for (Field field : flagClass.getFields()) {
         if (field.getName().endsWith("_FLAG")) {
-          String argName = field.getName().substring(
-              0, field.getName().length() - "_FLAG".length());
+          String argName =
+              field.getName().substring(0, field.getName().length() - "_FLAG".length());
           if (field.getType().getName().equals(Boolean.class.getName())) {
             if (flags.hasOption(argName)) {
               setField(field, new Boolean(true));
@@ -145,26 +143,28 @@ public class CommonsCliHelper {
       throw new RuntimeException("Field " + field.getName() + " must be static");
     }
   }
-  
+
   /**
-   * For each class registered, we extract options based on the flags set within the class.
+   * For each class registered, we extract options based on the flags set within
+   * the class.
    * 
-   *  - Any class field ending in {prefix}_FLAG is turned into "--{prefix}" on the command line. 
-   *   eg.  "public String adminEmail_FLAG" becomes "--adminEmail"
-   *  - Any field defined with {prefix}_HELP will be used as the help text.
+   * - Any class field ending in {prefix}_FLAG is turned into "--{prefix}" on
+   * the command line. eg. "public String adminEmail_FLAG" becomes
+   * "--adminEmail" - Any field defined with {prefix}_HELP will be used as the
+   * help text.
    * 
    * @return Options all commandline options registered for parsing.
    */
   @SuppressWarnings("unchecked")
   private Options createOptions() {
-    
+
     Options options = new Options();
     options.addOption(new Option("help", false, "Print out usage."));
     for (Class flagClass : classes) {
       for (Field field : flagClass.getFields()) {
         if (field.getName().endsWith("_FLAG")) {
-          String argName = field.getName().substring(
-              0, field.getName().length() - "_FLAG".length());
+          String argName =
+              field.getName().substring(0, field.getName().length() - "_FLAG".length());
           String helpText = getHelpText(flagClass, argName);
           if (field.getType().getName().equals(Boolean.class.getName())) {
             options.addOption(new Option(argName, false, helpText));
@@ -177,10 +177,10 @@ public class CommonsCliHelper {
     }
     return options;
   }
-    
-    
+
+
   /**
-   * Returns help text for the given field and class. 
+   * Returns help text for the given field and class.
    * 
    * @returns String the help text.
    */

@@ -24,7 +24,7 @@ import com.google.feedserver.samples.config.XmlMixinConfiguration;
 
 /**
  * A manager that handles and wraps adapters. Whenever an adapter is created we
- * apply {@link WrapperManger} as a wrapper over the adapter. The
+ * apply WrapperManger as a wrapper over the adapter. The
  * {@link XmlWrapperManager} looks at configuration of the adapter and applies
  * all the wrappers that needed by this adapter. If the adapter itself is a
  * wrapper then Wrapper manager finds its target adapter and applies this

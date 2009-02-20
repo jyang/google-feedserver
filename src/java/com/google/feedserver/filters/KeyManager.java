@@ -46,10 +46,11 @@ public interface KeyManager {
   }
 
   /**
+   * Checks if there is a key of type {@link KeyType} for the given consumer
    * 
-   * @param consumerId
-   * @param keyType
-   * @return
+   * @param consumerId The consumer-id
+   * @param keyType One of the key types as defined in {@link KeyType}
+   * @return True if there exists a key and false otherwise
    */
   boolean hasKeyForConsumer(String consumerId, KeyType keyType);
 

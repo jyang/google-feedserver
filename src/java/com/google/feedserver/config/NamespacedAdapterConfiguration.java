@@ -167,7 +167,7 @@ public class NamespacedAdapterConfiguration extends CollectionAdapterConfigurati
   /**
    * Returns the adapter class name
    * 
-   * @return
+   * @return The adapter class name
    */
   public String getAdapterClassName() {
     return getStringProperty(FeedConfiguration.PROP_NAME_ADAPTER_CLASS);
