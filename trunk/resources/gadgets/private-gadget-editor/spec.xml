@@ -168,10 +168,29 @@ function initCodePress() {
   CodePressWrapper.init();
 };
 
+function detectDomainName() {
+  var params = location.href.split('&');
+  for (var i = 0; i < params.length; i++) {
+    if (params[i].indexOf('parent=') == 0) {
+      var p = params[i].split('=');
+      var parent = decodeURIComponent(p[1]); 
+      var r = /sites.google.com\/a\/([^\/]*)\//.exec(parent);
+      var domainName = r ? r[1] : null;
+      return domainName;
+    }
+  }
+
+  return null;
+};
+
+function getDomainName() {
+  return new gadgets.Prefs().getString("domainName") || detectDomainName();
+};
+
 function initGadget() {
-  var domainName = new gadgets.Prefs().getString("domainName");
+  var domainName = getDomainName();
   if (domainName) {
-    privateGadgetSpecFeedUrl = 'http://www.google.com/a/feeds/server/g/domain/' + domainName + '/PrivateGadgetSpec';
+    privateGadgetSpecFeedUrl = 'http://feedserver-enterprise.googleusercontent.com/a/' + domainName + '/g/PrivateGadgetSpec';
   } else {
     showMessage('domain name missing');
   }
