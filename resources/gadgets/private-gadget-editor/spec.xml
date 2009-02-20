@@ -173,8 +173,8 @@ function detectDomainName() {
   for (var i = 0; i < params.length; i++) {
     if (params[i].indexOf('parent=') == 0) {
       var p = params[i].split('=');
-      var parent = decodeURIComponent(p[1]); 
-      var r = /sites.google.com\/a\/([^\/]*)\//.exec(parent);
+      var parent = decodeURIComponent(p[1]);
+      var r = /google.com\/a\/([^\/]*)\//.exec(parent);
       var domainName = r ? r[1] : null;
       return domainName;
     }
