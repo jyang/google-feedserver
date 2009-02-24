@@ -228,7 +228,7 @@ gadgets.util.registerOnLoadHandler(init);
     <td id="button-bar">
       <span id="gadget-list">Loading ...</span>
       <button onclick="javascript:saveGadget(false)">Save</button>
-      <button onclick="javascript:saveGadget(true)">Save as</button>
+      <button onclick="javascript:saveGadget(true)">Save As</button>
       <button onclick="javascript:deleteSelectedGadget()">Delete</button> |
       <button onclick="javascript:newGadget()">New</button>
       <button onclick="javascript:openGadgetByUrl()">Open URL</button>
