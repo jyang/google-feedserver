@@ -127,13 +127,14 @@ function newGadget() {
 
 function saveGadget(changeName) {
   entryOfGadgetBeingEdited.content.entity.specContent = editor.getCode();
-  if (nameOfGadgetBeingEdited) {
-    if (changeName) {
-      nameOfGadgetBeingEdited = prompt('Please enter new name of gadget (e.g. hello.xml)');
-    }
+  if (nameOfGadgetBeingEdited && !changeName) {
     service.updateEntry(privateGadgetSpecFeedUrl + '/' + nameOfGadgetBeingEdited, entryOfGadgetBeingEdited, showMessage, showMessage);
   } else {
-    nameOfGadgetBeingEdited = prompt('Please enter name of gadget (e.g. hello.xml)');
+    if (changeName) {
+      nameOfGadgetBeingEdited = prompt('Please enter new name of gadget (e.g. hello.xml)');
+    } else {
+      nameOfGadgetBeingEdited = prompt('Please enter name of new gadget (e.g. hello.xml)');
+    }
     if (nameOfGadgetBeingEdited) {
       entryOfGadgetBeingEdited.content.entity.name = nameOfGadgetBeingEdited;
       service.insertEntry(privateGadgetSpecFeedUrl, entryOfGadgetBeingEdited, function(response) {
