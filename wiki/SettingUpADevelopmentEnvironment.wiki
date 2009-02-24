@@ -164,7 +164,7 @@ To test signed requests, you can use a the {{{FeedServerClientTool}}} using the 
 
 You can download a pre-built version of the [http://google-feedserver.googlecode.com/files/client-tools.zip FSCT client tools] from the Downloads tab.
 
-Before running these shell scripts, create the client JAR file. Run the {{{ant client}}} Ant target.
+Before running these shell scripts, create the client JAR file (if not using the pre-built FSCT client tools). Run the {{{ant client}}} Ant target.
 
 When running each  script, you are prompted for a username and password. For the sample feeds, you can key in any username and password as no authentication is done to validate the user. In a production environment, configure the Feed Server to authenticate users for the service and issue tokens to authorize requests.
 
