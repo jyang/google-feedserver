@@ -2,18 +2,15 @@
 
 === Apache Abdera Project Information ===
 
-  * [http://abdera.apache.org/ Apache Abdera], [http://abdera.apache.org/docs/api/index.html Javadocs]
+  * [http://abdera.apache.org/ Apache Abdera Site]
+  * [http://cwiki.apache.org/confluence/display/ABDERA/Documentation Wiki Docs ]
+  * [http://abdera.apache.org/docs/api/index.html Javadocs]
 
   * [http://mail-archives.apache.org/mod_mbox/abdera-dev/ Abdera Mailing List Archives]
 
-  * [http://svn.apache.org/repos/asf/abdera/java/trunk/server/src/main/java/org/apache/abdera/protocol/server/ Apache Abdera Repos]
+  * [http://svn.apache.org/viewvc/abdera/java/trunk/ Abdera Repository Viewer]
 
-  * [http://mail-archives.apache.org/mod_mbox/abdera-dev/200709.mbox/%3c4953698.1190658350586.JavaMail.jira@brutus%3e Build a WAR file for SimpleProvider]
-    * Includes examples for file system adapting
-    * [https://issues.apache.org/jira/browse/ABDERA-66 Issue for building a WAR file for SimpleProvider]
 
-  * [http://mail-archives.apache.org/mod_mbox/incubator-abdera-dev/200711.mbox/%3c473C7087.9030709%40gmail.com%3e Streamwriter]
-    * Higher performance response writes
 ----
 *Current Status:*
-Google Feed Server is based on Apache Abdera 3.0 and has a prototype implementation of Abdera Adapters. Managed Collection Adapters were added to Abdera 4.0. Abdera Head is now at 5.0 and this is the only working release. Work is currently in progress to bring Google Feed Server up to date with Abdera 5.0.
+Google Feed Server is based on Apache Abdera 1.0 and has an extended implementation of Abdera Adapters. Managed Collection Adapters, a Feed Server invention, were added to Abdera 0.4.0. Abdera Head is now at 1.0-incubating and release is imminent. When Abdera ships 1.0, Feed Server will sync to it.
