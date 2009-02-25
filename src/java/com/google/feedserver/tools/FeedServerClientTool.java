@@ -161,10 +161,21 @@ public class FeedServerClientTool {
    * @throws AuthenticationException
    */
   protected void getUserCredentials() throws AuthenticationException {
-    String username = username_FLAG == null ? getConsole().readLine("Username: ") : username_FLAG;
-    String password =
-        password_FLAG == null ? new String(getConsole().readPassword("Password: ")) : password_FLAG;
-    feedServerClient.setUserCredentials(username, new String(password));
+    String username = username_FLAG;
+
+    while (username == null || username.trim().isEmpty()) {
+      getConsole().printf("The username cannot be null or blank");
+      username = getConsole().readLine("\nUsername: ");
+    }
+
+    String password = password_FLAG;
+
+    while (password == null || password.trim().isEmpty()) {
+      getConsole().printf("The password cannot be null or blank");
+      password = new String(getConsole().readPassword("\nPassword: "));
+    }
+
+    feedServerClient.setUserCredentials(username, password);
   }
 
   protected Console getConsole() {
