@@ -154,6 +154,10 @@ Before building the code base, uncomment the following lines in the {{{web/WEB-I
 
 Build and deploy the WAR file for Tomcat, use the {{{ant tomcat}}} command.
 
+
+----
+= Using the Feed Server Client Tool =
+
 To test signed requests, you can use a the {{{FeedServerClientTool}}} using the following scripts in the {{{resources/clientTool}}} folder:
   * {{{setupEnv.sh}}} -- Set up the parameter values required by all other scripts
   * {{{getFeed.sh}}} -- The script to retrieve a feed
