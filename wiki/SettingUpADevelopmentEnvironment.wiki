@@ -170,7 +170,7 @@ You can download a pre-built version of the [http://google-feedserver.googlecode
 
 Before running these shell scripts, create the client JAR file (if not using the pre-built FSCT client tools). Run the {{{ant client}}} Ant target.
 
-When running each  script, you are prompted for a username and password. For the sample feeds, you can key in any username and password as no authentication is done to validate the user. In a production environment, configure the Feed Server to authenticate users for the service and issue tokens to authorize requests.
+When running each  script, you are prompted for a password. The username should be set in {{{setupEnv.sh (or setupEnv.bat)}}}. For the sample feeds, you can use any username and password as no authentication is done to validate the user. In a production environment, configure the Feed Server to authenticate users for the service and issue tokens to authorize requests.
 
 == Details of Each Script ==
 
@@ -178,6 +178,7 @@ When running each  script, you are prompted for a username and password. For the
 
 Update the {{{setupEnv.sh}}} script with a domain name for the feeds and the other parameters required for authentication and authorization:
   * FSCT_DOMAIN -- Domain name
+  * FSCT_USER_NAME -- The username
   * FSCT_FEED_BASE -- The feed URL
   * SERVICE_NAME -- The name of the service with which the user account is associated. For the sample feeds, it is {{{test}}}.
   * AUTHN_URL_PROTOCOL -- Name of the protocol to use for authentication, either {{{http}}} or {{{https}}}.
