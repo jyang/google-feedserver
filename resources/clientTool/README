@@ -1,5 +1,5 @@
-Client tools:
-==========================
+Client Tools Downloadable Distribution
+======================================
 
 This is a binary distribution of the client tools (FSCT scripts) to work with Google FeedServer.
 
@@ -21,13 +21,21 @@ The scripts should be used when requests are to be signed with Google ClientLogi
 
 See http://code.google.com/apis/accounts/docs/AuthForInstalledApps.html for Google ClientLogin details 
 
-1. Update the setupEnv.sh (or setupEnv.bat) script with the domain name for the feeds and the other parameters required for authentication and authorization:
+1. Update the setupEnv.sh (or setupEnv.bat) script with the domain name for the feeds and the other parameters required for authentication and authorization. For Google hosted FeedServer, at a minimum, FSCT_DOMAIN must be set, and generally, to work with the standard feeds, no other changes are necesssary. The following are the user-configurable settings:
+
   * FSCT_DOMAIN -- Domain name
   * FSCT_FEED_BASE -- The feed URL
   * SERVICE_NAME -- The name of the service with which the user account is associated.
   * AUTHN_URL_PROTOCOL -- Name of the protocol to use for authentication, either http or https.
   * AUTHN_URL -- The end point that handles authentication and grants authorization tokens to be used with each request. 
 
+2. Test things are working with the getFeed.sh(bat) script.
+  Run this script as follows:
+
+  $> ./getFeed.sh <<feed_name>>
+  
+  For example './getFeed.sh Gadgets' will fetch the feed that contains all gadgets in the public gadget directory.
+  
 2. The insertEntry.sh (or insertEntry.bat) script adds a new entry to a feed. 
   The feed entry details come from a file whose path is specified as input in the script : 
   -entryFilePath <path to the file>
@@ -43,4 +51,39 @@ For more details please refer to the documentation here:
 http://code.google.com/p/google-feedserver/wiki/SettingUpADevelopmentEnvironment#Details_of_Each_Script
 
 
+Troubleshooting
+---------------
+
+All Platforms
+
+* You may get the following message when running any command:
+  log4j:WARN No appenders could be found for logger (org.apache.commons.beanutils.converters.BooleanConverter).
+  log4j:WARN Please initialize the log4j system properly.
+
+  * You can safely ignore these warnings, or turn on Abdera debugging: http://code.google.com/p/google-feedserver/wiki/SettingUpADevelopmentEnvironment#Abdera_Debugging
+
+* Not found Exception:
+
+  Exception in thread "main" com.google.feedserver.util.FeedServerClientException: com.google.gdata.util.ResourceNotFoundException: Not Found
+  resource not found
+  
+  A number of things could be wrong here, the domain may not be right, or the entry or feed name may not be spelled correctly. Feed and Entry names are case sensitive.
+  
+* Unauthorized Exception:
+
+  Exception in thread "main" com.google.feedserver.util.FeedServerClientException: com.google.gdata.util.ServiceForbiddenException: Forbidden
+  Unauthorized
+  
+  * Feeds that have ACLs set on them may prevent reading or writing by the account provided. This error occurs when the ACL check has failed. You may be able to change the ACL for the resource by editing the ACL feed.
+
+
+Windows
+
+* If you run a command, such as getFeed.bat PrivateGadgetSpec and you get the error: 
+  "'java' is not recognized as an internal or external command, operable program or batch file." 
+  
+  * You need to install java and have java.exe it in your PATH. See http://www3.ntu.edu.sg/home/ehchua/programming/howto/JDK_Howto.html for more info. (You do not need the Java SDK to use FSCT. FSCT requires only the JRE, which is installed on many systems.)
+
+  
+  
 
