@@ -20,6 +20,17 @@
 #gadget-list {
   font-size: 10pt;
 }
+
+.right-container {
+  position: relative;
+}
+
+.right {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  margin: 4px;
+}
 </style>
 
 <script type="text/javascript">
@@ -39,203 +50,20 @@ if (location.href.indexOf('gmodules.com') > 0) {
 </script>
 
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
-<script type="text/javascript">
-var service = null;
-var privateGadgetNames = null;
-var nameOfGadgetBeingEdited = '';
-var entryOfGadgetBeingEdited = null;
-var privateGadgetSpecFeedUrl = null;
+<script type="text/javascript" src="http://google-feedserver.googlecode.com/svn/trunk/resources/private-gadget-editor/code.js"></script>
 
-function initEditor() {
-  if (privateGadgetSpecFeedUrl) {
-    initGadgetNameList();
-  }
-};
-
-function initGadgetNameList() {
-  service = new google.gdata.client.FeedServerService('PrivateGadgetSpec', 'GadgetEditor');
-  service.setGadgetsAuthentication('SIGNED');
-  service.getFeed(
-      privateGadgetSpecFeedUrl,
-      function(response) {
-        if (response) {
-          var entries = response.feed.entry || [];
-          showPrivateGadgetNames(setPrivateGadgetNames(entries));
-        }
-      },
-      showMessage);
-};
-
-function setPrivateGadgetNames(entries) {
-  privateGadgetNames = [];
-  for (var i = 0; i < entries.length; i++) {
-    var name = entries[i].id.$t;
-    name = name.substring(name.lastIndexOf('/') + 1);
-    privateGadgetNames.push(name);
-  }
-  return privateGadgetNames;
-};
-
-function showPrivateGadgetNames() {
-  var html = ['<select id="gadget-select" onchange="editSelectedGadget()">'];
-  html.push('<option value="">Select to open</option>');
-  for (var i = 0; i < privateGadgetNames.length; i++) {
-    var privateGadgetName = privateGadgetNames[i];
-    html.push('<option ' + (privateGadgetName == nameOfGadgetBeingEdited ? 'selected' : '') + '>', privateGadgetName, '</option>');
-  }
-  document.getElementById('gadget-list').innerHTML = html.join('');
-};
-
-function getSelectedGadgetName() {
-  return document.getElementById('gadget-select').value;
-};
-
-function editSelectedGadget() {
-  var name = getSelectedGadgetName();
-  if (name) {
-    service.getEntry(privateGadgetSpecFeedUrl + '/' + name, function(response) {
-      nameOfGadgetBeingEdited = name;
-      entryOfGadgetBeingEdited = response.entry;
-      editor.setCode(response.entry.content.entity.specContent);
-      editor.editor.syntaxHighlight('init');
-    }, showMessage);
-  } else {
-    newGadget();
-  }
-};
-
-function deleteSelectedGadget() {
-  var name = getSelectedGadgetName();
-  if (name) {
-    service.deleteEntry(privateGadgetSpecFeedUrl + '/' + name, function(response) {
-      initEditor();
-      newGadget();
-    }, showMessage);
-  } else {
-    alert('No gadget selected');
-  }
-};
-
-function newGadget() {
-  nameOfGadgetBeingEdited = '';
-  editor.setCode(getGadgetSpecTemplate());
-  editor.editor.syntaxHighlight('init');
-  showPrivateGadgetNames();
-  entryOfGadgetBeingEdited = {xmlns: 'http://www.w3.org/2005/Atom', content: {
-      type: 'application/xml', entity: {name: '', specContent: ''}}};
-};
-
-function saveGadget(changeName) {
-  entryOfGadgetBeingEdited.content.entity.specContent = editor.getCode();
-  if (nameOfGadgetBeingEdited && !changeName) {
-    service.updateEntry(privateGadgetSpecFeedUrl + '/' + nameOfGadgetBeingEdited, entryOfGadgetBeingEdited, showMessage, showMessage);
-  } else {
-    if (changeName) {
-      nameOfGadgetBeingEdited = prompt('Please enter new name of gadget (e.g. hello.xml)');
-    } else {
-      nameOfGadgetBeingEdited = prompt('Please enter name of new gadget (e.g. hello.xml)');
-    }
-    if (nameOfGadgetBeingEdited) {
-      entryOfGadgetBeingEdited.content.entity.name = nameOfGadgetBeingEdited;
-      service.insertEntry(privateGadgetSpecFeedUrl, entryOfGadgetBeingEdited, function(response) {
-        privateGadgetNames.push(nameOfGadgetBeingEdited);
-        showPrivateGadgetNames();
-      }, showMessage);
-    }
-  }
-};
-
-function openGadgetByUrl() {
-  var gadgetSpecUrl = prompt('Please enter public URL of gadget spec');
-  if (gadgetSpecUrl) {
-    var params = {};
-    params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.TEXT;
-    gadgets.io.makeRequest(gadgetSpecUrl, function(response) {
-      if (response.rc > 299) {
-        showMessage('error: ' + response.errors);
-      } else {
-        nameOfGadgetBeingEdited = null;
-        entryOfGadgetBeingEdited = {xmlns: 'http://www.w3.org/2005/Atom', content: {
-          type: 'application/xml', entity: {name: '', specContent: response.text}}};
-        editor.setCode(response.text);
-        editor.editor.syntaxHighlight('init');
-      }
-    }, params);
-  }
-};
-
-function getGadgetSpecTemplate() {
-  var textArea = document.getElementById('gadget-spec-template');
-  return textArea.value || textArea.defaultValue;
-};
-
-function showMessage(message) {
-  var miniMessage = new gadgets.MiniMessage(__MODULE_ID__, document.getElementById('message-box'));
-  miniMessage.createDismissibleMessage(message);
-};
-
-google.load('gdata', '1.x', {packages: ['core']});
-google.setOnLoadCallback(initEditor);
-</script>
-
-<script type="text/javascript">
-function initCodePress() {
-  editor.style.height = '400px';
-  CodePressWrapper.init();
-};
-
-function detectDomainName() {
-  var params = location.href.split('&');
-  for (var i = 0; i < params.length; i++) {
-    if (params[i].indexOf('parent=') == 0) {
-      var p = params[i].split('=');
-      var parent = decodeURIComponent(p[1]);
-      var r = /google.com\/a\/([^\/]*)\//.exec(parent);
-      var domainName = r ? r[1] : null;
-      return domainName;
-    }
-  }
-
-  return null;
-};
-
-function getDomainName() {
-  return new gadgets.Prefs().getString("domainName") || detectDomainName();
-};
-
-function initGadget() {
-  var domainName = getDomainName();
-  if (domainName) {
-    privateGadgetSpecFeedUrl = 'http://feedserver-enterprise.googleusercontent.com/a/' + domainName + '/g/PrivateGadgetSpec';
-  } else {
-    showMessage('domain name missing');
-  }
-
-  gadgets.window.adjustHeight();
-};
-
-function init() {
-  initCodePress();
-  initGadget();
-  initEditor();
-};
-
-gadgets.util.registerOnLoadHandler(init);
-</script>
-
-<table width="100%">
-  <tr>
-    <td id="button-bar">
-      <span id="gadget-list">Loading ...</span>
-      <button onclick="javascript:saveGadget(false)">Save</button>
-      <button onclick="javascript:saveGadget(true)">Save As</button>
-      <button onclick="javascript:deleteSelectedGadget()">Delete</button> |
-      <button onclick="javascript:newGadget()">New</button>
-      <button onclick="javascript:openGadgetByUrl()">Open URL</button>
-    </td>
-    <td id="message-box" align="right"></td>
-  </tr>
-</table>
+<div id="button-bar right-container">
+  <span id="gadget-list">Loading ...</span>
+  <button onclick="javascript:saveGadget(false)">Save</button>
+  <button onclick="javascript:saveGadget(true)">Save As</button>
+  <button onclick="javascript:deleteSelectedGadget()">Delete</button> |
+  <button onclick="javascript:newGadget()">New</button>
+  <button onclick="javascript:openGadgetByUrl()">Open URL</button>
+  <div class="right">
+    <span id="message-box"></span>
+    <span id="spinner"></span>
+  </div>
+</div>
 
 <textarea id="editor" class="codepress gadget"></textarea>
 <iframe id="codepress-iframe" style="display:none"></iframe>
