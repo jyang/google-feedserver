@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Module>
-<ModulePrefs title="Private Gadget Editor" >
+<ModulePrefs title="Private Gadget Editor" width="450" height="450">
   <Require feature="dynamic-height"/>
   <Require feature="setprefs"/>
   <Require feature="minimessage"/>
