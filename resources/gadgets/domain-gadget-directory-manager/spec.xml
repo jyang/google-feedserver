@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+<ModulePrefs title="Domain Gadget Directory Manager" >
+  <Require feature="dynamic-height"/>
+  <Require feature="setprefs"/>
+  <Require feature="minimessage"/>
+  <Require feature="tabs"/>
+</ModulePrefs>
+<UserPref name="domainName" display_name="Domain Name" datatype="string"/>
+<UserPref name="selectedTab" datatype="hidden"/>
+<Content type="html"><![CDATA[
+<style>
+body {
+  padding-top: 2px;
+}
+
+* {
+  font-size: 10pt;
+}
+
+.instruction {
+  margin: 4px;
+  padding: 4px;
+}
+
+.list {
+  margin: 4px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  overflow-y: scroll;
+}
+
+.list-item {
+  border-bottom: 1px solid #eee;
+}
+
+.title {
+  font-weight: bold;
+  padding: 4px;
+}
+
+.dialog {
+  margin: 4px;
+  border: 2px solid #36c;
+}
+
+.dialog .title {
+  background-color: #36c;
+  color: #fff;
+}
+
+#public-gadget-list {
+  height: 100px;
+}
+
+#hide-directory {
+  padding: 8px;
+  height: 24px;
+  background-color: #36c;
+}
+
+#hide-directory a {
+  color: #fff;
+}
+
+.button-bar {
+  padding: 4px;
+}
+
+.right-container {
+  position: relative;
+}
+
+.right {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  margin: 4px;
+}
+
+a.right {
+  margin: 0px;
+}
+</style>
+
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript" src="http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/domain-gadget-directory-manager/code.js"></script>
+
+<div id="tab-public" style="display:none">
+  <div class="instruction">
+    Control which gadgets from the public directory are available to your users.
+  </div>
+  <div class="button-bar right-container">
+    <select id="directory-filter-type" onchange="changeDirectoryFilter()">
+     <option selected value="no-filter">No Restrictions</option>
+     <option value="white-list-filter">White List</option>
+     <option value="black-list-filter">Black List</option>
+    </select>
+    <button id="add-gadget" class="right" onclick="showPublicGadgets()" disabled="true">Add Gadgets</button>
+    <div id="hide-directory" class="right" style="display:none">
+      <a href="javascript:void(0)" onclick="hidePublicGadgets()">Hide Directory</a>
+    </div>
+  </div>
+  <div id="gadget-lists" style="display:none">
+    <div id="public-gadget-list-dialog" class="dialog">
+      <div class="title right-container">
+        Keyword: <input id="search-term" type="text"></input>
+        <button onclick="showPublicGadgets()">Search</button>
+        <div id="public-gadget-list-spinner" class="right"></div>
+      </div>
+      <div id="public-gadget-list" class="list"></div>
+    </div>
+    <div id="gadget-filter-list-title" class="title"></div>
+    <div id="gadget-filter-list" class="list"></div>
+  </div>
+</div>
+
+<div id="tab-private" style="display:none">
+  <div class="instruction">
+    Select private gadgets to publish to and unselect private gadgets to unpublish from the private gadget directory.
+  </div>
+  <div id="gadget-list" class="list"></div>
+</div>
+
+<div id="tab-categories" style="display:none">
+  <div class="button-bar">
+    <button onclick="addCategory()">Add</button>
+  </div>
+  <div id="category-list" class="list"></div>
+</div>
+]]></Content>
+</Module>
