@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Module>
-<ModulePrefs title="Domain Gadget Directory Manager" >
+<ModulePrefs title="Domain Gadget Directory Manager" width="400" height="400">
   <Require feature="dynamic-height"/>
   <Require feature="setprefs"/>
   <Require feature="minimessage"/>
