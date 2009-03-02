@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -151,5 +152,24 @@ public class XmlUtilTest extends TestCase {
     assertEquals(2, eValues.length);
     assertEquals("forth0", eValues[0]);
     assertEquals("forth1", eValues[1]);
+  }
+
+  public void testGenerateXmlWithCDATA() throws SAXException, IOException,
+      ParserConfigurationException {
+    String xmlWithSpecContent =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            + "<Module>\n<ModulePrefs title=\"hello world example\" />\n"
+            + "<Content type=\"html\">\n<![CDATA[\n"
+            + "Hello, private world 3 of jotspot1.bigr.org!\n]]></Content></Module>";
+    Map<String, Object> properties = new HashMap<String, Object>();
+    properties.put("asdf", xmlWithSpecContent);
+    // String xml = xmlUtil.convertPropertiesToXml(properties);
+    String xml =
+        "<entity><asdf>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;\n"
+            + "&lt;Module&gt;\n&lt;ModulePrefs title=&quot;hello world example&quot; /&gt;\n"
+            + "&lt;Content type=&quot;html&quot;&gt;\n&lt;![CDATA[\n"
+            + "Hello, private world 3 of jotspot1.bigr.org!\n]]&gt;&lt;/Content&gt;&lt;/Module&gt;</asdf></entity>";
+    Map<String, Object> properties1 = xmlUtil.convertXmlToProperties(xml);
+    assertEquals(xmlWithSpecContent, properties1.get("asdf"));
   }
 }

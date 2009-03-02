@@ -340,7 +340,11 @@ public class TypelessFeedServerClient {
     log.info("Entry info " + content.getXml().getBlob());
     XmlUtil xmlUtil = new XmlUtil();
     try {
-      Map<String, Object> entity = xmlUtil.convertXmlToProperties(content.getXml().getBlob());
+      String xmlText = content.getXml().getBlob();
+      // TODO : This is a temporary work-around till a solution for escaping the
+      // '>' by the GData client library is worked
+      xmlText = xmlText.replaceAll("]]>", "]]&gt;");
+      Map<String, Object> entity = xmlUtil.convertXmlToProperties(xmlText);
       // copy id which is the same as self and edit link
       entity.put(ID, entry.getId());
       return entity;
