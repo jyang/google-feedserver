@@ -179,6 +179,14 @@ For a more robust authentication and authorization mechanism, you can plug in a 
 OAuth signed requests are authorized by the {{{OAuthFilter}}}. The key assumes Google as the default service provider with a Google public key. The easiest way to test this is to write a OAuth gadget. See http://code.google.com/apis/gadgets/docs/oauth.html. You can plug in a domain-specific key with the {{{SimpleKeyMananger}}} without changing OAuth signed requests.
 
 ----
+= Google Client Library Support =
+
+Developers can use the core aspects of the [http://code.google.com/apis/gdata/clientlibs.html Google Data APIs Client Libraries] with the Google Feed Server. One example of this is the , [http://code.google.com/apis/gdata/client-js.html JavaScript client library]. Because browsers can submit GET and POST requests, but are unable to issue PUT and DELETE requests, the Feed Server includes a method override filter. The !JavaScript library sends a DELETE over a POST request, which the server interprets as a DELETE.
+
+The Google client libraries also have an optional XD2 filter to support cross-domain access.
+
+Many of the higher level functions of the Google Data API client libraries such as for calendar entries, were designed to work specifically with the services on Google.com. Therefore, not all such services are emulated in [http://code.google.com/p/google-feedserver/ google-feedserver].
+----
 = Work Flow =
 
 This section provides a high-level overview and walk through of the code base.
