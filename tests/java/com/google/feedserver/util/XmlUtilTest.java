@@ -163,12 +163,8 @@ public class XmlUtilTest extends TestCase {
             + "Hello, private world 3 of jotspot1.bigr.org!\n]]></Content></Module>";
     Map<String, Object> properties = new HashMap<String, Object>();
     properties.put("asdf", xmlWithSpecContent);
-    // String xml = xmlUtil.convertPropertiesToXml(properties);
-    String xml =
-        "<entity><asdf>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;\n"
-            + "&lt;Module&gt;\n&lt;ModulePrefs title=&quot;hello world example&quot; /&gt;\n"
-            + "&lt;Content type=&quot;html&quot;&gt;\n&lt;![CDATA[\n"
-            + "Hello, private world 3 of jotspot1.bigr.org!\n]]&gt;&lt;/Content&gt;&lt;/Module&gt;</asdf></entity>";
+    String xml = xmlUtil.convertPropertiesToXml(properties);
+
     Map<String, Object> properties1 = xmlUtil.convertXmlToProperties(xml);
     assertEquals(xmlWithSpecContent, properties1.get("asdf"));
   }
