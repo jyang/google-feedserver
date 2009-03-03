@@ -41,6 +41,10 @@ function showElementBusy(id, busy) {
   $(id).innerHTML = busy || busy == undefined ? SPINNER : '';
 };
 
+function noCache(url) {
+  return url + '?nocache=' + (new Date().getTime());
+};
+
 // ---------
 // constants
 
@@ -61,6 +65,8 @@ var SPINNER = '<img src="http://www.google.com/reader/ui/752602945-loading-alt.g
 var NO_FILTER = 'no-filter';
 var WHITE_LIST_FILTER = 'white-list-filter';
 var BLACK_LIST_FILTER = 'black-list-filter';
+
+var EMPTY_RESPONSE = 'empty response';
 
 // ----------------
 // global variables
@@ -113,11 +119,11 @@ function initDirectoryManager() {
   }
 };
 
-google.load('gdata', '1.x', {packages: ['core']});
-google.setOnLoadCallback(initDirectoryManager);
+// google.load('gdata', '1.x', {packages: ['core'], 'other_params': 'debug=1'});
+// google.setOnLoadCallback(initDirectoryManager);
 
 function loadPrivateGadgetList() {
-  loadGadgetList(privateGadgetSpecFeedUrl, function(response) {
+  loadGadgetList(noCache(privateGadgetSpecFeedUrl), function(response) {
     privateGadgets = response ? response.feed.entry : [];
     showPrivateGadgets();
   });
@@ -183,7 +189,8 @@ function showPrivateGadgets() {
       var name = entity.name;
       var published = publishedGadgetUrls[name];
       html.push('<div class="list-item right-container" title="', name, '">',
-          bold(name + (entity.$state == STATE_ERROR ? ' (ERROR)' : ''), published),
+          bold(name + (entity.$state == STATE_ERROR ?
+              ' (<span title="' + entity.$stateInfo + '">ERROR</span>)' : ''), published),
           getPublishUnpublishButton(entity, i, published), '</div>');
     }
     $('gadget-list').innerHTML = html.join('');
@@ -203,14 +210,16 @@ function publishGadget(i) {
   service.insertEntry(privateGadgetFeedUrl, entry, function(response) {
     if (response) {
       entity.$state = STATE_OK;
-      publishedGadgetUrls[name] = response.entry.content.entity.id.$t;
+      publishedGadgetUrls[name] = response.entry.id.$t;
     } else {
       entity.$state = STATE_ERROR;
+      entity.$stateInfo = EMPTY_RESPONSE;
     }
 
     showPrivateGadgets();
-  }, function(response) {
+  }, function(error) {
     entity.$state = STATE_ERROR;
+    entity.$stateInfo = error;
     showPrivateGadgets();
   });
 
@@ -228,8 +237,9 @@ function unpublishGadget(i) {
     entity.$state = STATE_OK;
     delete publishedGadgetUrls[name];
     showPrivateGadgets();
-  }, function(response) {
+  }, function(error) {
     entity.$state = STATE_ERROR;
+    entity.$stateInfo = error;
     showPrivateGadgets();
   });
 
@@ -290,8 +300,9 @@ function removeCategory(i) {
   service.deleteEntry(entry.id.$t, function(response) {
     privateGadgetCategories.splice(i, 1);
     showPrivateGadgetCategories();
-  }, function(response) {
+  }, function(error) {
     category.$state = STATE_ERROR;
+    category.$stateInfo = error;
     showPrivateGadgetCategories();
   });
   category.$state = STATE_PENDING;
@@ -309,13 +320,15 @@ function addCategory() {
     service.insertEntry(privateGadgetCategoryFeedUrl, entry, function(response) {
       if (typeof(response) == 'xml') {
         entity.$state = STATE_ERROR;
+        entity.$stateInfo = response;
       } else {
         entity.$state = STATE_OK;
         copyProperties(response.entry, entry);
       }
       showPrivateGadgetCategories();
-    }, function(response) {
+    }, function(error) {
       entity.$state = STATE_OK;
+      entity.$stateInfo = error;
       showPrivateGadgetCategories();
     });
     entity.$state = STATE_PENDING;
@@ -470,9 +483,9 @@ function isGadgetInFilterList(gadgetId, filteredList) {
 function addGadgetToFilterList(i) {
   var entry = publicGadgets[i];
   var gadget = entry.content.entity;
-  if (gadget.id > MAX_LONG) {
-    return alert('Error: gadget id > MAX_LONG');
-  }
+//  if (gadget.id > MAX_LONG) {
+//    return alert('Error: gadget id > MAX_LONG');
+//  }
 
   gadget.gadgetId = gadget.id;
   gadget.$state = STATE_PENDING;
@@ -490,10 +503,12 @@ function addGadgetToFilterList(i) {
       showPublicGadgets();
     } else {
       gadget.$state = STATE_ERROR;
+      gadget.$stateInfo = EMPTY_RESPONSE;
     }
     showGadgetFilterList();
-  }, function(response) {
+  }, function(error) {
     gadget.$state = STATE_ERROR;
+    gadget.$stateInfo = error;
     showGadgetFilterList();
   });
 };
@@ -507,8 +522,9 @@ function removeGadgetFromFilterList(gadgetId) {
         getDomainFilterListedGadgets().splice(i, 1);
         gadget.$state = STATE_OK;
         showGadgetFilterList();
-      }, function(response) {
+      }, function(error) {
         gadget.$state = STATE_ERROR;
+        gadget.$stateInfo = error;
         showGadgetFilterList();
       });
       gadget.$state = STATE_PENDING;
@@ -543,7 +559,8 @@ function showGadgetFilterList() {
       var gadget = getDomainFilterListedGadgets()[i].content.entity;
       html.push('<div class="list-item right-container" title="',
           gadget.description, '">', gadget.title || 'Loading ...',
-          gadget.$state == STATE_ERROR ? ' (ERROR)' : '',
+          gadget.$state == STATE_ERROR ?
+              ' (<span title="' + gadget.$stateInfo + '">ERROR</span>)' : '',
           getFilterListItemState(gadget), '</div>');
     }
     $('gadget-filter-list').innerHTML = html.join('');
@@ -571,6 +588,7 @@ function loadGadgetFilterList(continuation) {
               } else {
                 var g = getDomainFilterListedGadgets()[j].content.entity;
                 g.$state = STATE_ERROR;
+                g.$stateInfo = EMPTY_RESPONSE;
               }
 
               if (--pending == 0) {
@@ -580,9 +598,10 @@ function loadGadgetFilterList(continuation) {
               continuation();
             }
         }(i), function(j) {
-          return function(response) {
+          return function(error) {
             var g = getDomainFilterListedGadgets()[j].content.entity;
             g.$state = STATE_ERROR;
+            g.$stateInfo = error;
 
             if (--pending == 0) {
               enable('add-gadget');
@@ -637,9 +656,21 @@ function getDomainName() {
 function initGadget() {
   var tabset = new gadgets.TabSet(null, 'Private Directory');
   tabset.alignTabs('left', 2);
-  tabset.addTab('Public Directory', 'tab-public');
-  tabset.addTab('Private Directory', 'tab-private');
-  tabset.addTab('Private Categories', 'tab-categories');
+  tabset.addTab('Public Directory', {
+      contentContainer: $('tab-public'),
+      callback: gadgets.window.adjustHeight(),
+      tooltip: 'manage domain public gadget directory'
+  });
+  tabset.addTab('Private Directory', {
+      contentContainer: $('tab-private'),
+      callback: gadgets.window.adjustHeight(),
+      tooltip: 'manage domain private gadget directory'
+  });
+  tabset.addTab('Private Categories', {
+      contentContainer: $('tab-categories'),
+      callback: gadgets.window.adjustHeight(),
+      tooltip: 'manage domain private gadget categories'
+  });
 
   var domainName = getDomainName();
   if (domainName) {
