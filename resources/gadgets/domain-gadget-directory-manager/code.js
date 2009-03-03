@@ -343,7 +343,8 @@ function addCategory() {
 var directoryFilterType = NO_FILTER;
 
 function getDomainFilterListedGadgets() {
-  return domainFilterListedGadgets[directoryFilterType];
+  return domainFilterListedGadgets[directoryFilterType] ?
+      domainFilterListedGadgets[directoryFilterType] : [];
 };
 
 function setDomainFilterListedGadgets(v) {
