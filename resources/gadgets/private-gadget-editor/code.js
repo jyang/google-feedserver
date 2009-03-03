@@ -1,20 +1,11 @@
-// ---------
-// constants
-
-var DEFAULT_SPINNER_ID = 'spinner';
-var SPINNER = '<img src="http://www.google.com/reader/ui/752602945-loading-alt.gif">';
-
-// ----------------
-// global variables
-
 var service = null;
 var privateGadgetNames = null;
 var nameOfGadgetBeingEdited = '';
 var entryOfGadgetBeingEdited = null;
 var privateGadgetSpecFeedUrl = null;
 
-// ---------
-// functions
+var SPINNER = '<img src="http://www.google.com/reader/ui/752602945-loading-alt.gif">';
+var DEFAULT_SPINNER_ID = 'spinner';
 
 function $(id) {
   return document.getElementById(id);
@@ -35,7 +26,7 @@ function initEditor() {
 };
 
 function noCache(url) {
-  return url + '?noache=' + (new Date().getTime());
+  return url + '?nocache=' + (new Date().getTime());
 };
 
 function initGadgetNameList() {
