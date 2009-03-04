@@ -4,10 +4,10 @@ for jar in lib/*.jar dist/*.jar; do
   CLASSPATH=${CLASSPATH}:$jar
 done
 
-#add "conf" dir to CLASSPATH. thats where adapter and feedserver config files are at.
+#add "conf" dir to CLASSPATH. thats where adapter and feedserver config files are stored
 CLASSPATH=$CLASSPATH:conf
 # This is for the log4j property file
-# CLASSPATH=$CLASSPATH:conf/feedserver
+CLASSPATH=$CLASSPATH:conf/feedserver
 
 if [ $# -eq 1 ]
 then
