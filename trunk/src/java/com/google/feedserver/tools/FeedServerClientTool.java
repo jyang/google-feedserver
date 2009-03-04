@@ -48,9 +48,12 @@ public class FeedServerClientTool {
   public static final String OPERATION_INSERT = "insert";
   public static final String OPERATION_UPDATE = "update";
   public static final String OPERATION_DELETE = "delete";
+  public static final String OPERATION_INSERT_GADGETSPEC = "insertGadgetSpec";
+  public static final String OPERATION_UPDATE_GADGETSPEC = "updateGadgetSpec";
   public static final String ALL_OPERATIONS =
       OPERATION_GET_FEED + ", " + OPERATION_GET_ENTRY + ", " + OPERATION_INSERT + ", "
-          + OPERATION_UPDATE + " or " + OPERATION_DELETE;
+          + OPERATION_UPDATE + OPERATION_DELETE + OPERATION_INSERT_GADGETSPEC + " or "
+          + OPERATION_UPDATE_GADGETSPEC;
 
   public static String url_FLAG = null;
   public static String url_HELP = "URL to feed or entry";
@@ -79,6 +82,16 @@ public class FeedServerClientTool {
   public static String serviceName_FLAG = null;
   public static String serviceName_HELP =
       "The name of the service with which the user account is associated with";
+
+  public static String gadgetName_FLAG = null;
+  public static String gadgetName_HELP = "The name of the gadget";
+
+  public static String gadgetSpecFile_FLAG = null;
+  public static String gadgetSpecFile_HELP = "The path of the gadget spec xml file";
+
+  public static String gadgetSpecEntityFile_FLAG = null;
+  public static String gadgetSpecEntityFile_HELP =
+      "The gadget spec entity file. This will define the feed entry schema used for storing gadget specs";
 
   public static final int TAB_STOP = 2;
 
@@ -146,6 +159,14 @@ public class FeedServerClientTool {
     } else if (OPERATION_DELETE.equals(op_FLAG)) {
       getUserCredentials();
       delete(url_FLAG);
+    } else if (OPERATION_INSERT_GADGETSPEC.equals(op_FLAG)) {
+      getUserCredentials();
+      printEntry(insert(url_FLAG, constructGadgetSpecEntryXml(gadgetSpecEntityFile_FLAG,
+          gadgetName_FLAG, gadgetSpecFile_FLAG)));
+    } else if (OPERATION_UPDATE_GADGETSPEC.equals(op_FLAG)) {
+      getUserCredentials();
+      printEntry(update(url_FLAG, constructGadgetSpecEntryXml(gadgetSpecEntityFile_FLAG,
+          gadgetName_FLAG, gadgetSpecFile_FLAG)));
     } else {
       if (op_FLAG != null) {
         System.err.println("Unknown operation.  Must use " + ALL_OPERATIONS + ".");
@@ -450,10 +471,94 @@ public class FeedServerClientTool {
    * @throws IOException if any file operations fail.
    */
   protected String readFile(File file) throws IOException {
+    return resolveEmbeddedFiles(readFileContents(file), file.getParentFile());
+  }
+
+  /**
+   * Helper function that reads contents of specified file into a String.
+   * 
+   * @param file File to read.
+   * @return string with file contents.
+   * @throws IOException if any file operations fail.
+   */
+  protected String readFileContents(File file) throws IOException {
     BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
     byte[] fileContents = new byte[(int) file.length()];
     bis.read(fileContents);
-    return resolveEmbeddedFiles(new String(fileContents), file.getParentFile());
+    return new String(fileContents);
+  }
+
+
+
+  /**
+   * The pattern to get the name tag in the feed schema
+   */
+  protected final static Pattern gadgetSpecNameTag = Pattern.compile("<name>.*?</name>");
+
+  /**
+   * The pattern to get the speccontent tag in the feed schema
+   */
+  protected final static Pattern gadgetSpecSpecContentTag =
+      Pattern.compile("<specContent>.*?</specContent>");
+
+  /**
+   * The file path indicator
+   */
+  protected final static String FILE_PATH_INDICATOR = "@";
+
+
+
+  /**
+   * Constructs the gadget spec entry that will be used for creating a new entry
+   * or updating an existing entry
+   * 
+   * @param gadgetSpecEntityFile The gadget spec entity file which serves as the
+   *        feed schema for the the gadget entry
+   * @param gadgetName The gadget name
+   * @param gadgetSpecFilePath The gadget spec file path
+   * @return The gadget spec entry xml
+   * @throws IOException If any exceptions are encountered
+   */
+  protected String constructGadgetSpecEntryXml(String gadgetSpecEntityFile, String gadgetName,
+      String gadgetSpecFilePath) throws IOException {
+
+    while (gadgetName == null || gadgetName.trim().isEmpty()) {
+      getConsole().printf("The gadget name cannot be null or blank");
+      gadgetName = getConsole().readLine("\nGadget name: ");
+    }
+
+    while (gadgetSpecFilePath == null || gadgetSpecFilePath.trim().isEmpty()) {
+      getConsole().printf("The gadget spec file cannot be null or blank");
+      gadgetName = getConsole().readLine("\nGadget spec file: ");
+    }
+
+    // Get the gadget spec feed schema
+    File file = new File(gadgetSpecEntityFile);
+    String gadgetSpecXml = readFileContents(file);
+    StringBuilder fileContents = new StringBuilder();
+
+    int lastStart = 0;
+
+    // Add the given gadget name in the feed schema
+    for (Matcher matcher = gadgetSpecNameTag.matcher(gadgetSpecXml); matcher.find();) {
+      fileContents.append(gadgetSpecXml.substring(0, matcher.start() + 6));
+      fileContents.append(gadgetName);
+      lastStart = matcher.end() - 7;
+    }
+
+    // Add the given gadget file path in the feed schema
+    for (Matcher matcher = gadgetSpecSpecContentTag.matcher(gadgetSpecXml); matcher.find();) {
+      fileContents.append(gadgetSpecXml.substring(lastStart, lastStart + 7));
+      lastStart += 7;
+      fileContents.append(gadgetSpecXml.substring(lastStart, matcher.start() + 13));
+      fileContents.append(FILE_PATH_INDICATOR).append(gadgetSpecFilePath);
+      lastStart = matcher.end() - 14;
+    }
+
+    fileContents.append(gadgetSpecXml.substring((lastStart)));
+
+    // Get the final gadget spec entry xml
+    return resolveEmbeddedFiles(fileContents.toString(), file.getParentFile());
   }
 
   /**
