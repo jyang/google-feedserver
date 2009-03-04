@@ -12,6 +12,7 @@
   <property name="lib.home" value="${basedir}/lib"/>
   <property name="dist" value="${basedir}/distribution"/>
   <property name="resources" value="resources" />
+  <property name="log4jConfigFile" value="${conf.home}/feedserver/log4j.properties" />  
 
   <!-- Client Properties -->
   <property name="client.version" value="2.0"/>
@@ -258,6 +259,7 @@
     <mkdir dir="${clienttools.temp.dir}/lib" />
     <mkdir dir="${clienttools.temp.dir}/scripts" />
     <copy file="${fsct.scripts.dir}/README" todir="${clienttools.temp.dir}"/>
+    <copy file="${log4jConfigFile}" todir="${clienttools.temp.dir}"/>
     <copy file="${client.jarfile}" todir="${clienttools.temp.dir}/dist">
     </copy>
     <copy todir="${clienttools.temp.dir}/lib">
