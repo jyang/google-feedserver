@@ -24,10 +24,13 @@ See http://code.google.com/apis/accounts/docs/AuthForInstalledApps.html for Goog
 1. Update the setupEnv.sh (or setupEnv.bat) script with the domain name for the feeds and the other parameters required for authentication and authorization. For Google hosted FeedServer, at a minimum, FSCT_DOMAIN must be set, and generally, to work with the standard feeds, no other changes are necesssary. The following are the user-configurable settings:
 
   * FSCT_DOMAIN -- Domain name
+  * FSCT_USER_NAME -- The user account to be used
   * FSCT_FEED_BASE -- The feed URL
   * SERVICE_NAME -- The name of the service with which the user account is associated.
   * AUTHN_URL_PROTOCOL -- Name of the protocol to use for authentication, either http or https.
   * AUTHN_URL -- The end point that handles authentication and grants authorization tokens to be used with each request. 
+
+Note: The current script has defaults for hosted Google FeedServer. You will have to set the domain and user account
 
 2. Test things are working with the getFeed.sh(bat) script.
   Run this script as follows:
@@ -36,12 +39,13 @@ See http://code.google.com/apis/accounts/docs/AuthForInstalledApps.html for Goog
   
   For example './getFeed.sh Gadgets' will fetch the feed that contains all gadgets in the public gadget directory.
   
-2. The insertEntry.sh (or insertEntry.bat) script adds a new entry to a feed. 
+3. The insertEntry.sh (or insertEntry.bat) script adds a new entry to a feed. 
   The feed entry details come from a file whose path is specified as input in the script : 
   -entryFilePath <path to the file>
   Update this script to refer to the correct file path
+
   
-3. The updateEntry.sh (or updateEntry.bat) script updates an existing feed entry. 
+4. The updateEntry.sh (or updateEntry.bat) script updates an existing feed entry. 
   The feed entry details should come from a file whose path is specified as input in the script : 
   -entryFilePath <path to the file>
   Update this script to refer to the correct file path
@@ -49,6 +53,27 @@ See http://code.google.com/apis/accounts/docs/AuthForInstalledApps.html for Goog
   
 For more details please refer to the documentation here:
 http://code.google.com/p/google-feedserver/wiki/SettingUpADevelopmentEnvironment#Details_of_Each_Script
+
+Managing gadget spec for a domain:
+-----------------------------------
+Retrieve a specific gadget spec:
+  $> ./getEntry.sh <<feed_name>>/<<gadget_name>>
+  For example './getEntry.sh Gadgets/hello-world-gadget' will fetch the gadget with the name 'hello-world-gadget' in the public gadget directory.
+
+Upload a new gadget spec:
+1. Copy the gadget spec as a xml file and save it in the 'scripts' directory (there is a sample gadget spec: hello.xml)
+2. Run the ./insertGadgetSpec.sh script as follows:
+   $> ./insertGadgetSpec.sh <<feed_name>> <<gadget_name>> <<gadget_spec_file>>  
+   For example './insertGadgetSpec.sh Gadgets hello-world-gadget hello.xml'  will save the gadget spec with the given name. The saved gadget spec will be returned as response.
+3. To retrieve the gadget spec mention the gadget name as a parameter to the getEntry.sh script.
+   eg: $> ./getEntry.sh Gadgets/hello-world-gadget
+
+Update an existing gadget spec:
+1. Save the existing gadget spec as a xml file under the 'scripts' directory. Update it as required
+2. Run the ./updateGadgetSpec.sh script as follows:
+   $> ./updateGadgetSpec.sh <<feed_name>> <<gadget_name>> <<gadget_spec_file>>  
+   For example './updateGadgetSpec.sh Gadgets hello-world-gadget hello.xml'  will update the gadget spec with the given name. The updated gadget spec will be returned as response.
+
 
 
 Troubleshooting
