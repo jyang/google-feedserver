@@ -4,7 +4,10 @@ var nameOfGadgetBeingEdited = '';
 var entryOfGadgetBeingEdited = null;
 var privateGadgetSpecFeedUrl = null;
 
-var SPINNER = '<img src="http://www.google.com/reader/ui/752602945-loading-alt.gif">';
+var SERVICE_NAME = 'esp';
+var APP_NAME = 'private-gadget-editor';
+
+var SPINNER = '<img src="http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/private-gadget-editor/spinner.gif">';
 var DEFAULT_SPINNER_ID = 'spinner';
 
 function $(id) {
@@ -30,7 +33,7 @@ function noCache(url) {
 };
 
 function initGadgetNameList() {
-  service = new google.gdata.client.FeedServerService('PrivateGadgetSpec', 'GadgetEditor');
+  service = new google.gdata.client.FeedServerService(SERVICE_NAME, APP_NAME);
   service.setGadgetsAuthentication('SIGNED');
   service.getFeed(noCache(privateGadgetSpecFeedUrl), function(response) {
     stopSpinner();
@@ -175,8 +178,9 @@ function showMessage(message) {
   miniMessage.createDismissibleMessage(message);
 };
 
-google.load('gdata', '1.x', {packages: ['core']});
-google.setOnLoadCallback(initEditor);
+//// google.load('gdata', '1.x', {packages: ['core']});
+// google.load('gdata', '1.x', {packages: ['core'], 'other_params': 'debug=1'});
+// google.setOnLoadCallback(initEditor);
 
 function initCodePress() {
   editor.style.height = '400px';
