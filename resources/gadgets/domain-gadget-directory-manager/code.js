@@ -60,7 +60,7 @@ var MAX_LONG = 9223372036854776000;
 var MAX_NO_SCROLL_ROWS = 20;
 var MAX_SCROLLBAR_HEIGHT = 360;
 
-var SPINNER = '<img src="http://www.google.com/reader/ui/752602945-loading-alt.gif">';
+var SPINNER = '<img src="http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/domain-gadget-directory-manager/spinner.gif">';
 
 var NO_FILTER = 'no-filter';
 var WHITE_LIST_FILTER = 'white-list-filter';
@@ -119,6 +119,7 @@ function initDirectoryManager() {
   }
 };
 
+//// google.load('gdata', '1.x', {packages: ['core']});
 // google.load('gdata', '1.x', {packages: ['core'], 'other_params': 'debug=1'});
 // google.setOnLoadCallback(initDirectoryManager);
 
@@ -343,8 +344,7 @@ function addCategory() {
 var directoryFilterType = NO_FILTER;
 
 function getDomainFilterListedGadgets() {
-  return domainFilterListedGadgets[directoryFilterType] ?
-      domainFilterListedGadgets[directoryFilterType] : [];
+  return domainFilterListedGadgets[directoryFilterType];
 };
 
 function setDomainFilterListedGadgets(v) {
@@ -484,10 +484,6 @@ function isGadgetInFilterList(gadgetId, filteredList) {
 function addGadgetToFilterList(i) {
   var entry = publicGadgets[i];
   var gadget = entry.content.entity;
-//  if (gadget.id > MAX_LONG) {
-//    return alert('Error: gadget id > MAX_LONG');
-//  }
-
   gadget.gadgetId = gadget.id;
   gadget.$state = STATE_PENDING;
   getDomainFilterListedGadgets().push(entry);
@@ -538,7 +534,7 @@ function removeGadgetFromFilterList(gadgetId) {
 function getFilterListItemState(gadget) {
   switch(gadget.$state) {
     case STATE_PENDING:
-      return '<div class="right">' + SPINNER + '</div>';
+      return '<div class="right" style="margin:0px">' + SPINNER + '</div>';
 
     case STATE_ERROR:
     default:
@@ -573,7 +569,7 @@ function loadGadgetFilterList(continuation) {
   if (getDomainFilterListedGadgets().length == 0) {
     var service = createService();
     service.getFeed(getDomainFilterListedGadgetFeedUrl(), function(response) {
-      setDomainFilterListedGadgets(response ? response.feed.entry : []);
+      setDomainFilterListedGadgets(response && response.feed.entry ? response.feed.entry : []);
       var length = getDomainFilterListedGadgets().length;
       var pending = length;
       for (var i = 0; i < length; i++) {
@@ -611,6 +607,9 @@ function loadGadgetFilterList(continuation) {
             continuation();
           }
         }(i));
+      }
+      if (pending == 0) {
+        enable('add-gadget');
       }
       continuation();
     }, showMessage);
