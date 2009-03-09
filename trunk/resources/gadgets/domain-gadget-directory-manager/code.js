@@ -88,6 +88,12 @@ var selectedPrivateGadgetCategories = {};
 var publicGadgetFeedUrl = null;
 var publicGadgets = [];
 
+var domainPublicGadgetFeedUrl = null;
+var domainPublicGadgets = [];
+
+var domainPrivateGadgetFeedUrl = null;
+var domainPrivateGadgets = [];
+
 var domainFilterListedGadgets = {};
 domainFilterListedGadgets[WHITE_LIST_FILTER] = [];
 domainFilterListedGadgets[BLACK_LIST_FILTER] = [];
@@ -125,7 +131,7 @@ function initDirectoryManager() {
 
 function loadPrivateGadgetList() {
   loadGadgetList(noCache(privateGadgetSpecFeedUrl), function(response) {
-    privateGadgets = response ? response.feed.entry : [];
+    privateGadgets = response && response.feed.entry ? response.feed.entry : [];
     showPrivateGadgets();
   });
 };
@@ -285,9 +291,11 @@ function showPrivateGadgetCategories() {
     var html = [];
     for (var i = 0; i < length; i++) {
       var entity = privateGadgetCategories[i].content.entity;
-      var category = entity.category.length ? entity.category[0] : entity.category;
-      html.push('<div class="list-item right-container" title="', category.displayName,
-          '">', category.displayName, getRemoveCategoryButton(entity, i), '</div>');
+      // var category = entity.category.length ? entity.category[0] : entity.category;
+      // var displayName = category.displayName;
+      var displayName = entity.name;
+      html.push('<div class="list-item right-container" title="', displayName,
+          '">', displayName, getRemoveCategoryButton(entity, i), '</div>');
     }
     $('category-list').innerHTML = html.join('');
     gadgets.window.adjustHeight();
@@ -619,6 +627,19 @@ function loadGadgetFilterList(continuation) {
   }
 };
 
+// -----------------
+// directory preview
+
+var previewingDirectory = null;
+
+function previewDirectory(directory) {
+  previewingDirectory = directory;
+  showDirectoryPreview();
+};
+
+function showDirectoryPreview() {
+};
+
 // -----
 // other
 
@@ -671,10 +692,19 @@ function initGadget() {
       callback: gadgets.window.adjustHeight(),
       tooltip: 'manage domain private gadget categories'
   });
+  tabset.addTab('Directory Preview', {
+      contentContainer: $('tab-preview'),
+      callback: gadgets.window.adjustHeight(),
+      tooltip: 'preview domain public and private directory'
+  });
 
   var domainName = getDomainName();
   if (domainName) {
     publicGadgetFeedUrl = 'http://feedserver-enterprise.googleusercontent.com/Gadget';
+    domainPublicGadgetFeedUrl = 'http://feedserver-enterprise.googleusercontent.com/a/' +
+        domainName + '/Gadget';
+    domainPublicGadgetFeedUrl = 'http://feedserver-enterprise.googleusercontent.com/a/' +
+        domainName + '/PrivateGadget';
     domainFilterListedGadgetFeedUrl[WHITE_LIST_FILTER] =
        'http://feedserver-enterprise.googleusercontent.com/a/' + domainName +
        '/g/WhiteListedGadget';
