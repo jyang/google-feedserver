@@ -37,7 +37,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Generic Google Feed Server Client Tool. See files in tests/clientTool for
+ * Generic Google Feed Server Client Tool. See files in resources/clientTool for
  * examples of how to invoke it with various command line arguments and the
  * format of the input files.
  * 
@@ -119,31 +119,45 @@ public class FeedServerClientTool {
   public void run(String[] args) throws FeedServerClientException, MalformedURLException,
       IOException, AuthenticationException {
     // register command line flags
+    CommonsCliHelper cliHelper = createClientHelper(args, FeedServerClientTool.class);
+
+    checkServiceAndAuthNParams(cliHelper);
+
+    // Process the request
+    processRequest(cliHelper);
+  }
+
+  /**
+   * Creates a client helper for the given command line arguments and the given
+   * class
+   * 
+   * @param args The command line arguments
+   * @param clazz The class that will process the command line arguments
+   * @return The client helper
+   */
+  @SuppressWarnings("unchecked")
+  protected CommonsCliHelper createClientHelper(String[] args, Class clazz) {
     CommonsCliHelper cliHelper = new CommonsCliHelper();
-    cliHelper.register(FeedServerClientTool.class);
+    cliHelper.register(clazz);
     cliHelper.parse(args);
 
-    // Check for the URL to be connected for authenticating and getting the
-    // authZ token
-    if (authnURL_FLAG == null) {
-      System.err.println("Must specify the URL of the server that will handle authentication");
-      cliHelper.usage();
-      return;
-    }
+    return cliHelper;
+  }
 
-    // Check for the URL to be connected for authenticating and getting the
-    // authZ token
-    if (serviceName_FLAG == null) {
-      System.err.println("Must specify the service name that will be used to authenticate users");
-      cliHelper.usage();
-      return;
-    }
-
-    // Initialize the feedserver client with the given authN URL and protocol
-    this.feedServerClient =
-        new TypelessFeedServerClient(new GoogleService(serviceName_FLAG, FeedServerClientTool.class
-            .getName(), authnURLProtocol_FLAG, authnURL_FLAG));
-
+  /**
+   * Processes the request by forwarding the request to appropriate methods
+   * matching the specified operation
+   * 
+   * @param cliHelper The client helper for retrieving the required paramater
+   *        values
+   * @throws FeedServerClientException
+   * @throws MalformedURLException
+   * @throws IOException
+   * @throws AuthenticationException
+   */
+  protected void processRequest(CommonsCliHelper cliHelper) throws FeedServerClientException,
+      MalformedURLException, IOException, AuthenticationException {
+    // Check and process the specified request
     if (OPERATION_GET_FEED.equals(op_FLAG)) {
       getUserCredentials();
       printFeed(getFeed(url_FLAG));
@@ -173,6 +187,35 @@ public class FeedServerClientTool {
       }
       cliHelper.usage();
     }
+  }
+
+  /**
+   * Checks that the user has specified the service and authn parameters
+   * 
+   * @param cliHelper The client helper for retrieving the required paramater
+   *        values
+   */
+  protected void checkServiceAndAuthNParams(CommonsCliHelper cliHelper) {
+    // Check for the URL to be connected for authenticating and getting the
+    // authZ token
+    if (authnURL_FLAG == null) {
+      System.err.println("Must specify the URL of the server that will handle authentication");
+      cliHelper.usage();
+      return;
+    }
+
+    // Check for the URL to be connected for authenticating and getting the
+    // authZ token
+    if (serviceName_FLAG == null) {
+      System.err.println("Must specify the service name that will be used to authenticate users");
+      cliHelper.usage();
+      return;
+    }
+
+    // Initialize the feedserver client with the given authN URL and protocol
+    this.feedServerClient =
+        new TypelessFeedServerClient(new GoogleService(serviceName_FLAG, FeedServerClientTool.class
+            .getName(), authnURLProtocol_FLAG, authnURL_FLAG));
   }
 
   /**
