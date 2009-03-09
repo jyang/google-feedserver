@@ -80,6 +80,19 @@ Update an existing gadget spec:
 
 Note: The <<gadget_spec_file>> file has to be the path of a file on the file system relative to the 'scripts' directory. By default the scripts assume that the file will be saved in 'scripts' directory
 
+Publish a gadget:
+You can publish a gadget so that the gadget is visible to anyone in your domain.
+1. Run the publishGadget.sh script as follows:
+   $> ./publishGadget.sh <<publish_dir>> <<feed_name>>/<<gadget_name>>
+ publish_dir -- The directory to which the gadget will be published. This directory will have all the published gadgets for the given domain
+ feed_name -- The feed name under which the gadget spec is stored
+ gadget_name -- The name of the gadget to be published
+
+ eg: ./publishGadget.sh PublishedGadgets Gadgets/hello-world-gadget
+
+Note: The gadget spec needs to be first uploaded using the 'insertGadgetSpec' script before you publish it
+
+
 Troubleshooting
 ---------------
 
@@ -98,3 +111,19 @@ All Platforms
   Unauthorized
 
   * Feeds that have ACLs set on them may prevent reading or writing by the account provided. This error occurs when the ACL check has failed. You may be able to change the ACL for the resource by editing the ACL feed.
+
+* Gadget already exists exception
+
+   Exception in thread "main" com.google.feedserver.util.FeedServerClientException: com.google.gdata.util.InvalidEntryException: Bad Request
+Gadget already exists
+
+  You will get this exception if the gadget has already been published.
+
+* Gadget specified could not be fetched
+
+   Exception in thread "main" com.google.feedserver.util.FeedServerClientException: com.google.gdata.util.ServiceException: Internal Server Error
+Gadget specified could not be fetched
+
+   Check that you have specified the correct feed name and gadget name that exists. You can do this by using the 'getEntry' script
+   
+
