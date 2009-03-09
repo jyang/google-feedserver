@@ -31,6 +31,12 @@
   right: 0px;
   margin: 4px;
 }
+
+#spec-url-wrapper {
+  padding: 4px;
+  font-size: 10pt;
+  display: none;
+}
 </style>
 
 <script type="text/javascript">
@@ -66,6 +72,10 @@ if (location.href.indexOf('gmodules.com') > 0) {
     <span id="message-box"></span>
     <span id="spinner"></span>
   </div>
+</div>
+
+<div id="spec-url-wrapper">
+  Spec URL: <a id="spec-url"></a>
 </div>
 
 <textarea id="editor" class="codepress gadget"></textarea>
