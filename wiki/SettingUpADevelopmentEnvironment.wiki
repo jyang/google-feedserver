@@ -218,9 +218,9 @@ The output appears as:
 The {{{getEntry.sh}}} script fetchs a specific entry for a feed
 Run this script as follows:
 {{{
-$> ./getEntry.sh <<feed_name>>/<<entry_id>>
+$> ./getEntry.sh <<feed_name>> <<entry_id>>
 }}}
-For example: {{{/getEntry.sh contact/1}}}
+For example: {{{/getEntry.sh contact 1}}}
 The output appears as:
 {{{
 <entity>
@@ -255,8 +255,8 @@ The newly added feed entry appears as output:
 The {{{updateEntry.sh}}} script updates an existing feed entry. The feed entry details should come from a file whose path is specified as input in the script : {{{-entryFilePath <path to the file>}}}}.
 Run this script as follows:
 
-{{{$> updateEntry.sh <<feed_name>>/<<entry_id>>}}}
-For example: {{{updateEntry.sh contact/2}}}
+{{{$> updateEntry.sh <<feed_name>> <<entry_id>>}}}
+For example: {{{updateEntry.sh contact 2}}}
 
 *Note:* The ID of the feed entry in the file and the input must be same.
 The updated feed entry appears as output:
@@ -274,8 +274,8 @@ The updated feed entry appears as output:
 
 The {{{deleteEntry.sh}}} script deletes an existing feed entry.
 Run this script as follows:
-{{{$> deleteEntry.sh <<feed_name>>/<<entry_id>>}}}
-For example: {{{deleteEntry.sh contact/2}}}
+{{{$> deleteEntry.sh <<feed_name>> <<entry_id>>}}}
+For example: {{{deleteEntry.sh contact 2}}}
 
 
 == Using OAuth ==
