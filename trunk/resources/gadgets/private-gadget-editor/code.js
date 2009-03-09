@@ -32,6 +32,19 @@ function noCache(url) {
   return url + '?nocache=' + (new Date().getTime());
 };
 
+function setNameOfGadgetBeingEdited(name) {
+  nameOfGadgetBeingEdited = name;
+  if (name) {
+    $('spec-url-wrapper').style.display = 'inline';
+    var specUrl = 'http://www.google.com/a/feeds/server/g/domain/' +
+        getDomainName() + '/PrivateGadgetSpec/' + name;
+    $('spec-url').href = specUrl;
+    $('spec-url').innerHTML = specUrl;
+  } else {
+    $('spec-url-wrapper').style.display = 'none';
+  }
+};
+
 function initGadgetNameList() {
   service = new google.gdata.client.FeedServerService(SERVICE_NAME, APP_NAME);
   service.setGadgetsAuthentication('SIGNED');
@@ -76,7 +89,7 @@ function editSelectedGadget() {
   if (name) {
     service.getEntry(noCache(privateGadgetSpecFeedUrl + '/' + name), function(response) {
       stopSpinner();
-      nameOfGadgetBeingEdited = name;
+      setNameOfGadgetBeingEdited(name);
       entryOfGadgetBeingEdited = response.entry;
       editor.setCode(response.entry.content.entity.specContent);
       editor.editor.syntaxHighlight('init');
@@ -108,7 +121,7 @@ function deleteSelectedGadget() {
 };
 
 function newGadget() {
-  nameOfGadgetBeingEdited = '';
+  setNameOfGadgetBeingEdited('');
   editor.setCode(getGadgetSpecTemplate());
   editor.editor.syntaxHighlight('init');
   showPrivateGadgetNames();
@@ -128,11 +141,13 @@ function saveGadget(changeName) {
     });
     startSpinner();
   } else {
-    if (changeName) {
-      nameOfGadgetBeingEdited = prompt('Please enter new name of gadget (e.g. hello.xml)');
-    } else {
-      nameOfGadgetBeingEdited = prompt('Please enter name of new gadget (e.g. hello.xml)');
+    var name = changeName ?
+      prompt('Please enter new name of gadget (e.g. hello.xml)') :
+      prompt('Please enter name of new gadget (e.g. hello.xml)');
+    if (!name) {
+      return;
     }
+    setNameOfGadgetBeingEdited(name);
     if (nameOfGadgetBeingEdited) {
       entryOfGadgetBeingEdited.content.entity.name = nameOfGadgetBeingEdited;
       service.insertEntry(privateGadgetSpecFeedUrl,
@@ -158,7 +173,7 @@ function openGadgetByUrl() {
       if (response.rc > 299) {
         showMessage('Error: ' + response.errors);
       } else {
-        nameOfGadgetBeingEdited = null;
+        setNameOfGadgetBeingEdited(null);
         entryOfGadgetBeingEdited = {xmlns: 'http://www.w3.org/2005/Atom', content: {
           type: 'application/xml', entity: {name: '', specContent: response.text}}};
         editor.setCode(response.text);
