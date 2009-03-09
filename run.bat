@@ -9,6 +9,8 @@ set CLASSPATH=%CLASSPATH%;.
 
 rem Add "conf" dir to CLASSPATH. Thats where adapter and feedserver config files are stored
 set CLASSPATH=%CLASSPATH%;conf
+rem Add the resources/clientTool to the classpath for including the log4j.properties
+set CLASSPATH=%CLASSPATH%;resources/clientTool
 
 if X%1==Xhelp (
 echo "Usage: %0 --port=<number> --uri=http://host:port authenticated=true|false OAuth_authenticated=true|false"
