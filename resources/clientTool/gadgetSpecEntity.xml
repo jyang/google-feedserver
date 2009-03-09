@@ -1,4 +1,4 @@
 <entity xmlns="">
-  <name>hello-world-gadget</name>
+  <name>hello</name>
   <specContent>@hello.xml</specContent>
 </entity>
