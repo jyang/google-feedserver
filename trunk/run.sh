@@ -7,7 +7,7 @@ done
 #add "conf" dir to CLASSPATH. thats where adapter and feedserver config files are stored
 CLASSPATH=$CLASSPATH:conf
 # This is for the log4j property file
-CLASSPATH=$CLASSPATH:conf/feedserver
+CLASSPATH=$CLASSPATH:resources/clientTool
 
 if [ $# -eq 1 ]
 then
