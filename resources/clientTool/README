@@ -9,6 +9,10 @@ Abdera Framework.
 The home of the project is at:
 http://code.google.com/p/google-feedserver/
 
+Pre-requisites:
+-------------------
+You need to have JRE 1.6 (or JDK) installed with the JAVA_HOME environment variable pointing to it.
+
 This binary distribution includes the following:
 -------------------------------------------------
 * The FSCT binary jar under 'dist' folder
@@ -21,7 +25,7 @@ The scripts should be used when requests are to be signed with Google ClientLogi
 
 See http://code.google.com/apis/accounts/docs/AuthForInstalledApps.html for Google ClientLogin details
 
-1. Update the setupEnv.sh (or setupEnv.bat) script with the domain name for the feeds and the other parameters required for authentication and authorization. For Google hosted FeedServer, at a minimum, FSCT_DOMAIN must be set, and generally, to work with the standard feeds, no other changes are necesssary. The following are the user-configurable settings:
+1. Update the setupEnv.sh (or setupEnv.bat) script with the domain name for the feeds and the other parameters required for authentication and authorization. For Google hosted FeedServer, at a minimum, FSCT_DOMAIN & FSCT_USER_NAME must be set, and generally, to work with the standard feeds, no other changes are necesssary. The following are the user-configurable settings:
 
   * FSCT_DOMAIN -- Domain name
   * FSCT_USER_NAME -- The user account to be used
@@ -57,8 +61,8 @@ http://code.google.com/p/google-feedserver/wiki/SettingUpADevelopmentEnvironment
 Managing gadget spec for a domain:
 -----------------------------------
 Retrieve a specific gadget spec:
-  $> ./getEntry.sh <<feed_name>>/<<gadget_name>>
-  For example './getEntry.sh Gadgets/hello-world-gadget' will fetch the gadget with the name 'hello-world-gadget' in the public gadget directory.
+  $> ./getEntry.sh <<feed_name>> <<gadget_name>>
+  For example './getEntry.sh Gadgets hello-world-gadget' will fetch the gadget with the name 'hello-world-gadget' in the public gadget directory.
 
 Upload a new gadget spec:
 1. Copy the gadget spec as a xml file and save it in the 'scripts' directory (there is a sample gadget spec: hello.xml)
@@ -66,13 +70,15 @@ Upload a new gadget spec:
    $> ./insertGadgetSpec.sh <<feed_name>> <<gadget_name>> <<gadget_spec_file>>
    For example './insertGadgetSpec.sh Gadgets hello-world-gadget hello.xml'  will save the gadget spec with the given name. The saved gadget spec will be returned as response.
 3. To retrieve the gadget spec mention the gadget name as a parameter to the getEntry.sh script.
-   eg: $> ./getEntry.sh Gadgets/hello-world-gadget
+   eg: $> ./getEntry.sh Gadgets hello-world-gadget
 
 Update an existing gadget spec:
 1. Save the existing gadget spec as a xml file under the 'scripts' directory. Update it as required
 2. Run the ./updateGadgetSpec.sh script as follows:
    $> ./updateGadgetSpec.sh <<feed_name>> <<gadget_name>> <<gadget_spec_file>>
    For example './updateGadgetSpec.sh Gadgets hello-world-gadget hello.xml'  will update the gadget spec with the given name. The updated gadget spec will be returned as response.
+
+Note: The <<gadget_spec_file>> file has to be the path of a file on the file system relative to the 'scripts' directory. By default the scripts assume that the file will be saved in 'scripts' directory
 
 Troubleshooting
 ---------------
