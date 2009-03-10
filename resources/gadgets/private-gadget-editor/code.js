@@ -39,7 +39,6 @@ function setNameOfGadgetBeingEdited(name) {
     var specUrl = 'http://www.google.com/a/feeds/server/g/domain/' +
        detectDomainName() + '/PrivateGadgetSpec/' + name;
     $('spec-url').href = specUrl;
-    $('spec-url').innerHTML = specUrl;
   } else {
     $('spec-url-wrapper').style.display = 'none';
   }
@@ -50,7 +49,7 @@ function initGadgetNameList() {
   service.setGadgetsAuthentication('SIGNED');
   service.getFeed(noCache(privateGadgetSpecFeedUrl), function(response) {
     stopSpinner();
-    var entries = response ? response.feed.entry : [];
+    var entries = response && response.feed.entry ? response.feed.entry : [];
     showPrivateGadgetNames(setPrivateGadgetNames(entries));
   }, function(response) {
     stopSpinner()
