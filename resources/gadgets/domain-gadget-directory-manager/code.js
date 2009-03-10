@@ -60,11 +60,11 @@ var MAX_NO_SCROLL_ROWS = 20;
 var MAX_SCROLLBAR_HEIGHT = 360;
 var MAX_RESULTS = 20;
 
-var SPINNER = '<img src="' + location.protocol + '//google-feedserver.googlecode.com/svn/trunk/resources/gadgets/domain-gadget-directory-manager/spinner.gif">';
+var SPINNER = '<img src="//www-opensocial.googleusercontent.com/gadgets/proxy/refresh=3600&container=enterprise&gadget=http%3A%2F%2Fwww.svca.cc%2Fdgdm.xml%3F1908234782374/http%3A%2F%2Fgoogle-feedserver.googlecode.com%2Fsvn%2Ftrunk%2Fresources%2Fgadgets%2Fprivate-gadget-editor%2Fspinner.gif">';
 
-var NO_FILTER = 'no-filter';
-var WHITE_LIST_FILTER = 'white-list-filter';
-var BLACK_LIST_FILTER = 'black-list-filter';
+var NO_FILTER = 'noRestrictions';
+var WHITE_LIST_FILTER = 'whiteList';
+var BLACK_LIST_FILTER = 'blackList';
 
 var EMPTY_RESPONSE = 'empty response';
 
@@ -366,23 +366,65 @@ function addCategory() {
 // ----------------
 // public directory
 
-var directoryFilterType = NO_FILTER;
+var directoryFilter = null;
+
+function initDirectoryFilter() {
+  if (directoryFilter == null) {
+    var service = createService();
+    var domainConfigSettingsUrl = location.protocol +
+        '//feedserver-enterprise.googleusercontent.com/a/' + detectDomainName() +
+        '/g/gadgets/settings';
+    service.getEntry(domainConfigSettingsUrl, function(response) {
+      showElementBusy('directory-filter-spinner', false);
+      setDirectoryFilter(response.entry.content.entity.gadgetFilter);
+    }, function(error) {
+      showElementBusy('directory-filter-spinner', false);
+      showMessage(error);
+    });
+    showElementBusy('directory-filter-spinner');
+  }
+};
 
 function getDomainFilterListedGadgets() {
-  return domainFilterListedGadgets[directoryFilterType];
+  return domainFilterListedGadgets[directoryFilter];
 };
 
 function setDomainFilterListedGadgets(v) {
-  domainFilterListedGadgets[directoryFilterType] = v;
+  domainFilterListedGadgets[directoryFilter] = v;
 };
 
 function getDomainFilterListedGadgetFeedUrl() {
-  return domainFilterListedGadgetFeedUrl[directoryFilterType];
+  return domainFilterListedGadgetFeedUrl[directoryFilter];
+};
+
+function setDirectoryFilter(filter) {
+  directoryFilter = filter;
+  $('directory-filter-type').value = filter;
+  showDirectoryFilter(filter);
 };
 
 function changeDirectoryFilter() {
-  directoryFilterType = $('directory-filter-type').value;
-  switch(directoryFilterType) {
+  directoryFilter = $('directory-filter-type').value;
+  showDirectoryFilter(directoryFilter);
+
+  // TODO: set filter type on the server side
+  var entry = {xmlns: 'http://www.w3.org/2005/Atom', content: {
+      type: 'application/xml', entity: {gadgetFilter: directoryFilter}}};
+  var service = createService();
+  var domainConfigSettingsUrl = location.protocol +
+      '//feedserver-enterprise.googleusercontent.com/a/' + detectDomainName() +
+      '/g/gadgets/settings';
+  service.updateEntry(domainConfigSettingsUrl, entry, function(response) {
+    showElementBusy('directory-filter-spinner', false);
+  }, function(error) {
+    $('directory-filter-spinner').innerHTML = '<span title="' + error + '">(Error)</span>';
+  });
+  showElementBusy('directory-filter-spinner');
+};
+
+function showDirectoryFilter(filter) {
+  enable('directory-filter-type');
+  switch(filter) {
     case NO_FILTER:
       disable('add-gadget');
       hide('gadget-lists');
@@ -410,8 +452,6 @@ function changeDirectoryFilter() {
       showGadgetFilterList();
       break;
   }
-
-  // TODO: set filter type on the server side
 };
 
 function getAddToFilterListButton(i, gadget) {
@@ -698,7 +738,10 @@ function initGadget() {
   tabset.alignTabs('left', 2);
   tabset.addTab('Public Directory', {
       contentContainer: $('tab-public'),
-      callback: gadgets.window.adjustHeight(),
+      callback: function() {
+        initDirectoryFilter();
+        gadgets.window.adjustHeight();
+      },
       tooltip: 'manage domain public gadget directory'
   });
   tabset.addTab('Private Directory', {
