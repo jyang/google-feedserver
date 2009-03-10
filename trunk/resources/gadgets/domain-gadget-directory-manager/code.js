@@ -670,10 +670,6 @@ function detectDomainName() {
   return null;
 };
 
-function getDomainName() {
-  return new gadgets.Prefs().getString("domainName") || detectDomainName();
-};
-
 function initGadget() {
   var tabset = new gadgets.TabSet(null, 'Private Directory');
   tabset.alignTabs('left', 2);
@@ -698,7 +694,7 @@ function initGadget() {
       tooltip: 'preview domain public and private directory'
   });
 
-  var domainName = getDomainName();
+  var domainName = detectDomainName();
   if (domainName) {
     publicGadgetFeedUrl = 'http://feedserver-enterprise.googleusercontent.com/Gadget';
     domainPublicGadgetFeedUrl = 'http://feedserver-enterprise.googleusercontent.com/a/' +

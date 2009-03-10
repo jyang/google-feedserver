@@ -5,7 +5,6 @@
   <Require feature="setprefs"/>
   <Require feature="minimessage"/>
 </ModulePrefs>
-<UserPref name="domainName" display_name="Domain Name" datatype="string"/>
 <Content type="html"><![CDATA[
 <style>
 #editor {
