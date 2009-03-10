@@ -37,7 +37,7 @@ function setNameOfGadgetBeingEdited(name) {
   if (name) {
     $('spec-url-wrapper').style.display = 'inline';
     var specUrl = 'http://www.google.com/a/feeds/server/g/domain/' +
-        getDomainName() + '/PrivateGadgetSpec/' + name;
+       detectDomainName() + '/PrivateGadgetSpec/' + name;
     $('spec-url').href = specUrl;
     $('spec-url').innerHTML = specUrl;
   } else {
@@ -217,12 +217,8 @@ function detectDomainName() {
   return null;
 };
 
-function getDomainName() {
-  return new gadgets.Prefs().getString("domainName") || detectDomainName();
-};
-
 function initGadget() {
-  var domainName = getDomainName();
+  var domainName = detectDomainName();
   if (domainName) {
     privateGadgetSpecFeedUrl = 'http://feedserver-enterprise.googleusercontent.com/a/' +
         domainName + '/g/PrivateGadgetSpec';

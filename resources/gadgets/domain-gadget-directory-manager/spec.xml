@@ -6,7 +6,6 @@
   <Require feature="minimessage"/>
   <Require feature="tabs"/>
 </ModulePrefs>
-<UserPref name="domainName" display_name="Domain Name" datatype="string"/>
 <UserPref name="selectedTab" datatype="hidden"/>
 <Content type="html"><![CDATA[
 <style>
