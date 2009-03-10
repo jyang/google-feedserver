@@ -7,7 +7,7 @@ var privateGadgetSpecFeedUrl = null;
 var SERVICE_NAME = 'esp';
 var APP_NAME = 'private-gadget-editor';
 
-var SPINNER = '<img src="http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/private-gadget-editor/spinner.gif">';
+var SPINNER = '<img src="//www-opensocial.googleusercontent.com/gadgets/proxy/refresh=3600&container=enterprise&gadget=http%3A%2F%2Fwww.svca.cc%2Fdgdm.xml%3F1908234782374/http%3A%2F%2Fgoogle-feedserver.googlecode.com%2Fsvn%2Ftrunk%2Fresources%2Fgadgets%2Fprivate-gadget-editor%2Fspinner.gif">';
 var DEFAULT_SPINNER_ID = 'spinner';
 
 function $(id) {
@@ -37,7 +37,7 @@ function setNameOfGadgetBeingEdited(name) {
   if (name) {
     $('spec-url-wrapper').style.display = 'inline';
     var specUrl = 'http://www.google.com/a/feeds/server/g/domain/' +
-       detectDomainName() + '/PrivateGadgetSpec/' + name;
+        detectDomainName() + '/PrivateGadgetSpec/' + name;
     $('spec-url').href = specUrl;
   } else {
     $('spec-url-wrapper').style.display = 'none';
