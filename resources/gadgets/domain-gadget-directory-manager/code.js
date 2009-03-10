@@ -60,7 +60,7 @@ var MAX_NO_SCROLL_ROWS = 20;
 var MAX_SCROLLBAR_HEIGHT = 360;
 var MAX_RESULTS = 20;
 
-var SPINNER = '<img src="//google-feedserver.googlecode.com/svn/trunk/resources/gadgets/domain-gadget-directory-manager/spinner.gif">';
+var SPINNER = '<img src="' + location.protocol + '//google-feedserver.googlecode.com/svn/trunk/resources/gadgets/domain-gadget-directory-manager/spinner.gif">';
 
 var NO_FILTER = 'no-filter';
 var WHITE_LIST_FILTER = 'white-list-filter';
@@ -719,22 +719,22 @@ function initGadget() {
 
   var domainName = detectDomainName();
   if (domainName) {
-    publicGadgetFeedUrl = '//feedserver-enterprise.googleusercontent.com/Gadget';
-    domainPublicGadgetFeedUrl = '//feedserver-enterprise.googleusercontent.com/a/' +
+    publicGadgetFeedUrl = location.protocol + '//feedserver-enterprise.googleusercontent.com/Gadget';
+    domainPublicGadgetFeedUrl = location.protocol + '//feedserver-enterprise.googleusercontent.com/a/' +
         domainName + '/Gadget';
-    domainPublicGadgetFeedUrl = '//feedserver-enterprise.googleusercontent.com/a/' +
+    domainPublicGadgetFeedUrl = location.protocol + '//feedserver-enterprise.googleusercontent.com/a/' +
         domainName + '/PrivateGadget';
     domainFilterListedGadgetFeedUrl[WHITE_LIST_FILTER] =
-       '//feedserver-enterprise.googleusercontent.com/a/' + domainName +
+       location.protocol + '//feedserver-enterprise.googleusercontent.com/a/' + domainName +
        '/g/WhiteListedGadget';
     domainFilterListedGadgetFeedUrl[BLACK_LIST_FILTER] =
-        '//feedserver-enterprise.googleusercontent.com/a/' + domainName +
+        location.protocol + '//feedserver-enterprise.googleusercontent.com/a/' + domainName +
         '/g/BlackListedGadget';
-    privateGadgetFeedUrl = '//feedserver-enterprise.googleusercontent.com/a/' +
+    privateGadgetFeedUrl = location.protocol + '//feedserver-enterprise.googleusercontent.com/a/' +
         domainName + '/g/PrivateGadget';
-    privateGadgetSpecFeedUrl = '//feedserver-enterprise.googleusercontent.com/a/' +
+    privateGadgetSpecFeedUrl = location.protocol + '//feedserver-enterprise.googleusercontent.com/a/' +
         domainName + '/g/PrivateGadgetSpec';
-    privateGadgetCategoryFeedUrl = '//feedserver-enterprise.googleusercontent.com/a/' +
+    privateGadgetCategoryFeedUrl = location.protocol + '//feedserver-enterprise.googleusercontent.com/a/' +
         domainName + '/g/PrivateGadgetCategory';
   } else {
     showMessage('Please set user preference "Domain Name"');
