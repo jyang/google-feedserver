@@ -118,8 +118,9 @@ a.right {
 </div>
 
 <div id="tab-private" style="display:none">
-  <div class="instruction">
+  <div class="instruction right-container">
     Select private gadgets to publish to and unselect private gadgets to unpublish from the private gadget directory.
+    <div id="private-gadget-list-spinner" class="right"></div>
   </div>
   <div id="gadget-list" class="list"></div>
 </div>
@@ -129,6 +130,12 @@ a.right {
     <button onclick="addCategory()">Add</button>
   </div>
   <div id="category-list" class="list"></div>
+</div>
+
+<div id="tab-preview" style="display:none">
+  <input type="radio" onchange="previewDirectory('public')">Public
+  <input type="radio" onchange="previewDirectory('private')">Private
+  <div id="directory"></div>
 </div>
 ]]></Content>
 </Module>

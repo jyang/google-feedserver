@@ -41,8 +41,9 @@ function showElementBusy(id, busy) {
   $(id).innerHTML = busy || busy == undefined ? SPINNER : '';
 };
 
-function noCache(url) {
-  return url + '?nocache=' + (new Date().getTime());
+function noCache(query) {
+  query.setParam('nocache', (new Date().getTime()).toString());
+  return query;
 };
 
 // ---------
@@ -55,10 +56,9 @@ var STATE_PENDING = 'pending';
 var STATE_OK = 'ok';
 var STATE_ERROR = 'error';
 
-var MAX_LONG = 9223372036854776000;
-
 var MAX_NO_SCROLL_ROWS = 20;
 var MAX_SCROLLBAR_HEIGHT = 360;
+var MAX_RESULTS = 20;
 
 var SPINNER = '<img src="http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/domain-gadget-directory-manager/spinner.gif">';
 
@@ -130,14 +130,22 @@ function initDirectoryManager() {
 // google.setOnLoadCallback(initDirectoryManager);
 
 function loadPrivateGadgetList() {
-  loadGadgetList(noCache(privateGadgetSpecFeedUrl), function(response) {
+  loadGadgetList(noCache(new google.gdata.client.Query(privateGadgetSpecFeedUrl)),
+      function(response) {
     privateGadgets = response && response.feed.entry ? response.feed.entry : [];
     showPrivateGadgets();
   });
 };
 
 function loadPublishedGadgetList() {
-  loadGadgetList(privateGadgetFeedUrl, function(response) {
+  loadPublishedGadgetList_(1, MAX_RESULTS, showPrivateGadgets);
+};
+
+function loadPublishedGadgetList_(startIndex, maxResults, continuation) {
+  var query = noCache(new google.gdata.client.Query(privateGadgetFeedUrl));
+  query.setParam('start-index', startIndex);
+  query.setParam('max-results', maxResults);
+  loadGadgetList(query, function(response) {
     if (response) {
       var entries = response.feed.entry || [];
       for (var i = 0; i < entries.length; i++) {
@@ -145,7 +153,14 @@ function loadPublishedGadgetList() {
         var gadgetName = gadgetSpecUrl.substring(gadgetSpecUrl.lastIndexOf('/') + 1);
         publishedGadgetUrls[gadgetName] = entries[i].id.$t;
       }
-      showPrivateGadgets();
+      if (entries.length < maxResults) {
+        // no more to load
+        continuation();
+        showElementBusy('private-gadget-list-spinner', false);
+      } else {
+        // load more
+        loadPublishedGadgetList_(startIndex + maxResults, maxResults, continuation);
+      }
     }
   });
 };
@@ -156,12 +171,13 @@ function createService() {
   return service;
 };
 
-function loadGadgetList(url, continuation) {
+function loadGadgetList(query, continuation) {
+  showElementBusy('private-gadget-list-spinner');
   var service = createService();
   var params = {};
   params[gadgets.io.RequestParameters.REFRESH_INTERVAL] = 0;  // no caching
   service.setGadgetsAuthentication('SIGNED', params);
-  service.getFeed(url, continuation, showMessage);
+  service.getFeed(query, continuation, showMessage);
 };
 
 function bold(s, cond) {
@@ -258,7 +274,8 @@ function unpublishGadget(i) {
 // private categories
 
 function loadGadgetCategoryList() {
-  loadGadgetList(privateGadgetCategoryFeedUrl, function(response) {
+  loadGadgetList(new google.gdata.client.Query(privateGadgetCategoryFeedUrl),
+      function(response) {
     if (response) {
       privateGadgetCategories = response.feed.entry || [];
       showPrivateGadgetCategories();
@@ -443,9 +460,13 @@ function showPublicGadgets(loadMore) {
 function loadPublicGadgets(searchTerm, loadMore, continuation) {
   if (publicGadgets.length == 0 || loadMore) {
     var service = createService();
-    service.getFeed(publicGadgetFeedUrl + '?start-index=' + publicGadgetsStartIndex +
-        '&max-results=' + publicGadgetsMaxResults +
-        (searchTerm ? '&q=' + searchTerm : ''), function(response) {
+    var query = new google.gdata.client.Query(publicGadgetFeedUrl);
+    query.setParam('start-index', publicGadgetsStartIndex);
+    query.setParam('max-results', publicGadgetsMaxResults);
+    if (searchTerm) {
+      query.setParam('q', searchTerm);
+    }
+    service.getFeed(query, function(response) {
       if (response) {
         var more = response.feed.entry || [];
         publicGadgets = publicGadgets.concat(more);
@@ -523,7 +544,8 @@ function removeGadgetFromFilterList(gadgetId) {
     var gadget = getDomainFilterListedGadgets()[i].content.entity;
     if (gadget.gadgetId == gadgetId) {
       var service = createService();
-      service.deleteEntry(getDomainFilterListedGadgetFeedUrl() + '/g' + gadgetId, function(response) {
+      service.deleteEntry(getDomainFilterListedGadgetFeedUrl() + '/g' + gadgetId,
+          function(response) {
         getDomainFilterListedGadgets().splice(i, 1);
         gadget.$state = STATE_OK;
         showGadgetFilterList();
@@ -576,7 +598,8 @@ function showGadgetFilterList() {
 function loadGadgetFilterList(continuation) {
   if (getDomainFilterListedGadgets().length == 0) {
     var service = createService();
-    service.getFeed(getDomainFilterListedGadgetFeedUrl(), function(response) {
+    var query = new google.gdata.client.Query(getDomainFilterListedGadgetFeedUrl());
+    service.getFeed(query, function(response) {
       setDomainFilterListedGadgets(response && response.feed.entry ? response.feed.entry : []);
       var length = getDomainFilterListedGadgets().length;
       var pending = length;
@@ -708,7 +731,7 @@ function initGadget() {
         'http://feedserver-enterprise.googleusercontent.com/a/' + domainName +
         '/g/BlackListedGadget';
     privateGadgetFeedUrl = 'http://feedserver-enterprise.googleusercontent.com/a/' +
-        domainName + '/g/PrivateGadget?nocache=1';
+        domainName + '/g/PrivateGadget';
     privateGadgetSpecFeedUrl = 'http://feedserver-enterprise.googleusercontent.com/a/' +
         domainName + '/g/PrivateGadgetSpec';
     privateGadgetCategoryFeedUrl = 'http://feedserver-enterprise.googleusercontent.com/a/' +
