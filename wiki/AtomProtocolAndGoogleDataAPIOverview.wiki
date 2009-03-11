@@ -8,6 +8,7 @@ Google Feed Server implements a simple back end for data adapters that allows a 
 ----
 <h2>Contents</h2>
 <wiki:toc max_depth="4" />
+
 ----
 = Google Data API and the Atom Publishing Protocol =
 
