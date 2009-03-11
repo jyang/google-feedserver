@@ -4,6 +4,7 @@
 ----
 <h2>Contents</h2>
 <wiki:toc max_depth="4" />
+
 ----
 = Configuring a Mapping File in iBATIS Format =  
 In the {{{conf/feedserver/sqlmap/}}} folder, create a mapping file for iBATIS to map Java objects to database queries and results for a table or view.
