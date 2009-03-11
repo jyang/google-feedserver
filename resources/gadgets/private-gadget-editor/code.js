@@ -7,7 +7,7 @@ var privateGadgetSpecFeedUrl = null;
 var SERVICE_NAME = 'esp';
 var APP_NAME = 'private-gadget-editor';
 
-var SPINNER = '<img src="//www-opensocial.googleusercontent.com/gadgets/proxy/refresh=3600&container=enterprise&gadget=http%3A%2F%2Fwww.svca.cc%2Fdgdm.xml%3F1908234782374/http%3A%2F%2Fgoogle-feedserver.googlecode.com%2Fsvn%2Ftrunk%2Fresources%2Fgadgets%2Fprivate-gadget-editor%2Fspinner.gif">';
+var SPINNER = '<img src="//www-opensocial.googleusercontent.com/gadgets/proxy/refresh=3600&container=enterprise&gadget=http%3A%2F%2Fgoogle-feedserver.googlecode.com%2Fsvn%2Ftrunk%2Fresources%2Fgadgets%2Fprivate-gadget-editor%2Fspec.xml/http%3A%2F%2Fgoogle-feedserver.googlecode.com%2Fsvn%2Ftrunk%2Fresources%2Fgadgets%2Fprivate-gadget-editor%2Fspinner.gif">';
 var DEFAULT_SPINNER_ID = 'spinner';
 
 function $(id) {
@@ -199,6 +199,15 @@ function showMessage(message) {
 function initCodePress() {
   editor.style.height = '400px';
   CodePressWrapper.init();
+
+  if (location.href.indexOf('codePressReloaded') < 0) {
+    setTimeout(function() {
+      if (!$('codepress-iframe').editor) {
+        location.href += '&codePressReloaded';
+        location.reload();
+      }
+    }, 500);
+  }
 };
 
 function detectDomainName() {
