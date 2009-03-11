@@ -134,9 +134,9 @@ function saveGadget(changeName) {
     service.updateEntry(privateGadgetSpecFeedUrl + '/' + nameOfGadgetBeingEdited,
         entryOfGadgetBeingEdited, function(response) {
       stopSpinner();
-    }, function(response) {
+    }, function(error) {
       stopSpinner();
-      showMessage('Error: failed to update gadget spec "' + nameOfGadgetBeingEdited + '"');
+      showMessage('Error: failed to update gadget spec "' + nameOfGadgetBeingEdited + '"' + error);
     });
     startSpinner();
   } else {
@@ -148,15 +148,16 @@ function saveGadget(changeName) {
     }
     setNameOfGadgetBeingEdited(name);
     if (nameOfGadgetBeingEdited) {
+      delete entryOfGadgetBeingEdited.content.entity.id;
       entryOfGadgetBeingEdited.content.entity.name = nameOfGadgetBeingEdited;
       service.insertEntry(privateGadgetSpecFeedUrl,
           entryOfGadgetBeingEdited, function(response) {
         stopSpinner();
         privateGadgetNames.push(nameOfGadgetBeingEdited);
         showPrivateGadgetNames();
-      }, function(response) {
+      }, function(error) {
         stopSpinner();
-        showMessage('Error: failed to add gadget spec "' + nameOfGadgetBeingEdited + '"');
+        showMessage('Error: failed to add gadget spec "' + nameOfGadgetBeingEdited + '": ' + error);
       });
       startSpinner();
     }
