@@ -60,18 +60,12 @@ CodePress = function(obj) {
     if(id) self.textarea.value = document.getElementById(id).value;
     if(!self.textarea.disabled) return;
     self.language = language ? language : self.options.replace(/ ?codepress ?| ?readonly-on ?| ?autocomplete-off ?| ?linenumbers-off ?/g,'');
-    if(!CodePress.languages[self.language]) self.language = 'generic';
+    // if(!CodePress.languages[self.language]) self.language = 'generic';
 
     var contentDoc = self.document || self.contentDocument || self.contentWindow.documnt;
     contentDoc.open();
     contentDoc.write(codePressEmptyIframeContent);
     contentDoc.close();
-    contentDoc.location.reload();
-
-    contentDoc.open();
-    contentDoc.write(codePressEmptyIframeContent);
-    contentDoc.close();
-    contentDoc.location.reload();
 
     if(self.attachEvent) self.attachEvent('onload',self.initialize);
     else self.addEventListener('load',self.initialize,false);
