@@ -151,7 +151,7 @@ public class BeanUtil {
             if (value.getClass().isArray()) {
               Object[] valueArrary = (Object[]) value;
               int length = valueArrary.length;
-              beanArray = Array.newInstance(propertyType, 1);
+              beanArray = Array.newInstance(propertyType, length);
               for (int index = 0; index < valueArrary.length; ++index) {
                 Object valueObject = valueArrary[index];
                 fillBeanInArray(propertyType, beanArray, index, valueObject);
@@ -241,24 +241,58 @@ public class BeanUtil {
    */
   public boolean equals(Object bean1, Object bean2) throws IntrospectionException,
       IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+    if ((null == bean1) && (null == bean2)) {
+      return true;
+    } else if ((null == bean1) || (null == bean2)) {
+      return false;
+    }
     if (bean1.getClass() != bean2.getClass()) {
       return false;
     }
-
-    BeanInfo bean1Info = Introspector.getBeanInfo(bean1.getClass(), Object.class);
-    for (PropertyDescriptor p : bean1Info.getPropertyDescriptors()) {
-      String name = p.getName();
-      Method reader = p.getReadMethod();
-      if (reader != null) {
-        Object value1 = reader.invoke(bean1);
-        Object value2 = reader.invoke(bean2);
-        if ((value1 != null && !value1.equals(value2))
-            || (value2 != null && !value2.equals(value1))) {
+    if (bean1.getClass().isArray() && bean2.getClass().isArray()) {
+      if (Array.getLength(bean1) != Array.getLength(bean2)) {
+        return false;
+      }
+      for (int i = 0; i < Array.getLength(bean1); i++) {
+        if (!equals(Array.get(bean1, i), Array.get(bean2, i))) {
           return false;
         }
       }
+      return true;
+    } else if (bean1.getClass().isArray()) {
+      return false;
+    } else if (bean2.getClass().isArray()) {
+      return false;
+    } else if (isBean(bean1.getClass())) {
+      BeanInfo bean1Info;
+      try {
+        bean1Info = Introspector.getBeanInfo(bean1.getClass(), Object.class);
+      } catch (IntrospectionException e) {
+        return false;
+      }
+      for (PropertyDescriptor p : bean1Info.getPropertyDescriptors()) {
+        String name = p.getName();
+        Method reader = p.getReadMethod();
+        if (reader != null) {
+          try {
+            Object value1 = reader.invoke(bean1);
+            Object value2 = reader.invoke(bean2);
+            if (!equals(value1, value2)) {
+              return false;
+            }
+          } catch (IllegalArgumentException e) {
+            return false;
+          } catch (IllegalAccessException e) {
+            return false;
+          } catch (InvocationTargetException e) {
+            return false;
+          }
+        }
+      }
+      return true;
+    } else {
+      return bean1.equals(bean2);
     }
-    return true;
   }
 
   public Object createBeanInstance(Class<?> objectClass) {
