@@ -746,9 +746,12 @@ function loadGadgetFilterList(continuation) {
 // -----------------
 // directory preview
 
+var gadgetDirectory;
+
 function showDirectoryPreview(directory) {
-  var gadgetDirectory = new GadgetDirectory(directory == 'public' ?
+  gadgetDirectory = new GadgetDirectory(directory == 'public' ?
       domainPublicGadgetFeedUrl : privateGadgetFeedUrl, directory + '-directory-preview');
+  show('directory-preview-refresh');
   if (directory == 'public') {
     show('public-directory-preview');
     show('public-directory-preview-spinner');
@@ -763,13 +766,22 @@ function showDirectoryPreview(directory) {
   gadgetDirectory.show();
 };
 
+function refreshDirectoryPreview() {
+  gadgetDirectory.init();
+  gadgetDirectory.show();
+};
+
 function GadgetDirectory(feedUrl, contentElementId) {
+  this.init(feedUrl, contentElementId);
+};
+
+GadgetDirectory.prototype.init = function(feedUrl, contentElementId) {
   this.gadgets_ = [];
-  this.feedUrl_ = feedUrl;
+  if (feedUrl) this.feedUrl_ = feedUrl;
   this.startIndex_ = 1;
   this.maxResults_ = MAX_RESULTS;
   this.lastSearchTerm_ = null;
-  this.contentElementId_ = contentElementId;
+  if (contentElementId) this.contentElementId_ = contentElementId;
 };
 
 GadgetDirectory.prototype.showWidgets = function() {

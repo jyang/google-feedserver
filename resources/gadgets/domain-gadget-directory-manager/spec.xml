@@ -156,6 +156,8 @@ a.right {
   <div class="right-container">
     <input name="preview-directory" type="radio" onchange="showDirectoryPreview('public')">Public
     <input name="preview-directory" type="radio" onchange="showDirectoryPreview('private')">Private
+    <button id="directory-preview-refresh" style="display:none"
+        onclick="refreshDirectoryPreview()">Refresh</button>
     <div class="right" id="public-directory-preview-spinner" style="display:none"></div>
     <div class="right" id="private-directory-preview-spinner" style="display:none"></div>
   </div>
