@@ -27,6 +27,7 @@ body {
   padding: 4px;
   border: 1px solid #ccc;
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .list-item {
@@ -80,6 +81,21 @@ body {
 a.right {
   margin: 0px;
 }
+
+p {
+  padding: 2px;
+}
+
+.gadget-icon {
+  width: 120px;
+  float: left;
+  padding: 10px;
+}
+
+.gadget-description {
+  margin-left: 150px;
+  padding: 4px;
+}
 </style>
 
 <!--
@@ -93,11 +109,11 @@ a.right {
     Control which gadgets from the public directory are available to your users.
   </div>
   <div class="button-bar right-container">
-    <select id="directory-filter-type" onchange="changeDirectoryFilter()">
-     <option selected value="no-filter">No Restrictions</option>
-     <option value="white-list-filter">White List</option>
-     <option value="black-list-filter">Black List</option>
-    </select>
+    <select id="directory-filter-type" onchange="changeDirectoryFilter()" disabled>
+     <option selected value="noRestrictions">No Restrictions</option>
+     <option value="whiteList">White List</option>
+     <option value="blackList">Black List</option>
+    </select> <span id="directory-filter-spinner"></span>
     <button id="add-gadget" class="right" onclick="showPublicGadgets()" disabled="true">Add Gadgets</button>
     <div id="hide-directory" class="right" style="display:none">
       <a href="javascript:void(0)" onclick="hidePublicGadgets()">Hide Directory</a>
@@ -133,9 +149,28 @@ a.right {
 </div>
 
 <div id="tab-preview" style="display:none">
-  <input type="radio" onchange="previewDirectory('public')">Public
-  <input type="radio" onchange="previewDirectory('private')">Private
-  <div id="directory"></div>
+  <div class="right-container">
+    <input name="preview-directory" type="radio" onchange="showDirectoryPreview('public')">Public
+    <input name="preview-directory" type="radio" onchange="showDirectoryPreview('private')">Private
+    <div class="right" id="public-directory-preview-spinner" style="display:none"></div>
+    <div class="right" id="private-directory-preview-spinner" style="display:none"></div>
+  </div>
+  <div id="public-directory-preview" class="list" style="display:none"></div>
+  <div id="private-directory-preview" class="list" style="display:none"></div>
+</div>
+
+<div id="tab-access-control" style="display:none">
+  <div class="instruction">
+    Enter the name of the group whose members are allowed to save to and update private gadget specs:<br>
+    <input id="spec-group">@<span id="acl-domain-name1"></span>
+  </div>
+  <div class="instruction">
+    Enter the name of the group whose members are allowed to publish to and unpublish from private gadget directory:<br>
+    <input id="directory-group">@<span id="acl-domain-name2"></span>
+  </div>
+  <div class="button-bar">
+    <button onclick="saveAcls()">Save</button> <button onclick="clearAcls()">Clear</button>
+  </div>
 </div>
 ]]></Content>
 </Module>
