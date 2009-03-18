@@ -809,8 +809,8 @@ GadgetDirectory.prototype.show = function(loadMore) {
       html.push('<div class="list-item">',
           '<div class="gadget-icon"><img src="', typeof(gadget.thumbnail) == 'string' ?
           gadget.thumbnail : 'http://www.google.com/ig/images/no_image/no_image_gadget_thm.png',
-          '"></div><div class="gadget-description"><h2>', gadget.title, '</h2><p>',
-          description, '</p><p>', gadget.author ? gadget.author : '',
+          '"></div><div class="gadget-description"><h3>', gadget.title, '</h3><p>',
+          description, '</p><p class="gadget-author">', gadget.author ? gadget.author : '',
           gadget.author_email ? ' (' + gadget.author_email + ')' : '', ' - ', gadget.url,
           '</p></div></div>');
     }

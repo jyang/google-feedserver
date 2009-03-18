@@ -17,6 +17,10 @@ body {
   font-size: 10pt;
 }
 
+h3 {
+  font-size: 12pt;
+}
+
 .instruction {
   margin: 4px;
   padding: 4px;
@@ -82,19 +86,19 @@ a.right {
   margin: 0px;
 }
 
-p {
-  padding: 2px;
-}
-
 .gadget-icon {
-  width: 120px;
   float: left;
-  padding: 10px;
+  padding: 4px;
 }
 
 .gadget-description {
-  margin-left: 150px;
+  margin-left: 132px;
   padding: 4px;
+}
+
+.gadget-author {
+  font-size: 8pt;
+  color: green;
 }
 </style>
 
