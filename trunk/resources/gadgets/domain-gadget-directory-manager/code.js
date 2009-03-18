@@ -1015,11 +1015,11 @@ function initGadget() {
       callback: gadgets.window.adjustHeight(),
       tooltip: 'manage domain private gadget categories'
   });
-//  tabset.addTab('Directory Preview', {
-//      contentContainer: $('tab-preview'),
-//      callback: gadgets.window.adjustHeight(),
-//      tooltip: 'preview domain public and private directory'
-//  });
+  tabset.addTab('Directory Preview', {
+      contentContainer: $('tab-preview'),
+      callback: gadgets.window.adjustHeight(),
+      tooltip: 'preview domain public and private directory'
+  });
 //   tabset.addTab('Access Control', {
 //       contentContainer: $('tab-access-control'),
 //       callback: function() {
