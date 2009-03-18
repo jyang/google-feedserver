@@ -217,8 +217,8 @@ function detectDomainName() {
     if (params[i].indexOf('parent=') == 0) {
       var p = params[i].split('=');
       var parent = decodeURIComponent(p[1]);
-      var r = /google.com\/a\/([^\/]*)\//.exec(parent);
-      var domainName = r ? r[1] : null;
+      var r = /google.com(:[0-9]+)?\/a\/([^\/]*)\//.exec(parent);
+      var domainName = r ? r[2] : null;
       return domainName;
     }
   }
