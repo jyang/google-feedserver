@@ -161,13 +161,13 @@ var aclFeedUrl = null;
 function initDirectoryManager() {
   if (privateGadgetSpecFeedUrl && !privateGadgetSpecFeedLoaded) {
     privateGadgetSpecFeedLoaded = true;
-    $('gadget-list').innerHTML = SPINNER;
+    $('gadget-list').innerHTML = '';
     loadPrivateGadgetList();
   }
 
   if (privateGadgetFeedUrl && !privateGadgetFeedLoaded) {
     privateGadgetFeedLoaded = true;
-    $('gadget-list').innerHTML = SPINNER;
+    $('gadget-list').innerHTML = '';
     loadPublishedGadgetList();
   }
 
@@ -216,6 +216,12 @@ function loadPublishedGadgetList_(startIndex, maxResults, continuation) {
       }
     }
   });
+};
+
+function refreshPrivateDirectory() {
+  $('gadget-list').innerHTML = '';
+  loadPrivateGadgetList();
+  loadPublishedGadgetList();
 };
 
 function createService() {
@@ -870,7 +876,7 @@ GadgetDirectory.prototype.load = function(searchTerm, loadMore, continuation) {
     }.bind(this), function(error) {
       this.showBusy(false);
       showMessage(error);
-    });
+    }.bind(this));
     this.showBusy(true);
   } else {
     this.showBusy(false);
