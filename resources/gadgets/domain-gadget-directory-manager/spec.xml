@@ -111,6 +111,7 @@ a.right {
 <div id="tab-public" style="display:none">
   <div class="instruction">
     Control which gadgets from the public directory are available to your users.
+    There will be a delay before changes appear in the directory. Use the preview tab.
   </div>
   <div class="button-bar right-container">
     <select id="directory-filter-type" onchange="changeDirectoryFilter()" disabled>
@@ -140,6 +141,7 @@ a.right {
 <div id="tab-private" style="display:none">
   <div class="instruction right-container">
     Select private gadgets to publish to and unselect private gadgets to unpublish from the private gadget directory.
+    There will be a delay before changes appear in the directory. Use the preview tab.
     <div id="private-gadget-list-spinner" class="right"></div>
     <button id="private-directory-refresh"
         onclick="refreshPrivateDirectory()">Refresh</button>
