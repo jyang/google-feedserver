@@ -778,7 +778,7 @@ Principal can be:
   * ANY_INDIVIDUAL: The current logged in user (has to match the owner of the user feed; can be out of the domain)
   * ANYONE: Any logged in user, in or out of the domain
   * User Email address: Any individual user's email address
-  * Group email address: Email address of a group (go to [https://www.google.com/a/cpanel/joonix.net/GroupList https://www.google.com/a/cpanel/joonix.net/GroupList] to manage groups)
+  * Group email address: Email address of a group (go to [https://www.google.com/a/cpanel/example.com/GroupList https://www.google.com/a/cpanel/example.com/GroupList] to manage groups)
   </td>
   <td>
 {{{
