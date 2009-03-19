@@ -548,7 +548,7 @@ To unpublish a gadget:
 For example:
     {{{
     ...
-    <id>http://feedserver-enterprise.googleusercontent.com/a/joonix.net/g/PrivateGadget/056536884581709698</id>
+    <id>http://feedserver-enterprise.googleusercontent.com/a/example.com/g/PrivateGadget/056536884581709698</id>
     ...
     }}}
     </li>
