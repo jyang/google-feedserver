@@ -1,0 +1,815 @@
+#summary Private Gadget Administrator's Guide: FSCT, Private Gadget Editor, and Domain Directory Manager
+
+<h1>Private Gadget Administrator's Guide</h1>
+
+This guide provides information about installing and using the Google Feed Server management tools to
+manage your data sources through feeds. Feed Server uses the 
+[http://cwiki.apache.org/confluence/display/ABDERA/Documentation Apache Abdera framework]
+to implement [http://www.ietf.org/rfc/rfc5023.txt Atom Publishing Protocol]. Open source software distribution is available in either binary 
+or source for use with Linux or Windows.
+
+----
+<h2>Contents</h2>
+<wiki:toc max_depth="4" />
+
+----
+----
+= Overview =
+
+The Google Feed Server provides open source software for data access through feeds. You can download and install the Feed Server on your site to manage your data sources. A feed consists of one or more feed entries, each containing an entity that maps directly to your own data.  Feeds and entries are represented with the [http://tools.ietf.org/html/rfc4287 Atom Syndication Format].
+
+The [http://code.google.com/p/google-feedserver/ google-feedserver] site provides the following additional administrative features:
+<ul>
+<li><b>Feed Server Client Tool (FSCT)</b>. Provides a set of Linux shell or Windows batch commands that you can run from the command line to retrieve or modify feeds.</li>
+<li><b>Private Gadget Editor (PGE)</b>. You can use the PGE gadget to create private Google Gadgets that are accessible to your own domain.</li>
+<li><b>Domain Directory Manager (DDM)</b>. You can use DDM gadget to manage where gadgets appear in your domain's gadget directories.</li>
+</ul>
+
+This guide assumes an understanding of Atom, Google Data API principles, and how to install a Java runtime environment to run Java programs.
+
+----
+----
+= Feed Server Client Tool =
+
+The Feed Server Client Tool (FSCT) provides feed administrators with a set of management tools and payload-in-content schemas for 
+managing and serving feeds. 
+
+The FSCT provides the following:
+
+  * Binary distribution for easy setup and use
+  * Create, retrieve, update, and delete (CRUD) capabilities 
+
+The sections that follow enable you to install, configure, and use the FSCT.
+
+----
+== FSCT Requirements ==
+
+To use FSCT, you need the following:
+
+  * Linux (any distribution where Java programs can run) or Windows (XP or Vista)
+  * 512 MB RAM recommended
+  * 2 MB disk space for installation of the binary version
+  * JRE available from [http://www.java.com/en/download/manual.jsp Java.com]
+  * FSCT software binary download from [http://google-feedserver.googlecode.com/files/google-feedserver-clienttool-2.0.4.zip]
+
+----
+== FSCT Tasks ==
+
+You can use FSCT for the following tasks:
+
+  # Manage feed entries: insert, retrieve, update, and delete
+  # Retrieve feeds
+
+----
+== Installing and Configuring FSCT ==
+
+You can download the FSCT from a [http://google-feedserver.googlecode.com/files/google-feedserver-clienttool-2.0.0.zip ZIP file] 
+that creates subordinate folders when extracted.
+FSCT provides a setup file that you edit and then run to configure your operating environment.
+
+If needed, you can download a source TAR file that you can build with Apache Ant.
+
+To install and configure FSCT:
+
+<ol>
+<li>Install [http://java.sun.com/javase/downloads/?intcmp=1281 JRE] if you have not done so already.</li>
+<li>Download the [http://google-feedserver.googlecode.com/files/google-feedserver-clienttool-2.0.4.zip FSCT binary distribution zip file] and extract the contents.</li> 
+<li>Use a text editor to edit the {{{setupEnv.sh}}} file for Linux or the {{{setupEnv.bat}}} file for Windows and set the following parameters (you can ignore the rest of the parameters):<ul>
+<li>FSCT_DOMAIN -- Set to the domain name of your Google Apps for Your Domain site.</li>
+<li>FSCT_USER_NAME -- Specify the login name for your Google Account.  For most administrative tasks, this needs to be an administrator account.</li>
+</ul></li>
+<li>Test your installation by running the {{{./getFeed.sh Gadgets}}} in Linux or {{{getFeed Gadgets}}} in Windows to view Google Gadgets in your domain's public gadget directory.</li>
+</ol>
+
+In {{{setupEnv.sh}}} for Linux or in {{{setupEnv.bat}}} for Windows, the following parameters are configurable:
+
+  * FSCT_DOMAIN -- Domain name
+  * FSCT_USER_NAME -- The user account to be used
+  * FSCT_FEED_BASE -- The feed URL base
+  * SERVICE_NAME -- The name of feed service
+  * AUTHN_URL_PROTOCOL -- Name of the protocol to use for authentication, either http or https
+  * AUTHN_URL -- The end point that handles authentication and grants authorization tokens to be used with each request
+
+----
+== FSCT Commands ==
+
+To use each entry command:
+
+ # Ensure that {{{setupEnv.sh}}} for Linux or {{{setupEnv.bat}}} for Windows is correctly configured with your Google Apps for Your Domain user name and domain name.
+ # Run the command from the command line specifying the proper syntax.
+
+FSCT provides the following commands for Linux (file type of {{{.sh}}}) or Windows (file type of {{{.bat}}}). The Syntax column lists Windows batch command syntax. For Linux, preface commands with {{{./}}} and specify the {{{.sh}}} file extension, for example {{{./getFeed PrivateGadgetSpec}}}:
+
+<table border="1">
+<tr><th>Command</th><th>Description</th><th>Syntax</th><th>Example</th></tr>
+ 
+<tr><td>{{{deleteEntry}}}</td>
+    <td>Deletes an entry from a feed</td>
+    <td><b>deleteEntry</b> <em>feedName</em> <em>entryName</em></td>
+    <td><tt>deleteEntry {{{PrivateGadgetSpec}}} hello-gadget</tt></td>
+</tr>
+    
+<tr><td>{{{getEntry}}}</td>
+    <td>Gets an entry from a feed</td>
+    <td><b>getEntry</b> <em>feedName</em> <em>entryName</em></td>
+    <td><tt>getEntry {{{PrivateGadgetSpec}}} hello-gadget</tt></td>
+</tr> 
+    
+<tr><td>{{{getFeed}}}</td>
+    <td>Gets a feed</td>
+    <td><b>getFeed</b> <em>feedName</em></td>
+    <td><tt>getFeed {{{PrivateGadgetSpec}}}</tt></td>
+</tr>
+    
+<tr><td>{{{insertEntry}}}</td>
+    <td>Inserts an entry into a feed</td>
+    <td><b>insertEntry</b> <em>feedName</em> <em>entityFilePath</em></td>
+    <td><tt>insertEntry {{{PrivateGadgetSpec}}} helloEntity.xml</tt> where <tt>helloEntity.xml</tt> has the content:<pre><entity xmlns="">
+  <name>hello-gadget</name>
+  <specContent>@hello.xml</specContent>
+</entity>
+</pre>and file <tt>hello.xml</tt> has the gadget spec content.
+</td>
+</tr> 
+
+<tr><td>{{{updateEntry}}}</td>
+    <td>Updates a feed entry in the Feed Server</td>
+    <td><b>updateEntry</b> <em>feedName</em> <em>entryName</em> <em>entityFilePath</em></td>
+    <td><tt>updateEntry {{{PrivateGadgetSpec}}} hello-gadget helloEntity.xml</tt></td>
+</tr>
+</table>
+
+The commands above are generic and works for any feed.  The commands below are optimized for private gadget and directory operation.
+<table border="1">
+<tr><th>Command</th><th>Description</th><th>Syntax</th><th>Example</th></tr>
+
+<tr><td>{{{insertGadgetSpec}}}</td>
+    <td>Inserts a gadget spec into the domain's private gadget spec feed</td>
+    <td><b>insertGadgetSpec !PrivateGadgetSpec</b> <em>gadgetName</em> <em>gadgetSpecFileName</em></td>
+    <td><tt>insertGadgetSpec {{{PrivateGadgetSpec}}} hello-gadget hello.xml</tt></td>
+</tr> 
+    
+<tr><td>{{{updateGadgetSpec}}}</td>
+    <td>Updates a gadget spec in the domain's private gadget spec feed</td>
+    <td><b>updateGadgetSpec !PrivateGadgetSpec</b> <em>gadgetName</em> <em>gadgetSpecFileName</em></td>
+    <td><tt>updateGadgetSpec {{{PrivateGadgetSpec}}} hello-gadget hello.xml</tt></td>
+</tr> 
+
+<tr><td>{{{publishGadget}}}</td>
+    <td>Publishes a private gadget in the domain's private gadget directory</td>
+    <td><b>publishGadget</b> <em>privateDirectoryFeedName</em> <em>privateGadgetSpecFeedName/gadgetName</em></td>
+    <td><tt>publishGadget {{{PrivateGadget}}} {{{PrivateGadgetSpec}}}/hello-gadget</tt></td>
+</tr> 
+</table>
+
+Note:
+  # All feeds have permissions defined on them.  FSCT will only succeed if the user is allowed to perform the operation
+  # Gadget name has to be unique in the gadget spec feed.
+
+----
+== Payload In Content ==
+
+Google Feed Server uses a simple payload format called "payload in content".
+<ul>
+<li>A payload is put in the {{{<content>}}} element as {{{type application/xml}}}</li>
+<li>A property is represented as an element of {{{<name>value</name>}}}</li>
+<li>A {{{repeatable}}} property is represented as an element of {{{<name repeatable="true">value0</name><name>value1</name>...}}}</li>
+<li>Properties can be nested</li>
+<li>Everything inside {{{<content>}}} is treated as data and everything outside as metadata</li>
+</ul>
+
+The payload in content format is Atom compliant and has the following properties:
+<ul>
+<li>No custom extension elements are required</li>
+<li>No custom namespaces are required</li>
+<li>The simple XML format maps to JavaBeans and JSON easily</li>
+<li>No Google Data API Java client library revision is needed when new payload !JavaBeans are added</li>
+</ul>
+
+----
+=== Atom Example ===
+
+A sample contact feed in Atom XML:
+
+{{{
+<feed>
+  ...
+  <entry>
+    ...
+    <content type="application/xml">
+      <entity xmlns="">
+        <id>1234</id>
+        <firstName>Polly</firstName>
+        <lastName>Hedra</lastName>
+        <nickName repeatable="true">Planes</nickName>
+        <nickName>Solid</nickName>
+      </entity>
+    </content>
+  </entry>
+</feed>
+}}}
+
+----
+=== JSON Example ===
+
+{{{
+{"feed": {"entry": [{
+  "content": {
+    "entity": {
+      "id": 1234, "firstName": "Polly", "lastName": "Hedra", nickName: [
+        "Planes", "Solid"
+      ]
+    }
+  },
+  ...
+]
+}}}
+
+----
+=== Java Example ===
+
+Sample Java client code in which property type conversions are done automatically.  
+
+{{{
+// Contact JavaBean
+public class Contact {
+  protected String id;
+  protected String firstName;
+  protected String lastName;
+  protected String[] nickName;
+
+  public String getFirstName() {
+    return firstName;
+  }
+  public void setFirstName(String s) {
+    firstName = s;
+  }
+
+  // create getter/setter for the other two properties
+  ...
+}
+
+// fill a bean with the payload in content of an entry
+FeedEntry entry = service.getEntry("...", FeedEntry.class);
+Contact contact = new Contact();
+ContentUtil contentUtil = new ContentUtil();
+contentUtil.fillBean(entry, contact);
+
+// put a bean into the content of an entry
+Contact contact = new Contact();
+contact.setFirstName("Polly");
+OtherContent content = contentUtil.createXmlContent(contact);
+FeedEntry entry = new FeedEntry();
+entry.setContent(content);
+}}}
+
+----
+=== !JavaScript Example ===
+
+Sample !JavaScript client code:
+
+{{{
+function search(userId) {
+  var service = new google.gdata.client.FeedServerService('employees', 'employee-search');
+  service.getFeed('http://...feedUrl...' + userId, function(response) {
+    var employee = response.entry.content.entity;
+    var content = [];
+    content.push('<table>');
+    content.push('<tr><th align="right">Location</th><td>', employee.location, ' ', employee.roomNumber, '</td></tr>');
+    content.push('<tr><th align="right">Name</th><td>', employee.firstName, ' ', employee.lastName, '</td></tr>');
+    content.push('<tr><th align="right">Job Title</th><td>', employee.jobTitle, '</td></tr>');
+    content.push('<tr><th align="right">Office Phone</th><td>', employee.phoneOffice, '</td></tr>');
+    content.push('</table>');
+    document.getElementById('employee-profile').innerHTML = content.join('');
+  }, showError);
+  document.getElementById('employee-profile').innerHTML = 'Searching for ' + userId + ' ...';
+};
+}}}
+
+----
+== Troubleshooting FSCT ==
+
+The following issues can occur while using FSCT commands.
+
+----
+=== Bad Request ===
+
+The bad request error can occur if you try to add a gadget that already exists or if you specify an FSCT command with the incorrect parameters.
+
+{{{Exception in thread "main" com.google.feedserver.util.FeedServerClientException: com.google.gdata.util.InvalidEntryException: Bad Request invalid_input}}}
+
+
+You may need to scroll down through the list of gadgets in the Domain Directory Manager to find a gadget.
+
+----
+=== Gadget already exists ===
+
+If a gadget has already been published and you attempt to publish the gadget more than once, the following error occurs:
+
+{{{Exception in thread "main" com.google.feedserver.util.FeedServerClientException: com.google.gdata.util.InvalidEntryException: Bad Request Gadget already exists}}}
+
+----
+=== Gadget specified could not be fetched ===
+
+If a command specifies an incorrect feed or gadget name, the following error may appear:
+
+{{{Exception in thread "main" com.google.feedserver.util.FeedServerClientException: com.google.gdata.util.ServiceException: Internal Server Error Gadget specified could not be fetched}}}
+
+Ensure that you specified the correct feed name and that the gadget name exists. This error occurs for the 'getEntry' command.
+
+----
+=== Invalid Credentials ===
+
+The invalid credentials error can occur when the FSCT is not correctly configured:
+
+{{{Exception in thread "main" com.google.gdata.client.GoogleService$InvalidCredentialsException: Invalid credentials}}}
+
+Ensure that you have edited {{{setupEnv.sh}}} for Linux or {{{setupEnv.bat}}} 
+for Windows and have set the following values:
+   
+  * {{{FSCT_DOMAIN}}}. Set to the domain name for your Google Apps for Your Domain account.
+  * {{{FSCT_USER_NAME}}}. Set to your user account name for your Google Apps for Your Domain account. 
+  
+----
+=== Not found Exception === 
+
+The resource not found error can occur if you enter incorrect command line information: 
+
+{{{Exception in thread "main" com.google.feedserver.util.FeedServerClientException: com.google.gdata.util.ResourceNotFoundException: Not Found}}} 
+
+
+This error can occur if the domain is not correct, or the entry or feed name 
+is misspelled (feed and entry names are case sensitive in Linux and in Windows). 
+
+----
+=== Unauthorized Exception === 
+
+The forbidden service error is as follows: 
+
+{{{Exception in thread "main" com.google.feedserver.util.FeedServerClientException: com.google.gdata.util.ServiceForbiddenException: Forbidden Unauthorized}}}
+
+
+Feeds that have ACLs set may prevent reading or writing by the account provided. 
+This error occurs when the ACL check has failed. You may be able to change the 
+ACL for the resource by editing the ACL feed. 
+
+<b>Note</b>: Only default ACLs apply to feeds: readable by anyone in the domain, writable only by the domain owner.
+
+----
+----
+= Private Gadget Editor =
+
+The Private Gadget Editor (PGE) gadget enables you to create, change, and delete Google Gadgets. 
+Private gadgets are those that are usable only by Google Apps for Your Domain Premier
+Edition or Education Edition, and only to users in a domain. 
+
+To add the PGE gadget to a Google Sites page:
+
+  # Click <b>Create new page</b>.
+  # Click <b>Start Page</b> and specify a page name.
+  # Click the <b>Add personal gadgets</b> heading or in the <b>Gadgets in this area are only visible to you</b> dashed area. The <b>Select a gadget</b> window appears.
+  # Click <b>Add gadget by URL</b>.
+  # Click the edit box, type in this value, and click <b>Add</b>: <p>{{{http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/private-gadget-editor/spec.xml}}}</p>
+  # In the gadget's title bar, click the maximize button to use the gadget in profile view. 
+  # Either paste in a gadget in the editor, or click <b>Open URL</b> to load a gadget spec from a public URL, or click <b>Select to open</b> to open an existing private gadget to edit.
+
+After creating and saving a gadget in the PGE, use the Domain Directory Manager to publish 
+the gadget to the domain's private gadget directory so that users can access it in Google Apps.
+
+----
+----
+= Domain Directory Manager =
+
+The Domain Directory Manager (DDM) gadget enables domain administrators to manage domain's public and private gadget directory.
+
+----
+== Add the DDM Gadget to Google Sites ==
+
+To add the DDM gadget to a Google Sites page:
+
+  # Click <b>Create new page</b>.
+  # Click <b>Start Page</b> and specify a page name.
+  # Click in the <b>Gadgets in this area are only visible to you</b> dashed area. The <b>Select a gadget</b> window appears.
+  # Click <b>Add gadget by URL</b>.
+  # Click the edit box, type in this value, and click <b>Add</b>: <p>{{{http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/domain-gadget-directory-manager/spec.xml}}}</p>
+
+----
+=== Using DDM ===
+
+The Domain Directory Manager provides the following tabs:
+
+<ul>
+<wiki:comment>
+<li><b>Public Directory</b>. Allows administrator to manage domain's public gadget directory. Administrator can choose to use no restrictions on public gadgets or use a white list to include only specified public gadgets or use a black list to filter out undesired public gadgets.</li>
+</wiki:comment>
+<li><b>Private Directory</b>. Allows administrator to manage domain's private gadget directory which in visible only to the domain.  Administrator can publish private gadgets to the private gadget directory and/or unpublish from it.</li>
+<li><b>Private Categories</b>. Allows administrator to manage domain's private gadget categories. Administrator can create or remove private categories under which private gadgets will appear. You can create a category for a gadget by setting the <b>category</b> attribute in the {{{<ModulePrefs>}}} element 
+in gadget XML code. 
+
+For example:
+
+{{{
+<ModulePrefs title="View Data Gadget"
+    category="Finance"
+    ... />
+}}}
+
+Choose a category that best matches the *content* of your gadget.  Refer to [http://code.google.com/support/bin/answer.py?hl=en&answer=55132 this page] for more details.
+</li>
+<li><b>Directory Preview</b>. There is a delay changes are made in DDM (or FSCT) and when they appear in end user's gadget directory UI. Use this tab to preview directory changes.</li>
+</ul>
+   
+<b>Note</b>: Only domains using Google Apps Premier Edition or Education Edition can have private gadgets.
+
+----
+= Using FSCT to Manage Private Gadgets =
+
+The FSCT commands enable you to perform the following tasks to manage private gadgets:
+
+  * Manage private gadgets and feeds
+  * Create private gadget categories
+  * Publish a private gadget to the Private Directory
+  * Unpublish a private gadget from the Private Directory
+  
+<b>Note</b>: The commands shown in the sections that follow are for Linux. 
+Windows users can enter the command itself without a file type.
+For example, to run the equivalent Windows command for {{{./insertEntry.sh}}},
+enter {{{insertentry}}} (Windows commands are not case sensitive). 
+  
+In the syntax statements that follow, the parameters are:
+
+<table border="1">
+<tr><th>Parameter</th><th>Description</th></tr>
+<tr><td><em>categoryName</em></td><td>A category in private directory under which private gadgets appear. The category name corresponds to the {{{category}}} 
+attribute of the {{{ModulePref}}} element in gadget spec.</td></tr>
+<tr><td><em>entityFile</em></td><td>Path to an XML file containing an entity used in a command.</td></tr>
+<tr><td><em>feedName</em></td>
+<td>Possible feed values:
+  * {{{PrivateGadgetSpec}}}. Feed that stores private gadget specifications (gadget XML files).
+  * {{{PrivateGadget}}}. Private gadget directory feed.
+  * {{{PrivateGadgetCategory}}}. Feed that stores categories of gadgets in a private gadget directory. 
+</td></tr>
+<tr><td><em>gadgetName</em></td><td>The name of a gadget.</td></tr>
+<tr><td><em>gadgetSpecFile</em></td><td>The path to a file relative to where FSCT commands are execute that contains a gadget's spec
+By default the FSCT commands assume that the file is saved in the 'scripts' folder</td></tr>
+<tr><td><em>privateDirectory</em></td><td>The private directory to which you publish your gadgets to or unpublish from.</td></tr>
+<tr><td><em>gadgetId</em></td><td>The unique id Feed Server assigns to a published gadget. Use <b>getFeed</b> on PrivateGadget feed to find it.</td></tr>
+</table>
+
+----
+== Add a Private Gadget ==
+
+ || <b>Linux Syntax:</b> {{{./insertGadgetSpec.sh}}} <em>feedName</em> <em>gadgetName</em> <em>gadgetSpecFile</em><br/><b>Windows Syntax:</b> {{{insertGadgetSpec}}} <em>feedName</em> <em>gadgetName</em> <em>gadgetSpecFile</em> ||
+
+To add a private gadget to your domain:
+
+  * Run {{{./insertGadgetSpec.sh PrivateGadgetSpec}}} <em>gadgetName</em> <em>gadgetSpecFile</em>
+  
+    After inserting the gadget, FSCT echoes back the inserted entity. For example:
+    
+    {{{
+    <?xml version="1.0" encoding="UTF-8" ?>
+    <Module>
+    <ModulePrefs title="Sample Enterprise Gadget" author="phedra" category="finance" />
+    <Content type="html">
+    <![CDATA[
+    <a href="javascript:getData()">Get Data&lt;/a>
+    <script type="text/javascript">
+    function getData() {
+    var params = {};
+    ...
+    }}}
+
+
+----
+== View Private Gadget Entry ==
+
+ ||<b>Linux Syntax:</b> {{{./getEntry.sh}}} <em>feedName</em> <em>gadgetName</em><br /><b>Windows Syntax:</b> {{{getEntry}}} <em>feedName</em> <em>gadgetName</em> ||
+
+To view a gadget:
+
+  * Run {{{./getEntry.sh PrivateGadgetSpec}}}/<em>gadgetName</em>
+   
+    The gadget entity is displayed in the console.
+  
+----
+== View all Gadgets ==
+
+ || <b>Linux Syntax:</b> {{{./getFeed.sh}}} <em>feedName</em><br /><b>Windows Syntax:</b> {{{getFeed}}} <em>feedName</em> ||
+
+To get all gadgets:
+
+  * Run {{{./getFeed.sh PrivateGadgetSpec}}}
+
+    Gadget entities is displayed in the console.
+    
+    <b>Note</b>:
+    * By default, FSCT only returns a maximum of 20 entries.  To retrieve more, use parameter "start-index=N" and "max-results=M" on the feed URL where N is a base-1 starting index and max-results is a number from 1 to 20.
+    * If there are many gadgets, the <b>getFeed</b> command listing can be many pages. In Windows, in the Command Prompt <b>Properties</b> menu, set the <b>Screen Buffer Size</b> to a number large enough to contain this output, such as to 9999 rows. You can then copy the data from the Command Prompt to an editor such as Notepad to search for a gadget entry. 
+  
+----
+== Update a Private Gadget ==
+
+ || <b>Linux Syntax:</b> {{{./updateGadgetSpec.sh}}} <em>feedName</em> <em>gadgetName</em> <em>gadgetSpecFile</em><br /><b>Windows Syntax:</b> {{{updateGadgetSpec}}} <em>feedName</em> <em>gadgetName</em> <em>gadgetSpecFile</em> ||
+
+To update a gadget in the {{{PrivateGadgetSpec}}} feed source:
+
+  * Run {{{./updateGadgetSpec.sh PrivateGadgetSpec}}} <em>gadgetName</em> <em>gadgetSpecFile</em>
+
+  The updated gadget entity is displayed in the console.
+  
+----
+== Delete a Private Gadget ==
+
+ || <b>Linux Syntax:</b> {{{./deleteEntry.sh}}} <em>feedName</em> <em>gadgetName</em> <em>gadgetSpecFile</em><br /><b>Windows Syntax:</b> {{{deleteEntry}}} <em>feedName</em> <em>gadgetName</em> ||
+
+ * Run {{{./deleteEntry.sh PrivateGadgetSpec}}} <em>gadgetName</em>
+
+----
+== Publish a Private Gadget to Private Directory ==
+
+ || <b>Linux Syntax:</b> {{{./publishGadget.sh}}} <em>privateDirectory</em> <em>feedName/gadgetName</em><br /><b>Windows Syntax:</b> {{{publishGadget}}} <em>privateDirectory</em> <em>feedName/gadgetName</em> ||
+
+ * Run {{{./publishGadget.sh PrivateGadget PrivateGadgetSpec}}}/<em>gadgetName</em>
+
+----
+== Unpublish a Gadget ==
+
+ || <b>Linux Syntax:</b> {{{./deleteEntry.sh PrivateGadget}}} <em>gadgetId</em><br /><b>Windows Syntax:</b> {{{deleteEntry PrivateGadget}}} <em>gadgetId</em> ||
+
+You can unpublish a gadget to remove it from domain's private gadget directory.
+
+<b>Note</b>: To find the gadget you want to unpublish, you need to find its gadget id.
+
+To unpublish a gadget:
+<ol>
+<li>Use the <b>getFeed !PrivateGadget</b> command to locate the gadget's id.
+
+For example:
+    {{{
+    ...
+    <id>http://feedserver-enterprise.googleusercontent.com/a/joonix.net/g/PrivateGadget/056536884581709698</id>
+    ...
+    }}}
+    </li>
+<li>Run the <b>deleteEntry</b> command, specify the {{{PrivateGadget}}} feed source, and the gadget id.
+
+For example:
+    {{{
+    ./deleteEntry.sh PrivateGadget 056536884581709698
+    }}}
+    </li>
+</ol>
+
+----
+== Create a Private Gadget Category ==
+
+ || <b>Linux Syntax:</b> {{{./insertEntry.sh PrivateGadgetCategory}}} <em>entityFile</em><br /><b>Windows Syntax:</b> {{{insertEntry PrivateGadgetCategory}}} <em>entityFile</em> ||
+
+<b>Note</b>: For a gadget to appear in a category, the gadget must set the {{{category}}} attribute in the 
+{{{<ModulePref>}}} element in the gadget specification. 
+
+For example:
+
+{{{
+<ModulePrefs title="Sample Enterprise Gadget" author="phedra" category="Finance" />
+}}}
+
+To create a gadget category:
+
+<ol>
+<li>Create an entity XML file for the category.
+
+An example {{{financeEntity.xml}}} entity file is:
+    
+    {{{
+    <entity xmlns="">
+      <name>Finance</name>
+      <category repeatable="true">
+        <locale>en</locale>
+        <displayName>Finance</displayName>
+      </category>
+    </entity>
+    }}}
+    </li>
+<li>Run the <b>insertEntry.sh</b> command for Linux or the <b>insertEntry.bat</b> command for Windows to add the category from the gadget to the Domain Directory Manager.
+
+    {{{
+    ./insertEntry.sh PrivateGadgetCategory financeEntity.xml
+    }}}
+    </li>
+</ol>
+
+----
+== Delete a Private Gadget Category ==
+
+ || <b>Linux Syntax:</b> {{{./deleteEntry.sh PrivateGadgetCategory}}} <em>categoryName</em><br /><b>Windows Syntax:</b> {{{deleteEntry PrivateGadgetCategory}}} <em>categoryName</em> ||
+
+Deletes a gadget category.
+
+For example:
+
+{{{./deleteEntry.sh PrivateGadgetCategory Finance}}}
+
+----
+= Using FSCT to Manage Feed Access =
+
+Every hosted feed has an access control list (ACL) associated with it to control which users can do which operations on the feed and its entries. All hosted feeds have a default ACL to allow domain's users to read from them and domain's administrators to write to them. Administrator can override the default ACL to suite the need of the domain.
+
+Here is an example of setting the ACL for the PrivateGagetSpec feed.  We have aclEntity.xml:
+{{{
+<entity xmlns="">
+  <name>PrivateGadgetSpec-acl</name>
+  <resourceInfo>
+    <resourceType>feed</resourceType>
+    <resourceRule>PrivateGadgetSpec</resourceRule>
+  </resourceInfo>
+  <authorizedEntities repeatable="true">
+    <operation>create</operation>
+    <entities repeatable="true">DOMAIN_ADMIN</entities>
+    <entities repeatable="true">gadget-dev@example.com</entities>
+  </authorizedEntities>
+  <authorizedEntities>
+    <operation>retrieve</operation>
+    <entities repeatable="true">DOMAIN_USERS</entities>
+  </authorizedEntities>
+  <authorizedEntities>
+    <operation>update</operation>
+    <entities repeatable="true">DOMAIN_ADMIN</entities>
+    <entities repeatable="true">gadget-dev@example.com</entities>
+  </authorizedEntities>
+  <authorizedEntities>
+    <operation>delete</operation>
+    <entities repeatable="true">DOMAIN_ADMIN</entities>
+    <entities repeatable="true">gadget-dev@example.com</entities>
+  </authorizedEntities>
+</entity>
+}}}
+
+Execute this command to create the ACL the first time:
+{{{
+./insertEntry.sh acl aclEntity.xml
+}}}
+
+Then the {{{PrivateGadgetSpec}}} feed can be:
+  * Inserted into by a domain's administrators, and all users on the group gadget-dev@example.com
+  * Retrieved by all users in the domain
+  * Updated by domain's administrators, and all users on the group gadget-dev@example.com
+  * Deleted from by domain's administrators, and all users on the group gadget-dev@example.com
+
+You can use the previous example as a template to produce an entity file specific to your needs.  Here are the valid values you can use for the "entities" element:
+  * DOMAIN_USERS: Any user in the domain
+  * DOMAIN_ADMIN: Any administrator of the domain
+  * DOMAIN_INDIVIDUAL: The current logged in user (has to belong to the domain and match the owner of the user feed)
+  * ANY_INDIVIDUAL: The current logged in user (has to match the owner of the user feed; can be out of the domain)
+  * ANYONE: Any logged in user, in or out of the domain
+  * User Email address: Any individual user's email address
+  * Group email address: Email address of a group (go to [https://www.google.com/a/cpanel/joonix.net/GroupList https://www.google.com/a/cpanel/joonix.net/GroupList] to manage groups)
+
+To update an ACL, execute the following command:
+{{{
+./updateEntry.sh acl PrivateGagetSpec-acl aclEntity.xml
+}}}
+
+If you want to change the ACL of another feed, for example, the !PrivateGadgetCategory, create another ACL entity file and plug the feed name into the {{{<resourceRule>}}} element.
+
+----
+= Schemas of Hosted Feeds =
+
+<table border="1">
+
+<tr>
+  <th>Feed Name</th><th>Entity Schema</th><th>Example</th>
+</tr>
+
+<tr>
+  <td>{{{PrivateGadget}}}</td>
+  <td>
+{{{
+<entity xmlns="">
+  <url>{internal URL to private gadget}</url>
+</entity>
+}}}
+</td>
+<td>
+{{{
+<entity xmlns="">
+  <url>http://feedserver-enterprise.googleusercontent.com
+/a/example.com/g/PrivateGadgetSpec/hello.xml</url>
+</entity>
+}}}
+</td>
+</tr>
+
+<tr>
+  <td>{{{PrivateGadgetCategory}}}</td>
+  <td>
+{{{
+<entity xmlns="">
+  <name>{unique name of category}</name>
+  <category repeatable="true">
+    <locale>en</locale>
+    <displayName>{display name of category}</displayName>
+  </category>
+</entity>
+}}}
+  </td>
+  <td>
+{{{
+<entity xmlns="">
+  <name>Finance</name>
+  <category repeatable="true">
+    <locale>en</locale>
+    <displayName>Finance</displayName>
+  </category>
+</entity>
+}}}
+  </td>
+</tr>
+
+<tr>
+  <td>{{{PrivateGadgetSpec}}}</td>
+  <td>
+{{{
+<entity xmlns="">
+  <name>{unique name of gadget}</name>
+  <specContent>@{path to gadget spec file}</specContent>
+</entity>
+}}}
+  </td>
+  <td>
+{{{
+<entity xmlns="">
+  <name>hello-gadget</name>
+  <specContent>@hello.xml</specContent>
+</entity>
+}}}
+  </td>
+</tr>
+
+<tr>
+  <td>{{{Acl}}}</td>
+  <td>
+{{{
+<entity xmlns="">
+  <name>{feedName}-acl</name>
+  <resourceInfo>
+    <resourceType>feed</resourceType>
+    <resourceRule>{feedName}</resourceRule>
+  </resourceInfo>
+  <authorizedEntities repeatable="true">
+    <operation>{operation}</operation>
+    <entities repeatable="true">{principal}</entities>
+    ...
+  </authorizedEntities>
+  ...
+</entity>
+}}}
+Operation can be:
+  * create
+  * retrieve
+  * update
+  * delete
+
+Principal can be:
+  * DOMAIN_USERS: Any user in the domain
+  * DOMAIN_ADMIN: Any administrator of the domain
+  * DOMAIN_INDIVIDUAL: The current logged in user (has to belong to the domain and match the owner of the user feed)
+  * ANY_INDIVIDUAL: The current logged in user (has to match the owner of the user feed; can be out of the domain)
+  * ANYONE: Any logged in user, in or out of the domain
+  * User Email address: Any individual user's email address
+  * Group email address: Email address of a group (go to [https://www.google.com/a/cpanel/joonix.net/GroupList https://www.google.com/a/cpanel/joonix.net/GroupList] to manage groups)
+  </td>
+  <td>
+{{{
+<entity xmlns="">
+  <name>PrivateGadgetSpec-acl</name>
+  <resourceInfo>
+    <resourceType>feed</resourceType>
+    <resourceRule>PrivateGadgetSpec</resourceRule>
+  </resourceInfo>
+  <authorizedEntities repeatable="true">
+    <operation>create</operation>
+    <entities repeatable="true">DOMAIN_ADMIN</entities>
+    <entities repeatable="true">gadget-dev@example.com</entities>
+  </authorizedEntities>
+  <authorizedEntities>
+    <operation>retrieve</operation>
+    <entities repeatable="true">DOMAIN_USERS</entities>
+  </authorizedEntities>
+  <authorizedEntities>
+    <operation>update</operation>
+    <entities repeatable="true">DOMAIN_ADMIN</entities>
+    <entities repeatable="true">gadget-dev@example.com</entities>
+  </authorizedEntities>
+  <authorizedEntities>
+    <operation>delete</operation>
+    <entities repeatable="true">DOMAIN_ADMIN</entities>
+    <entities repeatable="true">gadget-dev@example.com</entities>
+  </authorizedEntities>
+</entity>
+}}}
+  </td>
+</tr>
+
+</table>
