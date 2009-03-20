@@ -400,10 +400,10 @@ The Domain Directory Manager provides the following tabs:
 
 <ul>
 <wiki:comment>
-<li><b>Public Directory</b>. Allows administrator to manage domain's public gadget directory. Administrator can choose to use no restrictions on public gadgets or use a white list to include only specified public gadgets or use a black list to filter out undesired public gadgets.</li>
+<li><b>Public Directory</b>. Allows an administrator to manage a domain's public gadget directory. Administrators can choose to use no restrictions on public gadgets or use a white list to include only specified public gadgets or use a black list to filter out undesired public gadgets.</li>
 </wiki:comment>
-<li><b>Private Directory</b>. Allows administrator to manage domain's private gadget directory which in visible only to the domain.  Administrator can publish private gadgets to the private gadget directory and/or unpublish from it.</li>
-<li><b>Private Categories</b>. Allows administrator to manage domain's private gadget categories. Administrator can create or remove private categories under which private gadgets will appear. You can create a category for a gadget by setting the <b>category</b> attribute in the {{{<ModulePrefs>}}} element 
+<li><b>Private Directory</b>. Allows an administrator to manage a domain's private gadget directory which is visible only to the domain.  Administrators can publish private gadgets to the private gadget directory and/or unpublish from it.</li>
+<li><b>Private Categories</b>. Allows an administrator to manage a domain's private gadget categories. Administrators can create or remove private categories under which private gadgets will appear. You can create a category for a gadget by setting the <b>category</b> attribute in the {{{<ModulePrefs>}}} element 
 in gadget XML code. 
 
 For example:
@@ -416,7 +416,7 @@ For example:
 
 Choose a category that best matches the *content* of your gadget.  Refer to [http://code.google.com/support/bin/answer.py?hl=en&answer=55132 this page] for more details.
 </li>
-<li><b>Directory Preview</b>. There is a delay changes are made in DDM (or FSCT) and when they appear in end user's gadget directory UI. Use this tab to preview directory changes.</li>
+<li><b>Directory Preview</b>. Preview directory changes when there is a delay after changes are made in DDM (or FSCT) and when they appear in an end user's gadget directory UI.</li>
 </ul>
    
 <b>Note</b>: Only domains using Google Apps Premier Edition or Education Edition can have private gadgets.
