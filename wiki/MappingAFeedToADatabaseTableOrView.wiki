@@ -100,5 +100,5 @@ For example:
    adapterClassName=com.google.feedserver.adapter.JdbcAdapter
    configFile=<the above xml filename with database connection params>
    title=PerfInfo Feed
-   author=Google QA team
+   author=QA team
 }}}
