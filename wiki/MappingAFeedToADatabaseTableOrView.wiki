@@ -1,6 +1,6 @@
-#summary Map Java objects to database queries and results.
+#summary Creating an Atom feed out of a database table or view
 
-<h1>How to Set Up a Feed From a Database Table or View</h1>
+<h1>How to Map a Feed to a Database Table or View</h1>
 ----
 <h2>Contents</h2>
 <wiki:toc max_depth="4" />
