@@ -42,8 +42,8 @@ import java.util.logging.Logger;
 import javax.xml.transform.TransformerException;
 
 /**
- * The wrapper that will be used to merge the feed database resource files and
- * adding it to the sqlMapConfig as sqlMap resources.
+ * A wrapper used to merge feed database resource files and adding it to the
+ * sqlMapConfig as sqlMap resources.
  * <p>
  * This allows cleaner separation of feed specific database table definitions
  * and queries from the adapter configuration which can be generic to any feeds.
@@ -137,7 +137,6 @@ public class IBatisAdapterWrapper extends ManagedCollectionAdapterWrapper {
     return super.retrieveEntry(request, entryId);
   }
 
-
   /**
    * Sets the feed db config details for the given feed as sqlMap resource
    */
@@ -187,8 +186,7 @@ public class IBatisAdapterWrapper extends ManagedCollectionAdapterWrapper {
    * <p>
    * In other cases the config value will be retruned as is
    * </p>
-   * 
-   * 
+   *
    * @return The feed config value to be set as sqlMap resource.
    */
   private String getFeedConfigData() {
@@ -202,23 +200,17 @@ public class IBatisAdapterWrapper extends ManagedCollectionAdapterWrapper {
           dbResourceValues.substring(dbResourceValues
               .indexOf(FileSystemConfigStoreUtil.FILE_INDICATOR) + 1);
 
-      InputStream reader =
-          Thread.currentThread().getContextClassLoader().getResourceAsStream(
-              basePath + "/" + fileName);
+      InputStream reader = Thread.currentThread().getContextClassLoader()
+          .getResourceAsStream(basePath + "/" + fileName);
       if (reader == null) {
         basePath = basePath.substring(basePath.indexOf("/") + 1);
       }
 
-      dbResourceValues =
-          new StringBuilder(basePath).append("/").append(
-              dbResourceValues.substring(dbResourceValues
-                  .indexOf(FileSystemConfigStoreUtil.FILE_INDICATOR) + 1)).toString();
+      dbResourceValues = new StringBuilder(basePath).append("/").append(
+          dbResourceValues.substring(dbResourceValues
+              .indexOf(FileSystemConfigStoreUtil.FILE_INDICATOR) + 1)).toString();
     }
 
     return dbResourceValues.trim();
-
   }
-
-
-
 }
