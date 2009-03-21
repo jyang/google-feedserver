@@ -59,11 +59,11 @@ For example:
 }}}
 
 *Note*: The {{{id=}}} attributes in the previous XML example have the following naming conventions:
- * To get a feed, use {{{id = <feedname>-get-feed}}}
- * To get an entry, use {{{id = <feedname>-get-entry}}}
- * To insert an entry, use {{{id = <feedname>-insert-entry}}}
- * To delete an entry, use {{{id = <feedname>-delete-entry}}}
- * To update an entry, use {{{id = <feedname>-update-entry}}}
+ * Id of getFeed query: {{{<feedname>-get-feed}}}
+ * Id of getEntry query: {{{<feedname>-get-entry}}}
+ * Id of insertEntry query: {{{<feedname>-insert-entry}}}
+ * Id of deleteEntry query: {{{<feedname>-delete-entry}}}
+ * Id of updateEntry query: {{{<feedname>-update-entry}}}
 ----
 = Configuring an XML File with Database Connection Parameters =
 
