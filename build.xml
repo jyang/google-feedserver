@@ -19,7 +19,7 @@
   <property name="client.jarfile"
       value="${dist.home}/google-feedserver-java-client-${client.version}.jar"/>
 
-  <property name="client.tools.version" value="2.0.4"/>
+  <property name="client.tools.version" value="2.0.5"/>
   <property name="clienttools.zip" value="${dist}/google-feedserver-clienttool-${client.tools.version}.zip"/>
   <property name="clienttools.temp.dir" value="${dist}/temp" />
   <property name="fsct.scripts.dir" value="${resources}/clientTool" />
