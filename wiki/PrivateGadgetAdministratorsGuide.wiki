@@ -78,7 +78,7 @@ To install and configure FSCT:
 <li>FSCT_DOMAIN -- Set to the domain name of your Google Apps for Your Domain site.</li>
 <li>FSCT_USER_NAME -- Specify the login name for your Google Account.  For most administrative tasks, this needs to be an administrator account.</li>
 </ul></li>
-<li>Test your installation by running the {{{./getFeed.sh Gadgets}}} in Linux or {{{getFeed Gadgets}}} in Windows to view Google Gadgets in your domain's public gadget directory.</li>
+<li>Test your installation by running the {{{./getFeed.sh Gadget}}} in Linux or {{{getFeed Gadget}}} in Windows to view Google Gadgets in your domain's public gadget directory.</li>
 </ol>
 
 In {{{setupEnv.sh}}} for Linux or in {{{setupEnv.bat}}} for Windows, the following parameters are configurable:
