@@ -1,0 +1,125 @@
+#summary Describes use of the Atom payload with Feed Server
+
+<h2>Contents</h2>
+<wiki:toc max_depth="3" />
+
+----
+= Payload In Content =
+
+Google Feed Server uses a simple payload format called "payload in content." Information about the payload is 
+described in the [http://en.wikipedia.org/wiki/Atom_(standard) Wikipedia Atom article].
+<ul>
+<li>A payload is put in the {{{<content>}}} element as {{{type application/xml}}}</li>
+<li>A property is represented as an element of {{{<name>value</name>}}}</li>
+<li>A {{{repeatable}}} property is represented as an element of {{{<name repeatable="true">value0</name><name>value1</name>...}}}</li>
+<li>Properties can be nested</li>
+<li>Everything inside {{{<content>}}} is treated as data and everything outside as metadata</li>
+</ul>
+
+The payload in content format is Atom compliant and has the following properties:
+<ul>
+<li>No custom extension elements are required</li>
+<li>No custom namespaces are required</li>
+<li>The simple XML format maps to JavaBeans and JSON easily</li>
+<li>No Google Data API Java client library revision is needed when new payload !JavaBeans are added</li>
+</ul>
+
+----
+== Atom Example ==
+
+A sample contact feed in Atom XML:
+
+{{{
+<feed>
+  ...
+  <entry>
+    ...
+    <content type="application/xml">
+      <entity xmlns="">
+        <id>1234</id>
+        <firstName>Polly</firstName>
+        <lastName>Hedra</lastName>
+        <nickName repeatable="true">Planes</nickName>
+        <nickName>Solid</nickName>
+      </entity>
+    </content>
+  </entry>
+</feed>
+}}}
+
+----
+== JSON Example ==
+
+{{{
+{"feed": {"entry": [{
+  "content": {
+    "entity": {
+      "id": 1234, "firstName": "Polly", "lastName": "Hedra", nickName: [
+        "Planes", "Solid"
+      ]
+    }
+  },
+  ...
+]
+}}}
+
+----
+== Java Example ==
+
+Sample Java client code in which property type conversions are done automatically.  
+
+{{{
+// Contact JavaBean
+public class Contact {
+  protected String id;
+  protected String firstName;
+  protected String lastName;
+  protected String[] nickName;
+
+  public String getFirstName() {
+    return firstName;
+  }
+  public void setFirstName(String s) {
+    firstName = s;
+  }
+
+  // create getter/setter for the other two properties
+  ...
+}
+
+// fill a bean with the payload in content of an entry
+FeedEntry entry = service.getEntry("...", FeedEntry.class);
+Contact contact = new Contact();
+ContentUtil contentUtil = new ContentUtil();
+contentUtil.fillBean(entry, contact);
+
+// put a bean into the content of an entry
+Contact contact = new Contact();
+contact.setFirstName("Polly");
+OtherContent content = contentUtil.createXmlContent(contact);
+FeedEntry entry = new FeedEntry();
+entry.setContent(content);
+}}}
+
+----
+== !JavaScript Example ==
+
+Sample !JavaScript client code:
+
+{{{
+function search(userId) {
+  var service = new google.gdata.client.FeedServerService('employees', 'employee-search');
+  service.getFeed('http://...feedUrl...' + userId, function(response) {
+    var employee = response.entry.content.entity;
+    var content = [];
+    content.push('<table>');
+    content.push('<tr><th align="right">Location</th><td>', employee.location, ' ', employee.roomNumber, '</td></tr>');
+    content.push('<tr><th align="right">Name</th><td>', employee.firstName, ' ', employee.lastName, '</td></tr>');
+    content.push('<tr><th align="right">Job Title</th><td>', employee.jobTitle, '</td></tr>');
+    content.push('<tr><th align="right">Office Phone</th><td>', employee.phoneOffice, '</td></tr>');
+    content.push('</table>');
+    document.getElementById('employee-profile').innerHTML = content.join('');
+  }, showError);
+  document.getElementById('employee-profile').innerHTML = 'Searching for ' + userId + ' ...';
+};
+}}}
