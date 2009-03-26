@@ -236,6 +236,7 @@ The forbidden service error occurs when an access control list (ACL) check fails
 Feeds that have ACLs set may prevent reading or writing by the account provided. 
 You may be able to change the ACL for the resource by editing the ACL feed. For information on ACLs, see the Acl feed in the "Schemas of Hosted Feeds" section.
 
+[http://code.google.com/p/google-feedserver/wiki/PrivateGadgetAdministratorsGuide Return to top.]
 ----
 ----
 = Using FSCT to Manage Private Gadgets =
@@ -244,7 +245,7 @@ The FSCT commands enable you to perform the following tasks to manage private ga
 
   * Manage private gadgets and feeds
   * Create private gadget categories
-  * Publish a private gadget to the Private Directory (for information on the Private Directory, see <a ondblclick="_go('#dgdm')">Domain Gadget Directory Manager</a>)
+  * Publish a private gadget to the Private Directory (for information on the Private Directory, see [[http://code.google.com/p/google-feedserver/wiki/PrivateGadgetAdministratorsGuide#dgdm Domain Gadget Directory Manager])
   * Unpublish a private gadget from the Private Directory
   
 <b>Note</b>: The commands shown in the sections that follow are for Linux. 
