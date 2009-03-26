@@ -321,7 +321,7 @@ To display the XML code for all gadgets:
 
     Gadget entities display in the console.
     
-    <b>Note</b>:
+<b>Note</b>:
     * By default, FSCT only returns a maximum of 20 entries.  To retrieve more, use parameter "start-index=N" and "max-results=M" on the feed URL where N is a base-1 starting index and max-results is a number from 1 to 20.
     * If there are many gadgets, the <b>getFeed</b> command listing can be many pages. In Windows, in the Command Prompt <b>Properties</b> menu, set the <b>Screen Buffer Size</b> to a number large enough to contain this output, such as to 9999 rows. You can then copy the data from the Command Prompt to an editor such as Notepad to search for a gadget entry. 
 
