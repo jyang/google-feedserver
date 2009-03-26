@@ -1,37 +1,42 @@
-#summary Private Gadget Administrator's Guide: FSCT, Private Gadget Editor, and Domain Directory Manager
+#summary Private Gadget Administrator's Guide: FSCT, Private Gadget Editor, and Domain Gadget Directory Manager
 
 <h1>Private Gadget Administrator's Guide</h1>
 
-This guide provides information about installing and using the Google Feed Server management tools to
-manage your data sources through feeds. Feed Server uses the 
-[http://cwiki.apache.org/confluence/display/ABDERA/Documentation Apache Abdera framework]
-to implement [http://www.ietf.org/rfc/rfc5023.txt Atom Publishing Protocol]. Open source software distribution is available in either binary 
-or source for use with Linux or Windows.
+This guide provides information for administrators to use the Feed Server private gadget administrative tools: 
+Feed Server Client Tool, the Private Gadget Editor, and
+the Domain Gadget Directory Manager. In addition, this guide describes the schemas for hosted feeds. Hosted feeds are provided by [http://www.google.com/apps/ Google Apps].
+
+The primary use for these tools is to 
+support [http://code.google.com/apis/gadgets/ Google Gadget] features for Google Apps for Your Domain Premier Edition and Education Edition.
+Open source software distribution for these products is available in either binary 
+or source for use with Linux or Windows. The binary software distribution zip file is available on 
+the [http://code.google.com/p/google-feedserver/downloads/list Downloads tab] of this site. Source code 
+is available on the [http://code.google.com/p/google-feedserver/source/checkout Source tab] in the {{{svn/trunk/resources}}} folder.
 
 ----
 <h2>Contents</h2>
-<wiki:toc max_depth="4" />
+<wiki:toc max_depth="3" />
 
 ----
 ----
 = Overview =
 
-The Google Feed Server provides open source software for data access through feeds. You can download and install the Feed Server on your site to manage your data sources. A feed consists of one or more feed entries, each containing an entity that maps directly to your own data.  Feeds and entries are represented with the [http://tools.ietf.org/html/rfc4287 Atom Syndication Format].
-
-The [http://code.google.com/p/google-feedserver/ google-feedserver] site provides the following additional administrative features:
+Private Gadgets are XML files that you can use with Google Sites and the Google Visualization API to display information.
+The [http://code.google.com/p/google-feedserver/ google-feedserver] site provides the 
+following tools for administering private gadgets:
 <ul>
-<li><b>Feed Server Client Tool (FSCT)</b>. Provides a set of Linux shell or Windows batch commands that you can run from the command line to retrieve or modify feeds.</li>
+<li><b>Feed Server Client Tool (FSCT)</b>. Provides a set of Linux shell or Windows batch commands that you can run from the command line to retrieve or modify feeds. Use of the FSCT commands requires that you have previously installed the Java runtime environment, which is available from [http://java.sun.com/javase/downloads/?intcmp=1281 Java.Sun.com].</li>
 <li><b>Private Gadget Editor (PGE)</b>. You can use the PGE gadget to create private Google Gadgets that are accessible to your own domain.</li>
-<li><b>Domain Directory Manager (DDM)</b>. You can use DDM gadget to manage where gadgets appear in your domain's gadget directories.</li>
+<li><b>Domain Gadget Directory Manager (DGDM)</b>. You can use DGDM gadget to manage where gadgets appear in your domain's gadget directories.</li>
 </ul>
 
-This guide assumes an understanding of Atom, Google Data API principles, and how to install a Java runtime environment to run Java programs.
+This guide assumes an understanding of XML, Google Gadgets, and how to install a Java runtime environment to run Java programs from either a Linux or Windows command line.
 
 ----
 ----
 = Feed Server Client Tool =
 
-The Feed Server Client Tool (FSCT) provides feed administrators with a set of management tools and payload-in-content schemas for 
+The Feed Server Client Tool (FSCT) provides feed administrators with a set of management tools for 
 managing and serving feeds. 
 
 The FSCT provides the following:
@@ -67,14 +72,12 @@ You can download the FSCT from a [http://google-feedserver.googlecode.com/files/
 that creates subordinate folders when extracted.
 FSCT provides a setup file that you edit and then run to configure your operating environment.
 
-If needed, you can download a source TAR file that you can build with Apache Ant.
-
 To install and configure FSCT:
 
 <ol>
 <li>Install [http://java.sun.com/javase/downloads/?intcmp=1281 JRE] if you have not done so already.</li>
 <li>Download the [http://google-feedserver.googlecode.com/files/google-feedserver-clienttool-2.0.4.zip FSCT binary distribution zip file] and extract the contents.</li> 
-<li>Use a text editor to edit the {{{setupEnv.sh}}} file for Linux or the {{{setupEnv.bat}}} file for Windows and set the following parameters (you can ignore the rest of the parameters):<ul>
+<li>Use a text editor to edit the {{{setupEnv.sh}}} file for Linux or the {{{setupEnv.bat}}} file for Windows and set the following parameters (you can ignore the rest of the parameters in the setupEnv file):<ul>
 <li>FSCT_DOMAIN -- Set to the domain name of your Google Apps for Your Domain site.</li>
 <li>FSCT_USER_NAME -- Specify the login name for your Google Account.  For most administrative tasks, this needs to be an administrator account.</li>
 </ul></li>
@@ -93,7 +96,7 @@ In {{{setupEnv.sh}}} for Linux or in {{{setupEnv.bat}}} for Windows, the followi
 ----
 == FSCT Commands ==
 
-To use each entry command:
+To use each command:
 
  # Ensure that {{{setupEnv.sh}}} for Linux or {{{setupEnv.bat}}} for Windows is correctly configured with your Google Apps for Your Domain user name and domain name.
  # Run the command from the command line specifying the proper syntax.
@@ -163,128 +166,9 @@ The commands above are generic and works for any feed.  The commands below are o
 </table>
 
 Note:
-  # All feeds have permissions defined on them.  FSCT will only succeed if the user is allowed to perform the operation
+  # All feeds have permissions defined on them.  FSCT succeeds only if a user is allowed to perform the operation (so that a password can be entered).
   # Gadget name has to be unique in the gadget spec feed.
 
-----
-== Payload In Content ==
-
-Google Feed Server uses a simple payload format called "payload in content".
-<ul>
-<li>A payload is put in the {{{<content>}}} element as {{{type application/xml}}}</li>
-<li>A property is represented as an element of {{{<name>value</name>}}}</li>
-<li>A {{{repeatable}}} property is represented as an element of {{{<name repeatable="true">value0</name><name>value1</name>...}}}</li>
-<li>Properties can be nested</li>
-<li>Everything inside {{{<content>}}} is treated as data and everything outside as metadata</li>
-</ul>
-
-The payload in content format is Atom compliant and has the following properties:
-<ul>
-<li>No custom extension elements are required</li>
-<li>No custom namespaces are required</li>
-<li>The simple XML format maps to JavaBeans and JSON easily</li>
-<li>No Google Data API Java client library revision is needed when new payload !JavaBeans are added</li>
-</ul>
-
-----
-=== Atom Example ===
-
-A sample contact feed in Atom XML:
-
-{{{
-<feed>
-  ...
-  <entry>
-    ...
-    <content type="application/xml">
-      <entity xmlns="">
-        <id>1234</id>
-        <firstName>Polly</firstName>
-        <lastName>Hedra</lastName>
-        <nickName repeatable="true">Planes</nickName>
-        <nickName>Solid</nickName>
-      </entity>
-    </content>
-  </entry>
-</feed>
-}}}
-
-----
-=== JSON Example ===
-
-{{{
-{"feed": {"entry": [{
-  "content": {
-    "entity": {
-      "id": 1234, "firstName": "Polly", "lastName": "Hedra", nickName: [
-        "Planes", "Solid"
-      ]
-    }
-  },
-  ...
-]
-}}}
-
-----
-=== Java Example ===
-
-Sample Java client code in which property type conversions are done automatically.  
-
-{{{
-// Contact JavaBean
-public class Contact {
-  protected String id;
-  protected String firstName;
-  protected String lastName;
-  protected String[] nickName;
-
-  public String getFirstName() {
-    return firstName;
-  }
-  public void setFirstName(String s) {
-    firstName = s;
-  }
-
-  // create getter/setter for the other two properties
-  ...
-}
-
-// fill a bean with the payload in content of an entry
-FeedEntry entry = service.getEntry("...", FeedEntry.class);
-Contact contact = new Contact();
-ContentUtil contentUtil = new ContentUtil();
-contentUtil.fillBean(entry, contact);
-
-// put a bean into the content of an entry
-Contact contact = new Contact();
-contact.setFirstName("Polly");
-OtherContent content = contentUtil.createXmlContent(contact);
-FeedEntry entry = new FeedEntry();
-entry.setContent(content);
-}}}
-
-----
-=== !JavaScript Example ===
-
-Sample !JavaScript client code:
-
-{{{
-function search(userId) {
-  var service = new google.gdata.client.FeedServerService('employees', 'employee-search');
-  service.getFeed('http://...feedUrl...' + userId, function(response) {
-    var employee = response.entry.content.entity;
-    var content = [];
-    content.push('<table>');
-    content.push('<tr><th align="right">Location</th><td>', employee.location, ' ', employee.roomNumber, '</td></tr>');
-    content.push('<tr><th align="right">Name</th><td>', employee.firstName, ' ', employee.lastName, '</td></tr>');
-    content.push('<tr><th align="right">Job Title</th><td>', employee.jobTitle, '</td></tr>');
-    content.push('<tr><th align="right">Office Phone</th><td>', employee.phoneOffice, '</td></tr>');
-    content.push('</table>');
-    document.getElementById('employee-profile').innerHTML = content.join('');
-  }, showError);
-  document.getElementById('employee-profile').innerHTML = 'Searching for ' + userId + ' ...';
-};
-}}}
 
 ----
 == Troubleshooting FSCT ==
@@ -294,12 +178,12 @@ The following issues can occur while using FSCT commands.
 ----
 === Bad Request ===
 
-The bad request error can occur if you try to add a gadget that already exists or if you specify an FSCT command with the incorrect parameters.
+The bad request error occurs if you try to add a gadget that already exists or if you specify an FSCT command with the incorrect parameters.
 
 {{{Exception in thread "main" com.google.feedserver.util.FeedServerClientException: com.google.gdata.util.InvalidEntryException: Bad Request invalid_input}}}
 
 
-You may need to scroll down through the list of gadgets in the Domain Directory Manager to find a gadget.
+You may need to scroll down through the list of gadgets in the Domain Gadget Directory Manager to find a gadget.
 
 ----
 === Gadget already exists ===
@@ -311,7 +195,7 @@ If a gadget has already been published and you attempt to publish the gadget mor
 ----
 === Gadget specified could not be fetched ===
 
-If a command specifies an incorrect feed or gadget name, the following error may appear:
+If a command specifies an incorrect feed or gadget name, the following error occurs:
 
 {{{Exception in thread "main" com.google.feedserver.util.FeedServerClientException: com.google.gdata.util.ServiceException: Internal Server Error Gadget specified could not be fetched}}}
 
@@ -320,7 +204,7 @@ Ensure that you specified the correct feed name and that the gadget name exists.
 ----
 === Invalid Credentials ===
 
-The invalid credentials error can occur when the FSCT is not correctly configured:
+The invalid credentials error occurs when the FSCT is not correctly configured:
 
 {{{Exception in thread "main" com.google.gdata.client.GoogleService$InvalidCredentialsException: Invalid credentials}}}
 
@@ -333,7 +217,7 @@ for Windows and have set the following values:
 ----
 === Not found Exception === 
 
-The resource not found error can occur if you enter incorrect command line information: 
+The resource not found error occurs if you enter incorrect command line information: 
 
 {{{Exception in thread "main" com.google.feedserver.util.FeedServerClientException: com.google.gdata.util.ResourceNotFoundException: Not Found}}} 
 
@@ -344,83 +228,15 @@ is misspelled (feed and entry names are case sensitive in Linux and in Windows).
 ----
 === Unauthorized Exception === 
 
-The forbidden service error is as follows: 
+The forbidden service error occurs when an access control list (ACL) check fails:
 
 {{{Exception in thread "main" com.google.feedserver.util.FeedServerClientException: com.google.gdata.util.ServiceForbiddenException: Forbidden Unauthorized}}}
 
 
 Feeds that have ACLs set may prevent reading or writing by the account provided. 
-This error occurs when the ACL check has failed. You may be able to change the 
-ACL for the resource by editing the ACL feed. 
-
-<b>Note</b>: Only default ACLs apply to feeds: readable by anyone in the domain, writable only by the domain owner.
+You may be able to change the ACL for the resource by editing the ACL feed. For information on ACLs, see the Acl feed in the "Schemas of Hosted Feeds" section.
 
 ----
-----
-= Private Gadget Editor =
-
-The Private Gadget Editor (PGE) gadget enables you to create, change, and delete Google Gadgets. 
-Private gadgets are those that are usable only by Google Apps for Your Domain Premier
-Edition or Education Edition, and only to users in a domain. 
-
-To add the PGE gadget to a Google Sites page:
-
-  # Click <b>Create new page</b>.
-  # Click <b>Start Page</b> and specify a page name.
-  # Click the <b>Add personal gadgets</b> heading or in the <b>Gadgets in this area are only visible to you</b> dashed area. The <b>Select a gadget</b> window appears.
-  # Click <b>Add gadget by URL</b>.
-  # Click the edit box, type in this value, and click <b>Add</b>: <p>{{{http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/private-gadget-editor/spec.xml}}}</p>
-  # In the gadget's title bar, click the maximize button to use the gadget in profile view. 
-  # Either paste in a gadget in the editor, or click <b>Open URL</b> to load a gadget spec from a public URL, or click <b>Select to open</b> to open an existing private gadget to edit.
-
-After creating and saving a gadget in the PGE, use the Domain Directory Manager to publish 
-the gadget to the domain's private gadget directory so that users can access it in Google Apps.
-
-----
-----
-= Domain Directory Manager =
-
-The Domain Directory Manager (DDM) gadget enables domain administrators to manage domain's public and private gadget directory.
-
-----
-== Add the DDM Gadget to Google Sites ==
-
-To add the DDM gadget to a Google Sites page:
-
-  # Click <b>Create new page</b>.
-  # Click <b>Start Page</b> and specify a page name.
-  # Click in the <b>Gadgets in this area are only visible to you</b> dashed area. The <b>Select a gadget</b> window appears.
-  # Click <b>Add gadget by URL</b>.
-  # Click the edit box, type in this value, and click <b>Add</b>: <p>{{{http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/domain-gadget-directory-manager/spec.xml}}}</p>
-
-----
-=== Using DDM ===
-
-The Domain Directory Manager provides the following tabs:
-
-<ul>
-<wiki:comment>
-<li><b>Public Directory</b>. Allows an administrator to manage a domain's public gadget directory. Administrators can choose to use no restrictions on public gadgets or use a white list to include only specified public gadgets or use a black list to filter out undesired public gadgets.</li>
-</wiki:comment>
-<li><b>Private Directory</b>. Allows an administrator to manage a domain's private gadget directory which is visible only to the domain.  Administrators can publish private gadgets to the private gadget directory and/or unpublish from it.</li>
-<li><b>Private Categories</b>. Allows an administrator to manage a domain's private gadget categories. Administrators can create or remove private categories under which private gadgets will appear. You can create a category for a gadget by setting the <b>category</b> attribute in the {{{<ModulePrefs>}}} element 
-in gadget XML code. 
-
-For example:
-
-{{{
-<ModulePrefs title="View Data Gadget"
-    category="Finance"
-    ... />
-}}}
-
-Choose a category that best matches the *content* of your gadget.  Refer to [http://code.google.com/support/bin/answer.py?hl=en&answer=55132 this page] for more details.
-</li>
-<li><b>Directory Preview</b>. Preview directory changes when there is a delay after changes are made in DDM (or FSCT) and when they appear in an end user's gadget directory UI.</li>
-</ul>
-   
-<b>Note</b>: Only domains using Google Apps Premier Edition or Education Edition can have private gadgets.
-
 ----
 = Using FSCT to Manage Private Gadgets =
 
@@ -428,7 +244,7 @@ The FSCT commands enable you to perform the following tasks to manage private ga
 
   * Manage private gadgets and feeds
   * Create private gadget categories
-  * Publish a private gadget to the Private Directory
+  * Publish a private gadget to the Private Directory (for information on the Private Directory, see <a ondblclick="_go('#dgdm')">Domain Gadget Directory Manager</a>)
   * Unpublish a private gadget from the Private Directory
   
 <b>Note</b>: The commands shown in the sections that follow are for Linux. 
@@ -592,7 +408,7 @@ An example {{{financeEntity.xml}}} entity file is:
     </entity>
     }}}
     </li>
-<li>Run the <b>insertEntry.sh</b> command for Linux or the <b>insertEntry.bat</b> command for Windows to add the category from the gadget to the Domain Directory Manager.
+<li>Run the <b>insertEntry.sh</b> command for Linux or the <b>insertEntry.bat</b> command for Windows to add the category from the gadget to the Domain Gadget Directory Manager.
 
     {{{
     ./insertEntry.sh PrivateGadgetCategory financeEntity.xml
@@ -611,6 +427,7 @@ For example:
 
 {{{./deleteEntry.sh PrivateGadgetCategory Finance}}}
 
+----
 ----
 = Using FSCT to Manage Feed Access =
 
@@ -674,7 +491,10 @@ To update an ACL, execute the following command:
 If you want to change the ACL of another feed, for example, the !PrivateGadgetCategory, create another ACL entity file and plug the feed name into the {{{<resourceRule>}}} element.
 
 ----
+----
 = Schemas of Hosted Feeds =
+
+The following feed sources are available with Google Apps.
 
 <table border="1">
 
@@ -811,5 +631,83 @@ Principal can be:
 }}}
   </td>
 </tr>
-
 </table>
+
+----
+----
+= Private Gadget Editor =
+
+The Private Gadget Editor (PGE) gadget enables you to create, change, and delete Google Gadgets. The PGE is a gadget that can be
+added only to a Google Sites page.
+
+Private gadgets are usable only by Google Apps for Your Domain Premier
+Edition or Education Edition. Private gadgets are gadgets that are available only to users in a domain.
+
+To add the PGE gadget to a Google Sites page:
+
+<ol>
+<li>Click <b>Create new page</b>.</li>
+<li>Click <b>Start Page</b> and specify a page name.</li>
+<li>Click one of the following choices to add the gadget:
+<ul>
+  <li>The <b>Add personal gadgets</b> link.</li>
+  <li>In the <b>Gadgets in this area are only visible to you</b> dashed area.</li></ul> 
+The <b>Select a gadget</b> window appears.</li>
+<li>Click <b>Add gadget by URL</b>.</li>
+<li>Click the edit box, type in this value, and click <b>Add</b>: {{{http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/private-gadget-editor/spec.xml}}}</li>
+<li>In the gadget's title bar, click the maximize button to use the gadget in profile view. </li>
+<li>To create a gadget, paste in a gadget in the editor.
+To edit an existing gadget, click <b>Open URL</b> to load a gadget spec from a public URL, or click <b>Select to open</b> to open an existing private gadget to edit.</li>
+</ol>
+
+After creating and saving a gadget in the PGE, use the Domain Gadget Directory Manager to publish 
+the gadget to the domain's private gadget directory so that users can access it in Google Apps.
+
+----
+----
+<a id="dgdm"></a>
+= Domain Gadget Directory Manager =
+
+The Domain Gadget Directory Manager (DGDM) gadget enables domain administrators to manage domain's public and private gadget directory.
+The DGDM is itself a gadget that you add to a Google Sites page. The DGDM gadget only works with Google Sites.
+
+----
+== Add the DGDM Gadget to Google Sites ==
+
+To add the DGDM gadget to a Google Sites page:
+
+  # Start Google Sites
+  # Click the <b>Create new page</b> button.
+  # Click <b>User Start Page</b> and specify a page name.
+  # Click the <b>Add personal gadgets</b> link. The <b>Select a gadget</b> window appears.
+  # Click <b>Add gadget by URL</b>.
+  # Click the edit box, type in this value, and click <b>Add</b>: <p>{{{http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/domain-gadget-directory-manager/spec.xml}}}</p>
+
+----
+=== Using DGDM ===
+
+The Domain Gadget Directory Manager provides the following tabs:
+
+<ul>
+<wiki:comment>
+<li><b>Public Directory</b>. Allows an administrator to manage a domain's public gadget directory. Administrators can choose to use no restrictions on public gadgets or use a white list to include only specified public gadgets or use a black list to filter out undesired public gadgets.</li>
+</wiki:comment>
+<li><b>Private Directory</b>. Allows an administrator to manage a domain's private gadget directory which is visible only to the domain.  Administrators can publish private gadgets to the private gadget directory and/or unpublish from it.</li>
+<li><b>Private Categories</b>. Allows an administrator to manage a domain's private gadget categories. Administrators can create or remove private categories under which private gadgets will appear. You can create a category for a gadget by setting the <b>category</b> attribute in the {{{<ModulePrefs>}}} element 
+in gadget XML code. 
+
+For example:
+
+{{{
+<ModulePrefs title="View Data Gadget"
+    category="Finance"
+    ... />
+}}}
+
+Choose a category that best matches the *content* of your gadget.  Refer to [http://code.google.com/support/bin/answer.py?hl=en&answer=55132 this page] for more details.
+</li>
+<li><b>Directory Preview</b>. Preview directory changes when there is a delay after changes are made in DGDM (or FSCT) and when they appear in an end user's gadget directory UI.</li>
+</ul>
+   
+<b>Note</b>: Only domains using Google Apps Premier Edition or Education Edition can have private gadgets.
+
