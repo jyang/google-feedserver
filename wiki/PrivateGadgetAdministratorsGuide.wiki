@@ -186,14 +186,14 @@ The bad request error occurs if you try to add a gadget that already exists or i
 You may need to scroll down through the list of gadgets in the Domain Gadget Directory Manager to find a gadget.
 
 ----
-=== Gadget already exists ===
+=== Gadget Already Exists ===
 
 If a gadget has already been published and you attempt to publish the gadget more than once, the following error occurs:
 
 {{{Exception in thread "main" com.google.feedserver.util.FeedServerClientException: com.google.gdata.util.InvalidEntryException: Bad Request Gadget already exists}}}
 
 ----
-=== Gadget specified could not be fetched ===
+=== Gadget Specified Could Not Be Fetched ===
 
 If a command specifies an incorrect feed or gadget name, the following error occurs:
 
@@ -215,7 +215,7 @@ for Windows and have set the following values:
   * {{{FSCT_USER_NAME}}}. Set to your user account name for your Google Apps for Your Domain account. 
   
 ----
-=== Not found Exception === 
+=== Not Found Exception === 
 
 The resource not found error occurs if you enter incorrect command line information: 
 
@@ -303,26 +303,58 @@ To add a private gadget to your domain:
 
  ||<b>Linux Syntax:</b> {{{./getEntry.sh}}} <em>feedName</em> <em>gadgetName</em><br /><b>Windows Syntax:</b> {{{getEntry}}} <em>feedName</em> <em>gadgetName</em> ||
 
-To view a gadget:
+To display the XML code for a single gadget:
 
   * Run {{{./getEntry.sh PrivateGadgetSpec}}}/<em>gadgetName</em>
    
-    The gadget entity is displayed in the console.
+    The gadget entity displays in the console. (An entity refers to the contents of the gadget spec, which is defined with the {{{<entity>}}} element block.)
   
 ----
-== View all Gadgets ==
+== View All Gadgets ==
 
  || <b>Linux Syntax:</b> {{{./getFeed.sh}}} <em>feedName</em><br /><b>Windows Syntax:</b> {{{getFeed}}} <em>feedName</em> ||
 
-To get all gadgets:
+To display the XML code for all gadgets:
 
-  * Run {{{./getFeed.sh PrivateGadgetSpec}}}
+  * To view gadget source, run {{{./getFeed.sh PrivateGadgetSpec}}} 
+  * To find a gadget ID, run  {{{./getFeed.sh PrivateGadget}}} 
 
-    Gadget entities is displayed in the console.
+    Gadget entities display in the console.
     
     <b>Note</b>:
     * By default, FSCT only returns a maximum of 20 entries.  To retrieve more, use parameter "start-index=N" and "max-results=M" on the feed URL where N is a base-1 starting index and max-results is a number from 1 to 20.
     * If there are many gadgets, the <b>getFeed</b> command listing can be many pages. In Windows, in the Command Prompt <b>Properties</b> menu, set the <b>Screen Buffer Size</b> to a number large enough to contain this output, such as to 9999 rows. You can then copy the data from the Command Prompt to an editor such as Notepad to search for a gadget entry. 
+
+An example {{{getFeed}}} listing of the !PrivateGadget feed starts as follows:
+{{{
+<entities>
+ <entity>
+    <screenshot></screenshot>
+    <submit_date>1237487950081</submit_date>
+    <url>http://www.google.com/a/feeds/server/g/domain/example.com/PrivateGadgetSpec/hello.xml</url>
+    <country>all</country>
+    <id>http://feedserver-enterprise.googleusercontent.com/a/example.com/g/PrivateGadget/03655085350586526872</id>
+    <author_email>developer@example.com</author_email>
+    <title>hello world example</title>
+    <thumbnail></thumbnail>
+    <description></description>
+    <localmetadata repeatable="true">
+      <title>hello world example</title>
+      <screenshot></screenshot>
+      <thumbnail></thumbnail>
+      <description></description>
+      <language>all</language>
+      <country>all</country>
+    </localmetadata>
+    <view repeatable="true">
+      <name>default</name>
+      <type>html</type>
+    </view>
+    <language>all</language>
+    <item_type>gadget</item_type>
+  </entity>
+  ...
+}}}
   
 ----
 == Update a Private Gadget ==
@@ -333,7 +365,7 @@ To update a gadget in the {{{PrivateGadgetSpec}}} feed source:
 
   * Run {{{./updateGadgetSpec.sh PrivateGadgetSpec}}} <em>gadgetName</em> <em>gadgetSpecFile</em>
 
-  The updated gadget entity is displayed in the console.
+  The updated gadget entity displays in the console. This command enables you to change the XML code content in the for <em>gadgetSpecFile</em> the gadget. Any part of the gadget spec can be changed as well as the functionality for the gadget. 
   
 ----
 == Delete a Private Gadget ==
@@ -343,7 +375,7 @@ To update a gadget in the {{{PrivateGadgetSpec}}} feed source:
  * Run {{{./deleteEntry.sh PrivateGadgetSpec}}} <em>gadgetName</em>
 
 ----
-== Publish a Private Gadget to Private Directory ==
+== Publish a Private Gadget to the Private Directory ==
 
  || <b>Linux Syntax:</b> {{{./publishGadget.sh}}} <em>privateDirectory</em> <em>feedName/gadgetName</em><br /><b>Windows Syntax:</b> {{{publishGadget}}} <em>privateDirectory</em> <em>feedName/gadgetName</em> ||
 
@@ -356,11 +388,11 @@ To update a gadget in the {{{PrivateGadgetSpec}}} feed source:
 
 You can unpublish a gadget to remove it from domain's private gadget directory.
 
-<b>Note</b>: To find the gadget you want to unpublish, you need to find its gadget id.
+<b>Note</b>: To find the gadget you want to unpublish, you need to find its gadget ID value.
 
 To unpublish a gadget:
 <ol>
-<li>Use the <b>getFeed !PrivateGadget</b> command to locate the gadget's id.
+<li>Use the <b>getFeed !PrivateGadget</b> command to locate a gadget's ID value (in the {{{<id>}}} element).
 
 For example:
     {{{
@@ -369,7 +401,7 @@ For example:
     ...
     }}}
     </li>
-<li>Run the <b>deleteEntry</b> command, specify the {{{PrivateGadget}}} feed source, and the gadget id.
+<li>Run the <b>deleteEntry</b> command, specify the {{{PrivateGadget}}} feed source, and the gadget ID.
 
 For example:
     {{{
