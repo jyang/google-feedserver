@@ -236,7 +236,7 @@ The forbidden service error occurs when an access control list (ACL) check fails
 Feeds that have ACLs set may prevent reading or writing by the account provided. 
 You may be able to change the ACL for the resource by editing the ACL feed. For information on ACLs, see the Acl feed in the "Schemas of Hosted Feeds" section.
 
-[http://code.google.com/p/google-feedserver/wiki/PrivateGadgetAdministratorsGuide Return to top.]
+[http://code.google.com/p/google-feedserver/wiki/PrivateGadgetAdministratorsGuide Back to top.]
 ----
 ----
 = Using FSCT to Manage Private Gadgets =
@@ -245,7 +245,7 @@ The FSCT commands enable you to perform the following tasks to manage private ga
 
   * Manage private gadgets and feeds
   * Create private gadget categories
-  * Publish a private gadget to the Private Directory (for information on the Private Directory, see [[http://code.google.com/p/google-feedserver/wiki/PrivateGadgetAdministratorsGuide#dgdm Domain Gadget Directory Manager])
+  * Publish a private gadget to the Private Directory (for information on the Private Directory, see "Domain Gadget Directory Manager")
   * Unpublish a private gadget from the Private Directory
   
 <b>Note</b>: The commands shown in the sections that follow are for Linux. 
@@ -428,6 +428,8 @@ For example:
 
 {{{./deleteEntry.sh PrivateGadgetCategory Finance}}}
 
+[http://code.google.com/p/google-feedserver/wiki/PrivateGadgetAdministratorsGuide Back to top.]
+
 ----
 ----
 = Using FSCT to Manage Feed Access =
@@ -490,6 +492,8 @@ To update an ACL, execute the following command:
 }}}
 
 If you want to change the ACL of another feed, for example, the !PrivateGadgetCategory, create another ACL entity file and plug the feed name into the {{{<resourceRule>}}} element.
+
+[http://code.google.com/p/google-feedserver/wiki/PrivateGadgetAdministratorsGuide Back to top.]
 
 ----
 ----
@@ -634,6 +638,8 @@ Principal can be:
 </tr>
 </table>
 
+[http://code.google.com/p/google-feedserver/wiki/PrivateGadgetAdministratorsGuide Back to top.]
+
 ----
 ----
 = Private Gadget Editor =
@@ -663,6 +669,8 @@ To edit an existing gadget, click <b>Open URL</b> to load a gadget spec from a p
 
 After creating and saving a gadget in the PGE, use the Domain Gadget Directory Manager to publish 
 the gadget to the domain's private gadget directory so that users can access it in Google Apps.
+
+[http://code.google.com/p/google-feedserver/wiki/PrivateGadgetAdministratorsGuide Back to top.]
 
 ----
 ----
@@ -712,3 +720,4 @@ Choose a category that best matches the *content* of your gadget.  Refer to [htt
    
 <b>Note</b>: Only domains using Google Apps Premier Edition or Education Edition can have private gadgets.
 
+[http://code.google.com/p/google-feedserver/wiki/PrivateGadgetAdministratorsGuide Back to top.]
