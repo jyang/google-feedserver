@@ -380,6 +380,8 @@ To update a gadget in the {{{PrivateGadgetSpec}}} feed source:
  || <b>Linux Syntax:</b> {{{./publishGadget.sh}}} <em>privateDirectory</em> <em>feedName/gadgetName</em><br /><b>Windows Syntax:</b> {{{publishGadget}}} <em>privateDirectory</em> <em>feedName/gadgetName</em> ||
 
  * Run {{{./publishGadget.sh PrivateGadget PrivateGadgetSpec}}}/<em>gadgetName</em>
+ 
+Publishing a gadget is required for the gadget to appear in the Private Directory. Published gadgets can then be added to a Google Sites page by users in a domain within Google Apps for Your Domain Premier Edition or Education Edition.
 
 ----
 == Unpublish a Gadget ==
@@ -392,12 +394,20 @@ You can unpublish a gadget to remove it from domain's private gadget directory.
 
 To unpublish a gadget:
 <ol>
-<li>Use the <b>getFeed !PrivateGadget</b> command to locate a gadget's ID value (in the {{{<id>}}} element).
+<li>Run the <b>getFeed !PrivateGadget</b> command to locate a gadget's ID value (in the {{{<id>}}} element).
 
 For example:
     {{{
-    ...
-    <id>http://feedserver-enterprise.googleusercontent.com/a/example.com/g/PrivateGadget/056536884581709698</id>
+    $ ./getFeed.sh PrivateGadget
+    The password cannot be null or blank
+    Password:
+    <entities>
+      <entity>
+        <screenshot></screenshot>
+        <submit_date>1237476364974</submit_date>
+        <url>http://feedserver-enterprise.googleusercontent.com/a/example.com/g/PrivateGadgetSpec/mygadget.xml</url>
+        <country>all</country>
+        <id>http://feedserver-enterprise.googleusercontent.com/a/example.com/g/PrivateGadget/056536884581709698</id>
     ...
     }}}
     </li>
@@ -405,7 +415,11 @@ For example:
 
 For example:
     {{{
-    ./deleteEntry.sh PrivateGadget 056536884581709698
+    $ ./deleteEntry.sh PrivateGadget 056536884581709698
+    The password cannot be null or blank
+    Password:
+
+    $
     }}}
     </li>
 </ol>
@@ -415,8 +429,8 @@ For example:
 
  || <b>Linux Syntax:</b> {{{./insertEntry.sh PrivateGadgetCategory}}} <em>entityFile</em><br /><b>Windows Syntax:</b> {{{insertEntry PrivateGadgetCategory}}} <em>entityFile</em> ||
 
-<b>Note</b>: For a gadget to appear in a category, the gadget must set the {{{category}}} attribute in the 
-{{{<ModulePref>}}} element in the gadget specification. 
+<b>Note</b>: For a gadget to appear in a category, the gadget spec must contain the {{{category}}} attribute in the 
+{{{<ModulePref>}}} element. 
 
 For example:
 
