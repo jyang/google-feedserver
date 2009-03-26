@@ -723,7 +723,7 @@ the gadget to the domain's private gadget directory so that users can access it 
 <a id="dgdm"></a>
 = Domain Gadget Directory Manager =
 
-The Domain Gadget Directory Manager (DGDM) gadget enables domain administrators to manage domain's public and private gadget directory.
+The Domain Gadget Directory Manager (DGDM) gadget enables domain administrators to manage a domain's public and private gadget directory.
 The DGDM is itself a gadget that you add to a Google Sites page. The DGDM gadget only works with Google Sites.
 
 ----
