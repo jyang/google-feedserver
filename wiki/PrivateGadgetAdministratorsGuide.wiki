@@ -482,7 +482,7 @@ For example:
 
 Every hosted feed has an access control list (ACL) associated with it to control which users can do which operations on the feed and its entries. All hosted feeds have a default ACL to allow domain's users to read from them and domain's administrators to write to them. Administrator can override the default ACL to suite the need of the domain.
 
-Here is an example of setting the ACL for the PrivateGagetSpec feed.  We have aclEntity.xml:
+The following is an example of setting the ACL for the !PrivateGagetSpec feed, which is the {{{aclEntity.xml}}} listing:
 {{{
 <entity xmlns="">
   <name>PrivateGadgetSpec-acl</name>
