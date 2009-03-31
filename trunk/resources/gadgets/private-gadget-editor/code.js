@@ -36,8 +36,8 @@ function setNameOfGadgetBeingEdited(name) {
   nameOfGadgetBeingEdited = name;
   if (name) {
     $('spec-url-wrapper').style.display = 'inline';
-    var specUrl = 'http://www.google.com/a/feeds/server/g/domain/' +
-        detectDomainName() + '/PrivateGadgetSpec/' + name;
+    var specUrl = 'http://feedserver-enterprise.googleusercontent.com/a/' +
+        detectDomainName() + '/g/PrivateGadgetSpec/' + name;
     $('spec-url').href = specUrl;
   } else {
     $('spec-url-wrapper').style.display = 'none';
