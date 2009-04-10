@@ -55,7 +55,7 @@ To use FSCT, you need the following:
   * 512 MB RAM recommended
   * 2 MB disk space for installation of the binary version
   * JRE available from [http://www.java.com/en/download/manual.jsp Java.com]
-  * FSCT software binary download from [http://google-feedserver.googlecode.com/files/google-feedserver-clienttool-2.0.4.zip]
+  * FSCT software binary download from [http://google-feedserver.googlecode.com/files/google-feedserver-clienttool-2.0.5.zip]
 
 ----
 == FSCT Tasks ==
