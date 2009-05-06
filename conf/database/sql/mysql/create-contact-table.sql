@@ -8,9 +8,9 @@ CREATE TABLE `feedserver`.`Contact` (
 ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 ALTER TABLE `feedserver`.`Contact` ADD INDEX `lastNameIndex`(`last_name`),
- ADD INDEX `firstNameIndex`(`first_name`),
- ADD INDEX `ratingIndex`(`rating`);
+    ADD INDEX `firstNameIndex`(`first_name`), ADD INDEX `ratingIndex`(`rating`);
 
-INSERT INTO `feedserver`.`Contact` (`first_name`, `last_name`, `email`, `rating`)
-values ('Jim', 'Simon', 'jsimon@example.com', 5),
-       ('John', 'Doe', 'jdoe@example.com', 10); 
+INSERT INTO `feedserver`.`Contact`
+    (`first_name`, `last_name`, `email`, `rating`)
+    values ('Jim', 'Simon', 'jsimon@example.com', 5),
+    ('John', 'Doe', 'jdoe@example.com', 10); 
