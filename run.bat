@@ -16,11 +16,6 @@ if X%1==Xhelp (
 echo "Usage: %0 --port=<number> --uri=http://host:port authenticated=true|false OAuth_authenticated=true|false"
 echo "Specify either authenticated or OAuth_authenticated and not both"
 ) else (
-java -classpath "%CLASSPATH%" com.google.feedserver.server.jetty.StartFeedServerWithJetty %*
+java -server -classpath "%CLASSPATH%" com.google.feedserver.server.jetty.StartFeedServerWithJetty %*
 )
 endlocal
-
-
-
-
-
