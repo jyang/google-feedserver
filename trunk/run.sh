@@ -18,4 +18,4 @@ then
      exit 0
    fi
 fi
-java -classpath $CLASSPATH com.google.feedserver.server.jetty.StartFeedServerWithJetty $*
+java -server -classpath $CLASSPATH com.google.feedserver.server.jetty.StartFeedServerWithJetty $*
