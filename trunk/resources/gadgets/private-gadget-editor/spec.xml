@@ -45,7 +45,7 @@ function addScript(src) {
   document.body.appendChild(script);
 };
 
-if (location.href.indexOf('gmodules.com') > 0) {
+if (location.host.indexOf('gmodules.com') > 0) {
   addScript('/ig/modules/codepress/codepress.js?ts=092908');
   addScript('/ig/modules/codepress/codepress_wrapper.js?ts=092908');
 } else {
