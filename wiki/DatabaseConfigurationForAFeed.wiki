@@ -195,8 +195,8 @@ For example: {{{contact.properties}}}
 
 {{{
    subUri=contact
-   title=title for any sample feed
-   author=Google QA
+   title=feed
+   author=FeedServer
    adapterName=jdbcAdapterConfig
    configValue=@sqlmap/contact.xml
 }}}
