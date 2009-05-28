@@ -26,6 +26,7 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
+import org.apache.abdera.protocol.server.Target;
 import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
 import org.apache.abdera.protocol.server.provider.managed.ServerConfiguration;
 
@@ -75,7 +76,7 @@ public class IBatisCollectionAdapter extends AbstractManagedCollectionAdapter {
     String queryId = config.getFeedId() + "-get-feed";
     List<Map<String, Object>> rows;
     try {
-      rows = client.queryForList(queryId);
+      rows = client.queryForList(queryId, getRequestParams(request));
     } catch (SQLException e) {
       throw new FeedServerAdapterException(
           FeedServerAdapterException.Reason.ERROR_EXECUTING_ADAPTER_REQUEST, e.getMessage());
@@ -157,5 +158,19 @@ public class IBatisCollectionAdapter extends AbstractManagedCollectionAdapter {
   @Override
   public FeedInfo getFeedInfo(RequestContext request) throws FeedServerAdapterException {
     return getFeedInfoFromConfig(request);
+  }
+
+  /**
+   * Gets request parameters from request context
+   * @param request Request context
+   * @return All parameters on request context
+   */
+  protected Object getRequestParams(RequestContext request) {
+    HashMap<String, String> params = new HashMap<String, String>();
+    Target target = request.getTarget();
+    for (String name: target.getParameterNames()) {
+      params.put(name, target.getParameter(name));
+    }
+    return params;
   }
 }
