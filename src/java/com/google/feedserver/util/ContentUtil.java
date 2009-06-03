@@ -24,6 +24,7 @@ import org.xml.sax.SAXException;
 import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,6 +33,16 @@ import javax.xml.parsers.ParserConfigurationException;
  * Utility to handle content payload
  */
 public class ContentUtil {
+
+  /**
+   * Name of id property
+   */
+  public static final String ID = "id";
+
+  /**
+   * Name of the unique name property
+   */
+  public static final String NAME = "name";
 
   protected BeanUtil beanUtil = new BeanUtil();
   protected XmlUtil xmlUtil = new XmlUtil();
@@ -86,13 +97,40 @@ public class ContentUtil {
    * {@code OtherContent} description of the payload
    * @param content a GData {@code  OtherContent} representation of the payload
    * @param bean a JavaBean to set the properties on
+   * @throws InvocationTargetException 
+   * @throws IllegalAccessException 
+   * @throws IntrospectionException 
+   * @throws ParserConfigurationException 
+   * @throws IOException 
+   * @throws SAXException 
+   * @throws IllegalArgumentException 
    */
-  public void fillBean(OtherContent content, Object bean)
+  public void fillBean(OtherContent content, Object bean) throws IllegalArgumentException,
+      SAXException, IOException, ParserConfigurationException, IntrospectionException,
+      IllegalAccessException, InvocationTargetException {
+    fillBean(content, bean, null);
+  }
+
+  /**
+   * Sets properties on the JavaBean by extracting them from a GData
+   * {@code OtherContent} description of the payload
+   * @param content a GData {@code  OtherContent} representation of the payload
+   * @param bean a JavaBean to set the properties on
+   * @param id optional id of entity
+   */
+  public void fillBean(OtherContent content, Object bean, String id)
       throws SAXException, IOException, ParserConfigurationException,
           IllegalArgumentException, IntrospectionException,
           IllegalAccessException, InvocationTargetException {
     String xmlText = getXmlFromContent(content);
     Map<String, Object> properties = xmlUtil.convertXmlToProperties(xmlText);
+    if (properties == null) {
+      properties = new HashMap<String, Object>();
+    }
+    if (id != null) {
+      properties.put(ID, id);
+      properties.put(NAME, id);
+    }
     beanUtil.convertPropertiesToBean(properties, bean);
   }
 
