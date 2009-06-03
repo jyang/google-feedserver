@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,8 +54,6 @@ import javax.xml.parsers.ParserConfigurationException;
  * @author r@kuci.org (Ray Colline)
  */
 public class TypelessFeedServerClient {
-
-  public static final String ID = "id";
 
   // Logging instance
   private static final Logger log = Logger.getLogger(TypelessFeedServerClient.class);
@@ -166,7 +165,7 @@ public class TypelessFeedServerClient {
    */
   public void deleteEntry(URL feedUrl, Map<String, Object> entry) throws FeedServerClientException {
     try {
-      String entryUrl = (String) entry.get(ID);
+      String entryUrl = (String) entry.get(ContentUtil.ID);
       deleteEntry(new URL(entryUrl));
     } catch (MalformedURLException e) {
       throw new FeedServerClientException("invalid base URL", e);
@@ -345,8 +344,11 @@ public class TypelessFeedServerClient {
       // '>' by the GData client library is worked
       xmlText = xmlText.replaceAll("]]>", "]]&gt;");
       Map<String, Object> entity = xmlUtil.convertXmlToProperties(xmlText);
+      if (entity == null) {
+        entity = new HashMap<String, Object>();
+      }
       // copy id which is the same as self and edit link
-      entity.put(ID, entry.getId());
+      entity.put(ContentUtil.ID, entry.getId());
       return entity;
     } catch (SAXException e) {
       throw new FeedServerClientException(e);
@@ -362,7 +364,11 @@ public class TypelessFeedServerClient {
   }
 
   protected String getEntryId(Map<String, Object> entity) {
-    Object id = entity.get(ID);
+    Object id = entity.get(ContentUtil.ID);
     return id == null ? null : id.toString();
+  }
+
+  public GoogleService getService() {
+    return service;
   }
 }
