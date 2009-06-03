@@ -59,21 +59,14 @@ public class HostedFeedServerClientTools extends FeedServerClientTool {
   public static String publishFeedEntryURL_HELP = "Path to Atom XML file to insert or update";
 
   @Override
-  public void run(String[] args) throws FeedServerClientException, MalformedURLException,
-      IOException, AuthenticationException {
-
-    // Create the client helper
-    CommonsCliHelper cliHelper = createClientHelper(args, HostedFeedServerClientTools.class);
-
-    // Check the service params and authN params
-    checkServiceAndAuthNParams(cliHelper);
-
+  protected void processRequest(CommonsCliHelper cliHelper) throws FeedServerClientException,
+      MalformedURLException, IOException, AuthenticationException {
     if (OPERATION_PUBLISH.equals(op_FLAG)) {
       getUserCredentials();
       printEntry(publishToDirectory(url_FLAG, createPublishFeedSpecXml(entryFilePath_FLAG,
           publishFeedEntryURL_FLAG)));
     } else {
-      super.run(args);
+      super.processRequest(cliHelper);
     }
   }
 
