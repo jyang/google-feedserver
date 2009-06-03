@@ -96,11 +96,16 @@ public class BeanUtil {
         if (null != value) {
           if (isBean(value.getClass())) {
             if (value.getClass().isArray()) {
-              List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-              for (Object object : (Object[]) value) {
-                list.add(convertBeanToProperties(object));
+              Object[] valueArray = (Object[]) value;
+              if (valueArray.length == 0) {
+                properties.put(name, null);
+              } else {
+                List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+                for (Object object : (Object[]) value) {
+                  list.add(convertBeanToProperties(object));
+                }
+                properties.put(name, list.toArray(new Map[0]));
               }
-              properties.put(name, list.toArray(new Map[0]));
             } else {
               properties.put(name, convertBeanToProperties(value));
             }
