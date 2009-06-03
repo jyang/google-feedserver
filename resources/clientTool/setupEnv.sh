@@ -8,12 +8,14 @@ FSCT_USER_NAME=test_user@$FSCT_DOMAIN
 
 ### Use with on-prem Google FeedServer
 #FSCT_FEED_BASE=http://localhost:8080/$FSCT_DOMAIN
+#FSCT_USER_FEED_BASE=http://localhost:8080/$FSCT_DOMAIN/user
 #SERVICE_NAME=test
 #AUTHN_URL_PROTOCOL=http
 #AUTHN_URL=localhost:8080
 
 ### Use with hosted Google FeedServer
 FSCT_FEED_BASE=http://feedserver-enterprise.googleusercontent.com/a/$FSCT_DOMAIN/g
+FSCT_USER_FEED_BASE=http://feedserver-enterprise.googleusercontent.com/a/$FSCT_DOMAIN/user
 SERVICE_NAME=esp
 AUTHN_URL_PROTOCOL=https
 AUTHN_URL=www.google.com
