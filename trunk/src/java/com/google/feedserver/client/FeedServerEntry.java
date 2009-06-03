@@ -35,7 +35,8 @@ import javax.xml.parsers.ParserConfigurationException;
  * @author r@kuci.org (Ray Colline)
  */
 public class FeedServerEntry extends BaseEntry<FeedServerEntry> {
-  
+
+  protected ContentUtil contentUtil = new ContentUtil();
 
   /**
    * Creates empty entry.
@@ -81,7 +82,6 @@ public class FeedServerEntry extends BaseEntry<FeedServerEntry> {
    * @param xmlText XML string representing an entity.
    */
   public FeedServerEntry(String xmlText) {
-    ContentUtil contentUtil = new ContentUtil();
     XmlBlob xmlBlob = new XmlBlob();
     xmlBlob.setBlob(xmlText);
     setXmlBlob(xmlBlob);
@@ -94,7 +94,6 @@ public class FeedServerEntry extends BaseEntry<FeedServerEntry> {
    * @param entity a bean representing the content.
    */
   public void setContentFromEntity(Object entity) {
-    ContentUtil contentUtil = new ContentUtil();
     try {
       OtherContent content = contentUtil.createXmlContent(entity);
       this.setXmlBlob(content.getXml());
@@ -117,7 +116,6 @@ public class FeedServerEntry extends BaseEntry<FeedServerEntry> {
    * @throws FeedServerClientException if any conversion errors occur parsing the XML.
    */
   public void setContentFromXmlString(String xmlText) throws FeedServerClientException {
-    ContentUtil contentUtil = new ContentUtil();
     XmlBlob xmlBlob = new XmlBlob();
     xmlBlob.setBlob(xmlText);
     setXmlBlob(xmlBlob);
@@ -136,9 +134,16 @@ public class FeedServerEntry extends BaseEntry<FeedServerEntry> {
    */
   public <T> T getEntity(Class<T> entityClass) throws FeedServerClientException {
     try {
-      ContentUtil contentUtil = new ContentUtil();
       T entity = entityClass.newInstance();
-      contentUtil.fillBean((OtherContent) this.getContent(), entity);
+
+      // last word is URL is id
+      String id = getId();
+      if (id != null) {
+        int slash = id.lastIndexOf('/');
+        id = slash < 0 ? id : id.substring(slash + 1);
+      }
+
+      contentUtil.fillBean((OtherContent) this.getContent(), entity, id);
       return entity;
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Invalid bean " + entityClass.getName(), e);
