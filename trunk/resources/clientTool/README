@@ -66,31 +66,23 @@ Retrieve a specific gadget spec:
 
 Upload a new gadget spec:
 1. Copy the gadget spec as a xml file and save it in the 'scripts' directory (there is a sample gadget spec: hello.xml)
-2. Run the ./insertGadgetSpec.sh script as follows:
-   $> ./insertGadgetSpec.sh <<feed_name>> <<gadget_name>> <<gadget_spec_file>>
-   For example './insertGadgetSpec.sh Gadgets hello-world-gadget hello.xml'  will save the gadget spec with the given name. The saved gadget spec will be returned as response.
+2. Run the ./uploadGadget.sh script as follows:
+   $> ./uploadGadget.sh <<gadget_spec_file>>
+   For example './uploadGadget.sh hello.xml'  will save the gadget spec with the given name in the domain's private gadget store. The saved gadget spec will be returned as response.
 3. To retrieve the gadget spec mention the gadget name as a parameter to the getEntry.sh script.
-   eg: $> ./getEntry.sh Gadgets hello-world-gadget
+   eg: $> ./getEntry.sh GadgetSpec hello.xml
 
-Update an existing gadget spec:
-1. Save the existing gadget spec as a xml file under the 'scripts' directory. Update it as required
-2. Run the ./updateGadgetSpec.sh script as follows:
-   $> ./updateGadgetSpec.sh <<feed_name>> <<gadget_name>> <<gadget_spec_file>>
-   For example './updateGadgetSpec.sh Gadgets hello-world-gadget hello.xml'  will update the gadget spec with the given name. The updated gadget spec will be returned as response.
-
-Note: The <<gadget_spec_file>> file has to be the path of a file on the file system relative to the 'scripts' directory. By default the scripts assume that the file will be saved in 'scripts' directory
+Use uploadUserGadget.sh to upload into user's private gadget store.  Uploading again overrides the existing gadget spec.
 
 Publish a gadget:
-You can publish a gadget so that the gadget is visible to anyone in your domain.
+You can publish a gadget to your domain's private gadget directory.
 1. Run the publishGadget.sh script as follows:
-   $> ./publishGadget.sh <<publish_dir>> <<feed_name>>/<<gadget_name>>
- publish_dir -- The directory to which the gadget will be published. This directory will have all the published gadgets for the given domain
- feed_name -- The feed name under which the gadget spec is stored
- gadget_name -- The name of the gadget to be published
+   $> ./publishGadget.sh <<gadget_name>>
+ eg: ./publishGadget.sh hello.xml
 
- eg: ./publishGadget.sh PublishedGadgets Gadgets/hello-world-gadget
+Note: The gadget spec needs to be first uploaded.  This publishes a gadget in the domain's private gadget store to its directory.
 
-Note: The gadget spec needs to be first uploaded using the 'insertGadgetSpec' script before you publish it
+Use publishUserGadget.sh to publish from user's private gadget store.
 
 
 Troubleshooting
@@ -124,6 +116,4 @@ Gadget already exists
    Exception in thread "main" com.google.feedserver.util.FeedServerClientException: com.google.gdata.util.ServiceException: Internal Server Error
 Gadget specified could not be fetched
 
-   Check that you have specified the correct feed name and gadget name that exists. You can do this by using the 'getEntry' script
-   
-
+   Check that you have specified the correct feed name and gadget name that exists. You can do this by using the 'getEntry' script.
