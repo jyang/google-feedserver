@@ -258,7 +258,8 @@ public class FeedServerClient<T> {
     String name = (String) getBeanProperty(NAME_ELEMENT, entry.getEntity(entityClass), new String());
     try {
       LOG.info("updating entry at feed " + baseUrl + "/" + name);
-      service.update(new URL(baseUrl + "/" + name), entry);
+      URL url = new URL(baseUrl + "/" + name);
+      service.update(url, entry);
     } catch (IOException e) {
       throw new FeedServerClientException(e);
     } catch (ServiceException e) {
@@ -396,5 +397,9 @@ public class FeedServerClient<T> {
     } catch (SecurityException e) {
       throw new RuntimeException("Invalid bean " + bean.getClass().getName(), e);
     }
+  }
+
+  public GoogleService getService() {
+    return service;
   }
 }
