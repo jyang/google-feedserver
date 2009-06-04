@@ -1,6 +1,6 @@
 # uploadGadget.sh {gadgetSpecFilePath}
 
-TEMP_ENTITY_FILE=___temp-entity.xml
+TEMP_ENTITY_FILE=$0___temp-entity.xml
 
 specFilePath=$1
 specFileName=`basename $1`
