@@ -14,8 +14,9 @@ FSCT_USER_NAME=test_user@$FSCT_DOMAIN
 #AUTHN_URL=localhost:8080
 
 ### Use with hosted Google FeedServer
-FSCT_FEED_BASE=http://feedserver-enterprise.googleusercontent.com/a/$FSCT_DOMAIN/g
-FSCT_USER_FEED_BASE=http://feedserver-enterprise.googleusercontent.com/a/$FSCT_DOMAIN/user
+FSCT_BASE_URL=http://feedserver-enterprise.googleusercontent.com/a/$FSCT_DOMAIN
+FSCT_FEED_BASE=$FSCT_BASE_URL/g
+FSCT_USER_FEED_BASE=$FSCT_BASE_URL/user
 SERVICE_NAME=esp
 AUTHN_URL_PROTOCOL=https
 AUTHN_URL=www.google.com
