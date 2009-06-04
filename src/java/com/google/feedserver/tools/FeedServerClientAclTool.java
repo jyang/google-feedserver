@@ -187,13 +187,15 @@ public class FeedServerClientAclTool extends FeedServerClientTool {
   @Override
   protected void processRequest(CommonsCliHelper cliHelper) throws FeedServerClientException,
       MalformedURLException, IOException, AuthenticationException {
-    if (OPERATION_SET_ACL.equals(op_FLAG)) {
+    if (resource_FLAG == null) {
+      printError("resource missing (please use flag '-resource')");
+    } else if (OPERATION_SET_ACL.equals(op_FLAG)) {
       getUserCredentials();
       List<Acl> existingAcls = getAcl(resource_FLAG);
       if (existingAcls.size() > 1) {
         printError("More than 1 ACL per resource not supported by this client tool");
       } else {
-        setAcl(url_FLAG, existingAcls, acl_FLAG);
+        setAcl(url_FLAG, resource_FLAG, existingAcls, acl_FLAG);
       }
     } else {
       super.processRequest(cliHelper);
@@ -225,13 +227,14 @@ public class FeedServerClientAclTool extends FeedServerClientTool {
   /**
    * Sets ACLs of a resource.
    * @param url URL of resource to set ACLs
+   * @param resource Resource to set ACLs for
    * @param acls Existing ACLs to change
    * @param aclDef ACL change definitions (<crud><+|-><principal:...>,)*
    * @throws MalformedURLException
    * @throws FeedServerClientException
    */
-  protected void setAcl(String url, List<Acl> acls, String aclDef) throws MalformedURLException,
-      FeedServerClientException {
+  protected void setAcl(String url, String resource, List<Acl> acls, String aclDef)
+      throws MalformedURLException, FeedServerClientException {
     String[] authorizedEntitiesDefs = aclDef.split(",");
     List<String> addAuthorizedEntities = new ArrayList<String>();
     List<String> removeAuthorizedAuthities = new ArrayList<String>();
@@ -261,6 +264,9 @@ public class FeedServerClientAclTool extends FeedServerClientTool {
         printError("Error: cannot have empty authorized entities");
       } else {
         if (acl.getName() == null) {
+          acl.setName(resource);
+          acl.setResourceInfo(new ResourceInfo(resource,
+              resource.indexOf('/') > 0 ? ResourceInfo.ENTRY : ResourceInfo.FEED));
           feedServerClient.insertEntity(new URL(url), acl);
         } else {
           feedServerClient.updateEntity(new URL(url), acl);
