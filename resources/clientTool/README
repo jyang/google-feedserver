@@ -17,7 +17,7 @@ This binary distribution includes the following:
 -------------------------------------------------
 * The FSCT binary jar under 'dist' folder
 * The dependant jars under 'lib' folder
-* All FSCT scripts under 'scripts' folder
+* All FSCT scripts under 'bin' folder
 
 Instructions before running the scripts:
 ------------------------------------------
@@ -65,7 +65,7 @@ Retrieve a specific gadget spec:
   For example './getEntry.sh Gadgets hello-world-gadget' will fetch the gadget with the name 'hello-world-gadget' in the public gadget directory.
 
 Upload a new gadget spec:
-1. Copy the gadget spec as a xml file and save it in the 'scripts' directory (there is a sample gadget spec: hello.xml)
+1. Copy the gadget spec as a xml file and save it in the 'bin' directory (there is a sample gadget spec: hello.xml)
 2. Run the ./uploadGadget.sh script as follows:
    $> ./uploadGadget.sh <<gadget_spec_file>>
    For example './uploadGadget.sh hello.xml'  will save the gadget spec with the given name in the domain's private gadget store. The saved gadget spec will be returned as response.

@@ -10,18 +10,17 @@
   <property name="conf.home" value="${basedir}/conf"/>
   <property name="web.home" value="${basedir}/web"/>
   <property name="lib.home" value="${basedir}/lib"/>
-  <property name="dist" value="${basedir}/distribution"/>
   <property name="resources" value="resources" />
-  <property name="log4jConfigFile" value="${resources}/clientTool/log4j.properties" />  
+  <property name="log4jConfigFile" value="${resources}/clientTool/log4j.properties" />
 
   <!-- Client Properties -->
   <property name="client.version" value="2.0"/>
   <property name="client.jarfile"
       value="${dist.home}/google-feedserver-java-client-${client.version}.jar"/>
 
-  <property name="client.tools.version" value="2.0.5"/>
-  <property name="clienttools.zip" value="${dist}/google-feedserver-clienttool-${client.tools.version}.zip"/>
-  <property name="clienttools.temp.dir" value="${dist}/temp" />
+  <property name="client.tools.version" value="2.0.6"/>
+  <property name="clienttools.zip" value="${dist.home}/google-feedserver-clienttools-${client.tools.version}.zip"/>
+  <property name="clienttools.temp.dir" value="${dist.home}/temp" />
   <property name="fsct.scripts.dir" value="${resources}/clientTool" />
   <!-- End Client Properties -->
 
@@ -82,8 +81,8 @@
   </target>
 
   <target name="client-source-distro" depends="client">
-    <mkdir dir="${dist}"/>
-    <tar destfile="${dist}/google-feedserver-java-client-${client.version}-src.tar.gz"
+    <mkdir dir="${dist.home}"/>
+    <tar destfile="${dist.home}/google-feedserver-java-client-${client.version}-src.tar.gz"
         longfile="gnu" compression="gzip" excludes="tmp/**, third-party/*/docs/**">
       <tarfileset dir=".">
         <include name="build.xml"/>
@@ -251,51 +250,44 @@
       </classpath>
     </sql>
   </target>
-    
-  <!-- Target to create a zip of client tools which includes FSCT binaries and scripts -->   
+
+  <!-- Target to create a zip of client tools which includes FSCT binaries and scripts -->
   <target name="client-tools-distro" depends="client" description="Creates a zip of client tools which includes FSCT binaries and scripts">
     <mkdir dir="${clienttools.temp.dir}" />
     <mkdir dir="${clienttools.temp.dir}/dist" />
     <mkdir dir="${clienttools.temp.dir}/lib" />
-    <mkdir dir="${clienttools.temp.dir}/scripts" />
+    <mkdir dir="${clienttools.temp.dir}/bin" />
     <copy file="${fsct.scripts.dir}/README" todir="${clienttools.temp.dir}"/>
-    <copy file="${log4jConfigFile}" todir="${clienttools.temp.dir}/scripts"/>
-    <copy file="${client.jarfile}" todir="${clienttools.temp.dir}/dist">
-    </copy>
+    <copy file="${log4jConfigFile}" todir="${clienttools.temp.dir}/bin"/>
+    <copy file="${client.jarfile}" todir="${clienttools.temp.dir}/dist"></copy>
     <copy todir="${clienttools.temp.dir}/lib">
        <fileset dir="${lib.home}" includes="commons-beanutils-core-*.jar"></fileset>
-    </copy>
-    <copy todir="${clienttools.temp.dir}/lib">
+       <fileset dir="${lib.home}" includes="commons-beanutils-*.jar"></fileset>
        <fileset dir="${lib.home}" includes="commons-cli-*.jar"></fileset>
-    </copy>
-    <copy todir="${clienttools.temp.dir}/lib">
+       <fileset dir="${lib.home}" includes="commons-collections-*.jar"></fileset>
        <fileset dir="${lib.home}" includes="commons-lang-*.jar"></fileset>
-    </copy>
-    <copy todir="${clienttools.temp.dir}/lib">
        <fileset dir="${lib.home}" includes="commons-logging-*.jar"></fileset>
-    </copy>
-    <copy  todir="${clienttools.temp.dir}/lib">
        <fileset dir="${lib.home}" includes="gdata-*.jar"></fileset>
-    </copy>
-    <copy todir="${clienttools.temp.dir}/lib">
        <fileset dir="${lib.home}" includes="log4j-*.jar"></fileset>
     </copy>
-    <copy todir="${clienttools.temp.dir}/scripts">
+    <copy todir="${clienttools.temp.dir}/bin">
        <fileset dir="${fsct.scripts.dir}" includes="**" excludes="README">
        </fileset>
     </copy>
-           
-    <replace dir="${dist}/temp/scripts" value="FSCT_BASE_DIR=.."
+
+    <replace dir="${dist.home}/temp/bin" value="FSCT_BASE_DIR=.."
                           description="Change the base dir to be one level up">
        <include name="**/setupEnv.sh"/>
        <replacetoken><![CDATA[FSCT_BASE_DIR=../..]]></replacetoken>
     </replace>
-    <replace dir="${dist}/temp/scripts" value="FSCT_BASE_DIR=.."
+    <replace dir="${dist.home}/temp/bin" value="FSCT_BASE_DIR=.."
                                   description="Change the base dir to be one level up">
        <include name="**/setupEnv.bat"/>
        <replacetoken><![CDATA[FSCT_BASE_DIR=..\..]]></replacetoken>
     </replace>
     <zip destfile="${clienttools.zip}" basedir="${clienttools.temp.dir}"></zip>
+
+    <delete dir="${clienttools.temp.dir}" />
 
   </target>
 
