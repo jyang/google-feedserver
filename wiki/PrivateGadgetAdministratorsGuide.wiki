@@ -480,6 +480,21 @@ For example:
 ----
 = Using FSCT to Manage Feed Access =
 
+== Using Higher Level Tool ==
+
+To set the ACLs of a resource, you execute a command like this:
+
+{{{./setAcl.sh PrivateGadgetSpec crud+john.doe@example.com}}}
+
+which adds create, retrieve, update and delete access to user john.doe@example.com to the per domain feed PrivateGadgetSpec.  To take away access, you use minus as opposed to plus.  For example:
+
+{{{./setAcl.sh PrivateGadgetSpec d-john.doe@example.com}}}
+
+which takes away delete access from user john.doe@example.com on per domain feed PrivateGadgetSpec.
+
+
+== Using Lower Level Tool ==
+
 Every hosted feed has an access control list (ACL) associated with it to control which users can do which operations on the feed and its entries. All hosted feeds have a default ACL that allows domain users to read from a feed and the domain's administrators to write to the feed. You can override a default ACL to suit the needs of your domain.
 
 The following is an example of setting the ACL for the !PrivateGagetSpec feed, which is the {{{aclEntity.xml}}} listing:
