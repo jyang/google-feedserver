@@ -499,6 +499,7 @@ which removes delete access from user {{{john.doe@example.com}}} on per domain f
 You can verify the current ACLs by doing:
 
 {{{./getAcl.sh PrivateGadgetSpec}}}
+
 {{{./getEntry.sh acl PrivateGadgetSpec}}}
 
 To set the ACLs for an entry, you would use {{{<feedName>/<entryName>}}} as the resource.  For example,
@@ -509,7 +510,7 @@ which removes all access from user {{{john.doe@example.com}}} on a specific priv
 
 === For Per User Feeds ===
 
-To set ACLs on per user resources, do exact the same as the above except use {{{getUserAcl.sh}} and {{{setUserAcl.sh}}}.  For example,
+To set ACLs on per user resources, do exact the same as the above except use {{{getUserAcl.sh}}} and {{{setUserAcl.sh}}}.  For example,
 
 {{{./setUserAcl.sh PrivateGadgetSpec r+jane.doe@example.com}}}
 
