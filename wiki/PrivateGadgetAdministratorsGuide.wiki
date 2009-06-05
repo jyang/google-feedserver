@@ -526,7 +526,7 @@ adds read access to user {{{jane.doe@example.com}}} to current user's {{{Private
 
 {{{setUserAcl.sh <resource> <acl>{,<acl>}*}}}
 
-where {{{resource}}} is either {{{<feedName>}}} or {{{<feedName>/<entryName>}}}, {{{acl}}} is {{{{c,r,u,d}{+|-}<principal>}}} and {{{principal}}} is the email address of an individual or group.
+where {{{resource}}} is either {{{<feedName>}}} or {{{<feedName>/<entryName>}}}, {{{acl}}}  in the format of {{{{c,r,u,d}{+|-}<principal>}}} and {{{principal}}} the email address of an individual or group.
 
 For example,
 
