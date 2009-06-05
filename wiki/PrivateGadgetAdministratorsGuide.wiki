@@ -480,7 +480,7 @@ For example:
 ----
 = Using FSCT to Manage Feed Access =
 
-== Using Higher Level Tool ==
+== Using High Level Tool ==
 
 === For Per Domain Feeds ===
 
@@ -516,7 +516,20 @@ To set ACLs on per user resources, do exact the same as the above except use {{{
 
 adds read access to user {{{jane.doe@example.com}}} to current user's {{{PrivateGadgetSpec}}} feed.
 
-== Using Lower Level Tool ==
+=== General Command Syntax ===
+
+{{{getAcl.sh <resource>}}}
+{{{getUserAcl.sh <resource>}}}
+{{{setAcl.sh <resource> <acl>{,<acl>}*}}}
+{{{setUserAcl.sh <resource> <acl>{,<acl>}*}}}
+
+where {{{resource}}} is either {{{<feedName>}}} or {{{<feedName>/<entryName>}}}, {{{acl}}} is {{{{c,r,u,d}{+|-}<principal>}}}.  For example,
+
+{{{setUserAcl.sh PrivateGadgetSpec/hello.xml crud+jane.doe@example.com,r+partner.guy@partner.com}}}
+
+adds full access to user {{{jane.doe@example.com}}} and read access to user {{{partner.guy@partner.com}}} to private gadget called {{{hello.xml}}}.
+
+== Using Low Level Tool ==
 
 Every hosted feed has an access control list (ACL) associated with it to control which users can do which operations on the feed and its entries. All hosted feeds have a default ACL that allows domain users to read from a feed and the domain's administrators to write to the feed. You can override a default ACL to suit the needs of your domain.
 
