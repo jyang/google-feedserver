@@ -22,8 +22,10 @@ import com.google.feedserver.util.FeedServerClientException;
 import com.google.gdata.util.AuthenticationException;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -231,9 +233,10 @@ public class FeedServerClientAclTool extends FeedServerClientTool {
    * @param aclDef ACL change definitions (<crud><+|-><principal:...>,)*
    * @throws MalformedURLException
    * @throws FeedServerClientException
+   * @throws UnsupportedEncodingException 
    */
   protected void setAcl(String url, String resource, List<Acl> acls, String aclDef)
-      throws MalformedURLException, FeedServerClientException {
+      throws MalformedURLException, FeedServerClientException, UnsupportedEncodingException {
     String[] authorizedEntitiesDefs = aclDef.split(",");
     List<String> addAuthorizedEntities = new ArrayList<String>();
     List<String> removeAuthorizedAuthities = new ArrayList<String>();
@@ -260,7 +263,7 @@ public class FeedServerClientAclTool extends FeedServerClientTool {
         this.feedServerClient.getService(), Acl.class);
     for (Acl acl: acls) {
       if (acl.getAuthorizedEntities().length == 0) {
-        printError("Error: cannot have empty authorized entities");
+        delete(url + "/" + URLEncoder.encode(resource, "UTF-8"));
       } else {
         if (acl.getName() == null) {
           acl.setName(resource);
