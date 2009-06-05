@@ -501,7 +501,7 @@ You can verify the current ACLs by doing:
 {{{./getAcl.sh PrivateGadgetSpec}}}
 {{{./getEntry.sh acl PrivateGadgetSpec}}}
 
-To set the ACLs for an entry, you would use <feedName>/<entryName> as the resource.  For example,
+To set the ACLs for an entry, you would use {{{<feedName>/<entryName>}}} as the resource.  For example,
 
 {{{./setAcl.sh PrivateGadgetSpec/hello.xml crud-john.doe@example.com}}}
 
