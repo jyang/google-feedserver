@@ -62,7 +62,6 @@ public class FeedServerClientAclTool extends FeedServerClientTool {
   // ACL data model
   public static class ResourceInfo {
     public static final String FEED = "feed";
-    public static final String ENTRY = "entry";
 
     protected String resourceRule;
     protected String resourceType;
@@ -265,8 +264,7 @@ public class FeedServerClientAclTool extends FeedServerClientTool {
       } else {
         if (acl.getName() == null) {
           acl.setName(resource);
-          acl.setResourceInfo(new ResourceInfo(resource,
-              resource.indexOf('/') > 0 ? ResourceInfo.ENTRY : ResourceInfo.FEED));
+          acl.setResourceInfo(new ResourceInfo(resource, ResourceInfo.FEED));
           feedServerClient.insertEntity(new URL(url), acl);
         } else {
           feedServerClient.updateEntity(new URL(url), acl);
