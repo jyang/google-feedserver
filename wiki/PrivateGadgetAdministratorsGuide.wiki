@@ -519,11 +519,16 @@ adds read access to user {{{jane.doe@example.com}}} to current user's {{{Private
 === General Command Syntax ===
 
 {{{getAcl.sh <resource>}}}
+
 {{{getUserAcl.sh <resource>}}}
+
 {{{setAcl.sh <resource> <acl>{,<acl>}*}}}
+
 {{{setUserAcl.sh <resource> <acl>{,<acl>}*}}}
 
-where {{{resource}}} is either {{{<feedName>}}} or {{{<feedName>/<entryName>}}}, {{{acl}}} is {{{{c,r,u,d}{+|-}<principal>}}}.  For example,
+where {{{resource}}} is either {{{<feedName>}}} or {{{<feedName>/<entryName>}}} and {{{acl}}} is {{{{c,r,u,d}{+|-}<principal>}}}.
+
+For example,
 
 {{{setUserAcl.sh PrivateGadgetSpec/hello.xml crud+jane.doe@example.com,r+partner.guy@partner.com}}}
 
