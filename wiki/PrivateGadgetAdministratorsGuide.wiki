@@ -482,16 +482,38 @@ For example:
 
 == Using Higher Level Tool ==
 
+=== For Per Domain Feeds ===
+
 To set the ACLs of a resource, you execute a command like this:
 
 {{{./setAcl.sh PrivateGadgetSpec crud+john.doe@example.com}}}
 
-which adds create, retrieve, update and delete access to user john.doe@example.com to the per domain feed PrivateGadgetSpec.  To take away access, you use minus as opposed to plus.  For example:
+which adds create, retrieve, update and delete access to user {{{john.doe@example.com}}} to the per domain feed {{{PrivateGadgetSpec}}}.
+
+To remove access, you use minus as opposed to plus.  For example:
 
 {{{./setAcl.sh PrivateGadgetSpec d-john.doe@example.com}}}
 
-which takes away delete access from user john.doe@example.com on per domain feed PrivateGadgetSpec.
+which removes delete access from user {{{john.doe@example.com}}} on per domain feed {{{PrivateGadgetSpec}}}.
 
+You can verify the current ACLs by doing:
+
+{{{./getAcl.sh PrivateGadgetSpec}}}
+{{{./getEntry.sh acl PrivateGadgetSpec}}}
+
+To set the ACLs for an entry, you would use <feedName>/<entryName> as the resource.  For example,
+
+{{{./setAcl.sh PrivateGadgetSpec/hello.xml crud-john.doe@example.com}}}
+
+which removes all access from user {{{john.doe@example.com}}} on a specific private gadget call {{{hello.xml}}}.
+
+=== For Per User Feeds ===
+
+To set ACLs on per user resources, do exact the same as the above except use {{{getUserAcl.sh}} and {{{setUserAcl.sh}}}.  For example,
+
+{{{./setUserAcl.sh PrivateGadgetSpec r+jane.doe@example.com}}}
+
+adds read access to user {{{jane.doe@example.com}}} to current user's {{{PrivateGadgetSpec}}} feed.
 
 == Using Lower Level Tool ==
 
