@@ -526,13 +526,13 @@ adds read access to user {{{jane.doe@example.com}}} to current user's {{{Private
 
 {{{setUserAcl.sh <resource> <acl>{,<acl>}*}}}
 
-where {{{resource}}} is either {{{<feedName>}}} or {{{<feedName>/<entryName>}}} and {{{acl}}} is {{{{c,r,u,d}{+|-}<principal>}}}.
+where {{{resource}}} is either {{{<feedName>}}} or {{{<feedName>/<entryName>}}}, {{{acl}}} is {{{{c,r,u,d}{+|-}<principal>}}} and {{{principal}}} is the email address of an individual or group.
 
 For example,
 
-{{{setUserAcl.sh PrivateGadgetSpec/hello.xml crud+jane.doe@example.com,r+partner.guy@partner.com}}}
+{{{setUserAcl.sh PrivateGadgetSpec/hello.xml crud+project1@example.com,r+partner.guy@partner.com}}}
 
-adds full access to user {{{jane.doe@example.com}}} and read access to user {{{partner.guy@partner.com}}} to private gadget called {{{hello.xml}}}.
+adds full access to users in group {{{project1@example.com}}} and read access to user {{{partner.guy@partner.com}}} to private gadget called {{{hello.xml}}}.
 
 == Using Low Level Tool ==
 
