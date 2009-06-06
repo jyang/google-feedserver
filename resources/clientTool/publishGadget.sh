@@ -10,5 +10,5 @@ cat > $TEMP_ENTITY_FILE <<EOF
 </entity>
 EOF
 
-./insertEntry.sh PrivateGadget $TEMP_ENTITY_FILE $3 $4
+./insertEntry.sh PrivateGadget $TEMP_ENTITY_FILE $2 $3
 rm -f $TEMP_ENTITY_FILE
