@@ -1,4 +1,4 @@
-# publishGadget.sh {gadgetName}
+# publishGadget.sh {gadgetName} -password {password}
 
 source ./setupEnv.sh
 
@@ -10,5 +10,5 @@ cat > $TEMP_ENTITY_FILE <<EOF
 </entity>
 EOF
 
-./insertEntry.sh PrivateGadget $TEMP_ENTITY_FILE
-rm $TEMP_ENTITY_FILE
+./insertEntry.sh PrivateGadget $TEMP_ENTITY_FILE $3 $4
+rm -f $TEMP_ENTITY_FILE
