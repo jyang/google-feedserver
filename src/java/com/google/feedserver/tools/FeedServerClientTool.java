@@ -396,13 +396,17 @@ public class FeedServerClientTool {
    * @param out Stream to print on
    */
   public void printFeed(List<Map<String, Object>> feed, PrintStream out) {
-    println(out, "<entities>");
-    indentMore();
-    for (Map<String, Object> entry : feed) {
-      printEntry(entry, out);
+    if (feed == null) {
+      println(out, "Resource not found");
+    } else {
+      println(out, "<entities>");
+      indentMore();
+      for (Map<String, Object> entry : feed) {
+        printEntry(entry, out);
+      }
+      indentLess();
+      println(out, "</entities>");
     }
-    indentLess();
-    println(out, "</entities>");
   }
 
   protected void printList(List<Map<String, Object>> feed) {
@@ -431,11 +435,15 @@ public class FeedServerClientTool {
    * @param out Stream to print on
    */
   public void printEntry(Map<String, Object> entry, PrintStream out) {
-    println(out, "<entity>");
-    indentMore();
-    printMap(entry);
-    indentLess();
-    println(out, "</entity>");
+    if (entry == null) {
+      println(out, "Resource not found");
+    } else {
+      println(out, "<entity>");
+      indentMore();
+      printMap(entry);
+      indentLess();
+      println(out, "</entity>");
+    }
   }
 
   /**
