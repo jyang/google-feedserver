@@ -21,6 +21,7 @@ import com.google.feedserver.util.XmlUtil;
 import com.google.gdata.client.GoogleService;
 import com.google.gdata.data.OtherContent;
 import com.google.gdata.util.AuthenticationException;
+import com.google.gdata.util.ResourceNotFoundException;
 import com.google.gdata.util.ServiceException;
 import com.google.inject.Inject;
 
@@ -101,6 +102,8 @@ public class TypelessFeedServerClient {
       return getMapFromEntry(entry);
     } catch (IOException e) {
       throw new FeedServerClientException("Error while fetching " + feedUrl, e);
+    } catch (ResourceNotFoundException e) {
+      return null;
     } catch (ServiceException e) {
       throw new FeedServerClientException(e);
     }
@@ -125,6 +128,8 @@ public class TypelessFeedServerClient {
       feed = service.getFeed(feedUrl, FeedServerFeed.class);
     } catch (IOException e) {
       throw new FeedServerClientException("Error while fetching " + feedUrl, e);
+    } catch (ResourceNotFoundException e) {
+      return null;
     } catch (ServiceException e) {
       throw new FeedServerClientException(e);
     }
@@ -211,6 +216,8 @@ public class TypelessFeedServerClient {
       throw new RuntimeException("Invalid URL", e);
     } catch (IOException e) {
       throw new FeedServerClientException("Error while deleting " + entryUrl, e);
+    } catch (ResourceNotFoundException e) {
+      return null;
     } catch (ServiceException e) {
       throw new FeedServerClientException(e);
     } catch (NullPointerException e) {
