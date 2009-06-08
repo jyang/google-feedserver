@@ -526,7 +526,7 @@ To verify the ACLs on a specific user gadget, do the following:
 
 {{{./getUserEntry.sh acl PrivateGadgetSpec%2Fhello.xml}}}
 
-where "%2F" is URL encoded "/".
+where "%2F" is "/" URL encoded.
 
 To remove sharing, just use {{{unshareUserGadget.sh}}}.
 
