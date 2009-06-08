@@ -540,6 +540,10 @@ To remove sharing, just use {{{unshareUserGadget.sh}}}.
 
 {{{setUserAcl.sh <resource> <acl>{,<acl>}*}}}
 
+{{{shareUserGadget.sh <gadgetName> <principal>{,<principal>}*}}}
+
+{{{unshareUserGadget.sh <gadgetName> <principal>{,<principal>}*}}}
+
 where {{{resource}}} is either {{{<feedName>}}} or {{{<feedName>/<entryName>}}}, {{{acl}}}  in the format of {{{{c,r,u,d}{+|-}<principal>}}} and {{{principal}}} the email address of an individual or group.
 
 For example,
