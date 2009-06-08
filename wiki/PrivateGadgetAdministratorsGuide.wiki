@@ -508,6 +508,14 @@ To set the ACLs for an entry, you would use {{{<feedName>/<entryName>}}} as the 
 
 which removes all access from user {{{john.doe@example.com}}} on a specific private gadget call {{{hello.xml}}}.
 
+There is also a specific tool for sharing user's own private gadget with other users.  For example,
+
+{{{./shareUserGadget.sh hello.xml friend@example.com colleague@example.com}}}
+
+makes current user's own gadget {{{hello.xml}}} readable by {{{friend@example.com}}} and {{{colleague@example.com}}}.
+
+To remove sharing, just use {{{unshareUserGadget.sh}}}.
+
 === For Per User Feeds ===
 
 To set ACLs on per user resources, do exact the same as the above except use {{{getUserAcl.sh}}} and {{{setUserAcl.sh}}}.  For example,
