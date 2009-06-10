@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+<ModulePrefs title="FeedShell">
+  <Require feature="dynamic-height"/>
+</ModulePrefs>
+<Content type="html"><![CDATA[
+<link rel="stylesheet" href="http://cornerstone-framework.googlecode.com/svn/trunk/4/css/blitzer/jquery-ui.css">
+<link rel="stylesheet" href="http://cornerstone-framework.googlecode.com/svn/trunk/4/css/blitzer/csf.css">
+<style>
+* {
+  font-size: 10pt;
+}
+
+body {
+  padding: 4px;
+}
+
+.right {
+  text-align: right;
+}
+
+.session {
+  border-left: 4px solid #ccc;
+  padding-left: 4px;
+  margin-bottom: 8px;
+}
+
+.url-line {
+  width: 100%;
+  position: relative;
+}
+
+.url {
+  border: none;
+  border-bottom: 1px dotted #ccc;
+  width: 100%;
+  padding-right: 60px;
+}
+
+.options {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+.table {
+  margin-top: 4px;
+}
+</style>
+
+<script src="http://cornerstone-framework.googlecode.com/svn/trunk/4/js/jquery-1.3.2.js"></script>
+<script src="http://cornerstone-framework.googlecode.com/svn/trunk/4/js/jquery-ui-1.7.2.custom.js"></script>
+<script src="http://cornerstone-framework.googlecode.com/svn/trunk/4/js/jquery-ui-table.js"></script>
+
+<!--
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+-->
+<script type="text/javascript" src="http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/private-gadget-editor/gdata-core2.js"></script>
+<script type="text/javascript">
+// google.load('gdata', '1.x', {packages: ['core']});
+// google.load('gdata', '1.x', {packages: ['core'], 'other_params': 'debug=1'});
+
+var SERVICE_NAME = 'esp';
+var APP_NAME = 'FeedShell';
+
+function init() {
+  $('.url').keypress(function(e) {
+    if (e.keyCode == 13) {
+      var private = $('.private').attr('checked');
+      load($(e.target).attr('value'), private, show);
+    }
+  });
+};
+
+function createService(private) {
+  var service = new google.gdata.client.FeedServerService(
+      SERVICE_NAME, APP_NAME);
+  service.setAltSupport(google.gdata.client.alt.JSON, false);
+  service.setGadgetsAuthentication('SIGNED', {
+    REFRESH_INTERVAL:0, OAUTH_ENABLE_PRIVATE_NETWORK: private ? 'true' : 'false'
+  });
+  return service;
+}
+
+function load(url, private, showResource) {
+  var service = createService(private);
+  service.getFeed(url, function(response) {
+    show(response.entry ?
+        [response.entry.content.entity] :
+        $.map(response.feed.entry, function(entry) {
+          return entry.content.entity;
+        })
+    );
+  }, showError);
+  showContent('Loading ...');
+};
+
+function showContent(c) {
+  $('.table').html(c);
+};
+
+function escapeForHtml(v) {
+  return typeof(v) == 'string' ?
+      '<pre>' + v.replace(/</g, '&lt;').replace(/\n/g, '<br>') + '</pre>' :
+      v;
+};
+
+var table = null;
+
+function show(entities) {
+  if (entities && entities.length > 0) {
+    showContent('');
+
+    var columns = [];
+    $.each(entities[0], function(n) {
+      if (n != 'xmlns') {
+        columns.push({title: n, name: n, decorator: function(n, v) {
+          return n == 'specContent' ? escapeForHtml(v) :
+              typeof(v) == 'object' && v.toSource ? v.toSource() : v;
+        }});
+      }
+    });
+    var options = {
+      columns: columns,
+      rows: entities
+    };
+    if (table) table.data('table').destroy();
+    table = $('.table').table(options);
+  } else {
+    showContent('Not found');
+  }
+
+  gadgets.window.adjustHeight();
+};
+
+function showError(error) {
+  showContent(error ? error.toString() : 'Error');
+};
+
+gadgets.util.registerOnLoadHandler(init);
+</script>
+
+<div class="session">
+  <div class="url-line">
+    <input class="url" value="http://palmtree.corp.joonix.net:8080/resource/employeeSearch?name=%25&location=%25">
+    <div class="options">
+      <input type="checkbox" class="private">Private
+    </div>
+  </div>
+  <div class="table"></div>
+</div>
+
+</content>
+]]></Content>
+</Module>
