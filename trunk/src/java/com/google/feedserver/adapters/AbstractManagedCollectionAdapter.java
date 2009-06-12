@@ -202,11 +202,15 @@ public abstract class AbstractManagedCollectionAdapter extends ManagedCollection
   }
 
   protected Feed createFeed() {
+    String feedTitle = config.getFeedTitle();
+    String feedAuthor = config.getFeedAuthor();
+    
     Feed feed = abdera.newFeed();
     feed.setId(config.getFeedUri());
-    feed.setTitle(config.getFeedTitle());
+    feed.setTitle(feedTitle == null ? "feed" : feedTitle);
     feed.setUpdated(new Date());
-    feed.addAuthor(config.getFeedAuthor());
+    feed.addAuthor(feedAuthor == null ? "FeedServer" : feedAuthor);
+
     return feed;
   }
 
@@ -389,7 +393,7 @@ public abstract class AbstractManagedCollectionAdapter extends ManagedCollection
     return id;
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "unused"})
   public FeedInfo getFeedInfoFromConfig(RequestContext request) throws FeedServerAdapterException {
     return getFeedInfoFromMap((Map<String, Object>) getConfiguration().getTypeMetadataConfig());
   }
