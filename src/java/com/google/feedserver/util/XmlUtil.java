@@ -18,8 +18,10 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,6 +34,8 @@ import javax.xml.parsers.SAXParserFactory;
 public class XmlUtil {
 
   private SAXParserFactory parserFactory;
+
+  protected BeanUtil beanUtil = new BeanUtil();
 
   public XmlUtil() {
     parserFactory = SAXParserFactory.newInstance();
@@ -159,5 +163,23 @@ public class XmlUtil {
   protected SAXParser getParser()
       throws SAXException, ParserConfigurationException {
     return parserFactory.newSAXParser();
+  }
+
+  /**
+   * Converts XML representation of an entity into a JavaBean.
+   * @param xmlText XML text of entity
+   * @param bean JavaBean to fill
+   * @throws IllegalArgumentException
+   * @throws IntrospectionException
+   * @throws IllegalAccessException
+   * @throws InvocationTargetException
+   * @throws SAXException
+   * @throws IOException
+   * @throws ParserConfigurationException
+   */
+  public void convertXmlToBean(String xmlText, Object bean)
+      throws IllegalArgumentException, IntrospectionException, IllegalAccessException,
+          InvocationTargetException, SAXException, IOException, ParserConfigurationException {
+    beanUtil.convertPropertiesToBean(convertXmlToProperties(xmlText), bean);
   }
 }
