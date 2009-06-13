@@ -106,7 +106,7 @@ public class HostedFeedServerClientTools extends FeedServerClientTool {
       throws IOException {
     // Get the gadget spec feed schema
     File file = new File(publishFeedEntrySpecFile);
-    String publishFeedEntrySpecXml = readFileContents(file);
+    String publishFeedEntrySpecXml = fileUtil.readFileContents(file);
     StringBuilder fileContents = new StringBuilder();
 
     int lastStart = 0;
