@@ -18,15 +18,14 @@ package com.google.feedserver.tools;
 import com.google.feedserver.client.TypelessFeedServerClient;
 import com.google.feedserver.util.CommonsCliHelper;
 import com.google.feedserver.util.FeedServerClientException;
+import com.google.feedserver.util.FileUtil;
 import com.google.gdata.client.GoogleService;
 import com.google.gdata.util.AuthenticationException;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
-import java.io.BufferedInputStream;
 import java.io.Console;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
@@ -43,6 +42,7 @@ import java.util.regex.Pattern;
  *
  */
 public class FeedServerClientTool {
+
   public static final String OPERATION_GET_FEED = "getFeed";
   public static final String OPERATION_GET_ENTRY = "getEntry";
   public static final String OPERATION_INSERT = "insert";
@@ -97,6 +97,7 @@ public class FeedServerClientTool {
 
   protected TypelessFeedServerClient feedServerClient;
   protected ThreadLocal<Integer> indentation;
+  protected FileUtil fileUtil = new FileUtil();
 
   public static void main(String[] args) throws Exception {
     FeedServerClientTool tool = new FeedServerClientTool();
@@ -529,24 +530,8 @@ public class FeedServerClientTool {
    * @throws IOException if any file operations fail.
    */
   protected String readFile(File file) throws IOException {
-    return resolveEmbeddedFiles(readFileContents(file), file.getParentFile());
+    return resolveEmbeddedFiles(fileUtil.readFileContents(file), file.getParentFile());
   }
-
-  /**
-   * Helper function that reads contents of specified file into a String.
-   * 
-   * @param file File to read.
-   * @return string with file contents.
-   * @throws IOException if any file operations fail.
-   */
-  protected String readFileContents(File file) throws IOException {
-    BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-    byte[] fileContents = new byte[(int) file.length()];
-    bis.read(fileContents);
-    return new String(fileContents);
-  }
-
-
 
   /**
    * The pattern to get the name tag in the feed schema
@@ -563,8 +548,6 @@ public class FeedServerClientTool {
    * The file path indicator
    */
   protected final static String FILE_PATH_INDICATOR = "@";
-
-
 
   /**
    * Constructs the gadget spec entry that will be used for creating a new entry
@@ -592,7 +575,7 @@ public class FeedServerClientTool {
 
     // Get the gadget spec feed schema
     File file = new File(gadgetSpecEntityFile);
-    String gadgetSpecXml = readFileContents(file);
+    String gadgetSpecXml = fileUtil.readFileContents(file);
     StringBuilder fileContents = new StringBuilder();
 
     int lastStart = 0;
