@@ -119,19 +119,15 @@ public class FeedServerUtil {
    * 
    * @param properties The collection to get the property from
    * @param key The property to get
-   * @return The value of the property converted to a string
-   * @throws RuntimeException if the property does not exist
+   * @return The value of the property converted to a string; <code>null</code> if not found.
    */
   public static String getStringProperty(Map<String, Object> properties, String key) {
     Object value = getProperty(properties, key);
     if (value instanceof String) {
       return (String) value;
+    } else {
+      return null;
     }
-
-    String message = "Property " + key + " Not found";
-    RuntimeException e = new RuntimeException(message);
-    logger.log(Level.SEVERE, message, e);
-    throw e;
   }
 
   /**
