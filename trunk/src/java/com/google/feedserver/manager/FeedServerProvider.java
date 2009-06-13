@@ -26,8 +26,10 @@ import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.TargetType;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 import org.apache.abdera.protocol.server.provider.managed.ManagedProvider;
+import org.apache.log4j.Logger;
 
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * {@link FeedServerProvider} extends {@link ManagedProvider} so that we can use
@@ -39,6 +41,8 @@ import java.util.Map;
  */
 public class FeedServerProvider extends ManagedProvider {
   public GlobalServerConfiguration globalServerConfiguration;
+
+  private static final Logger logger = Logger.getLogger(FeedServerProvider.class.getName());
 
   public FeedServerProvider() {
     this(FeedServerConfiguration.getIntance());
@@ -54,8 +58,6 @@ public class FeedServerProvider extends ManagedProvider {
         "/([^/#?]+)/([^/#?]+)/([^/#?]+)(\\?[^#]*)?", TargetType.TYPE_ENTRY,
         AbstractManagedCollectionAdapter.PARAM_NAMESPACE,
         AbstractManagedCollectionAdapter.PARAM_FEED, AbstractManagedCollectionAdapter.PARAM_ENTRY));
-
-
   }
 
   public FeedServerProvider(GlobalServerConfiguration configuration) {
@@ -66,15 +68,11 @@ public class FeedServerProvider extends ManagedProvider {
       GlobalServerConfiguration configuration) {
     super.init(abdera, properties);
     this.globalServerConfiguration = configuration;
-
-
-
   }
 
   public GlobalServerConfiguration getGlobalServerConfiguration() {
     return globalServerConfiguration;
   }
-
 
   /**
    * Gets a {@link AbstractManagedCollectionAdapter} for the feed specified in
@@ -85,6 +83,7 @@ public class FeedServerProvider extends ManagedProvider {
       return getCollectionAdapterManager(request).getAdapter(
           request.getTarget().getParameter(AbstractManagedCollectionAdapter.PARAM_FEED));
     } catch (Exception e) {
+      logger.error(e);
       return null;
     }
   }
