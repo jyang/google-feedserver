@@ -100,7 +100,7 @@ public class IBatisCollectionAdapter extends AbstractManagedCollectionAdapter {
     SqlMapClient client = getSqlMapClient();
     Map<String, Object> row;
     try {
-      row = (Map<String, Object>) client.queryForObject(queryId, entryId);
+      row = (Map<String, Object>) client.queryForObject(queryId, entryId,  getRequestParams(request));
     } catch (SQLException e) {
       throw new FeedServerAdapterException(
           FeedServerAdapterException.Reason.ERROR_EXECUTING_ADAPTER_REQUEST, e.getMessage());
@@ -118,7 +118,9 @@ public class IBatisCollectionAdapter extends AbstractManagedCollectionAdapter {
     String queryId = config.getFeedId() + "-insert-entry";
     Object newEntryId;
     try {
-      newEntryId = client.insert(queryId, getPropertyMapForEntry(entry));
+      Map<String, Object> params = getRequestParams(request);
+      params.putAll(getPropertyMapForEntry(entry));
+      newEntryId = client.insert(queryId, params);
     } catch (SQLException e) {
       throw new FeedServerAdapterException(
           FeedServerAdapterException.Reason.ERROR_EXECUTING_ADAPTER_REQUEST, e.getMessage());
@@ -132,7 +134,9 @@ public class IBatisCollectionAdapter extends AbstractManagedCollectionAdapter {
     SqlMapClient client = getSqlMapClient();
     String queryId = config.getFeedId() + "-update-entry";
     try {
-      return client.update(queryId, getPropertyMapForEntry(entry)) > 0 ? retrieveEntry(request,
+        Map<String, Object> params = getRequestParams(request);
+        params.putAll(getPropertyMapForEntry(entry));
+      return client.update(queryId, params) > 0 ? retrieveEntry(request,
           entryId) : null;
     } catch (SQLException e) {
       throw new FeedServerAdapterException(
@@ -145,7 +149,9 @@ public class IBatisCollectionAdapter extends AbstractManagedCollectionAdapter {
     String queryId = config.getFeedId() + "-delete-entry";
     SqlMapClient client = getSqlMapClient();
     try {
-      if (!(client.delete(queryId, entryId) > 0)) {
+      Map<String, Object> params = getRequestParams(request);
+      params.put("id", entryId);
+      if (!(client.delete(queryId, params) > 0)) {
         throw new FeedServerAdapterException(
             FeedServerAdapterException.Reason.ERROR_EXECUTING_ADAPTER_REQUEST, "could not delete");
       }
@@ -165,8 +171,8 @@ public class IBatisCollectionAdapter extends AbstractManagedCollectionAdapter {
    * @param request Request context
    * @return All parameters on request context
    */
-  protected Object getRequestParams(RequestContext request) {
-    HashMap<String, String> params = new HashMap<String, String>();
+  protected Map<String, Object> getRequestParams(RequestContext request) {
+    HashMap<String, Object> params = new HashMap<String, Object>();
     Target target = request.getTarget();
     for (String name: target.getParameterNames()) {
       params.put(name, target.getParameter(name));
