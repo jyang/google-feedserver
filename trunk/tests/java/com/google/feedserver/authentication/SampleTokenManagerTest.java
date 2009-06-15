@@ -33,11 +33,10 @@ public class SampleTokenManagerTest extends TestCase {
     tokenManager = new SampleTokenManager();
   }
 
-  public void testGenerateAndValidateToken() {
+  public void testGenerateAndValidateToken() throws Exception {
     FakeHttpServletRequest request = new FakeHttpServletRequest();
     request.addRequestParameter("Email", "testuser");
     request.addRequestParameter("service", "testservice");
-
 
     String authZToken = null;
 
@@ -46,7 +45,7 @@ public class SampleTokenManagerTest extends TestCase {
       assertNotNull("The authz token should not have been null", authZToken);
     } catch (TokenManagerException e) {
       fail("Exceptions encountered while generating authz token : " + e.getMessage());
-      e.printStackTrace();
+      throw e;
     }
 
     try {
@@ -56,10 +55,7 @@ public class SampleTokenManagerTest extends TestCase {
           .validateAuthzToken(request));
     } catch (TokenManagerException e) {
       fail("Exceptions encountered while validating authz token : " + e.getMessage());
-      e.printStackTrace();
+      throw e;
     }
-
-
   }
-
 }
