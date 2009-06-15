@@ -16,7 +16,7 @@
 package com.google.feedserver.filters;
 
 import com.google.feedserver.authentication.TokenManager;
-import com.google.feedserver.authentication.TokenManagerDIModule;
+import com.google.feedserver.authentication.TokenManagerModule;
 import com.google.feedserver.authentication.TokenManagerException;
 import com.google.feedserver.server.servlet.GuiceServletContextListener;
 import com.google.inject.Inject;
@@ -39,12 +39,11 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * This filter intercepts the requests and validates the authorization token
  * using the {@link TokenManager}. For configuring a concrete instance of
- * {@link TokenManager} please refer to {@link TokenManagerDIModule}
+ * {@link TokenManager} please refer to {@link TokenManagerModule}
  * 
  * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public class SignedRequestFilter implements Filter {
-
 
   private TokenManager tokenManager;
 
@@ -52,7 +51,6 @@ public class SignedRequestFilter implements Filter {
 
   @Override
   public void destroy() {
-
   }
 
   @Override
@@ -77,7 +75,6 @@ public class SignedRequestFilter implements Filter {
 
     // Forward the request to other filters
     chain.doFilter(request, response);
-
   }
 
   @Inject
@@ -95,7 +92,8 @@ public class SignedRequestFilter implements Filter {
           .log(
               Level.SEVERE,
               "No injector found. Ensure that the GuiceServletContextListener has been configured correctly. The token generation & validation will not work!!!");
-    } else
+    } else {
       injector.injectMembers(this);
+    }
   }
 }

@@ -16,7 +16,7 @@
 
 package com.google.feedserver.server.servlet;
 
-import com.google.feedserver.authentication.TokenManagerDIModule;
+import com.google.feedserver.authentication.TokenManagerModule;
 import com.google.feedserver.filters.SignedRequestFilter;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -57,6 +57,6 @@ public class GuiceServletContextListener implements ServletContextListener {
    * @return GUICE injector instance
    */
   private Injector getInjector() {
-    return Guice.createInjector(new TokenManagerDIModule());
+    return Guice.createInjector(new TokenManagerModule());
   }
 }
