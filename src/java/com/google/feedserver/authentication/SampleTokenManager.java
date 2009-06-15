@@ -52,9 +52,9 @@ public class SampleTokenManager implements TokenManager {
 
   /**
    * The map that will store the mapping for a given user-email with the service
-   * and the timestamp when the token was generated.
+   * and the time stamp when the token was generated.
    * <p>
-   * For validation, the user-email & service will be checked with the timestamp
+   * For validation, the user email and service will be checked with the time stamp
    * in the input token.
    * </p>
    * <p>
@@ -171,5 +171,4 @@ public class SampleTokenManager implements TokenManager {
 
     return false;
   }
-
 }

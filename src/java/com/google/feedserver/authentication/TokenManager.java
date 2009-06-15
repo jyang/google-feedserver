@@ -16,7 +16,6 @@
 
 package com.google.feedserver.authentication;
 
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -30,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public interface TokenManager {
-
 
   /**
    * This method generates a authorization token with the given request
@@ -53,5 +51,4 @@ public interface TokenManager {
    *         authz token
    */
   boolean validateAuthzToken(HttpServletRequest request) throws TokenManagerException;
-
 }
