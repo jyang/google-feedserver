@@ -68,7 +68,6 @@ public abstract class AbstractManagedCollectionAdapter extends ManagedCollection
   public static final String PARAM_ENTRY = "entry";
   public static final String PARAM_FEED = "feed";
   public static final String PARAM_NAMESPACE = "namespace";
-  public static final String PARAM_USER = "userId";
   public static final String PARAM_FEED_TYPE = "feedType";
   public static final String USER_INFO = "__user_info__";
   public static final String ENCODING_UTF_8 = "UTF-8";
@@ -393,7 +392,7 @@ public abstract class AbstractManagedCollectionAdapter extends ManagedCollection
     return id;
   }
 
-  @SuppressWarnings({"unchecked", "unused"})
+  @SuppressWarnings({"unchecked"})
   public FeedInfo getFeedInfoFromConfig(RequestContext request) throws FeedServerAdapterException {
     return getFeedInfoFromMap((Map<String, Object>) getConfiguration().getTypeMetadataConfig());
   }
