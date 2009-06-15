@@ -17,7 +17,7 @@
 package com.google.feedserver.server.servlet;
 
 import com.google.feedserver.authentication.TokenManager;
-import com.google.feedserver.authentication.TokenManagerDIModule;
+import com.google.feedserver.authentication.TokenManagerModule;
 import com.google.feedserver.authentication.TokenManagerException;
 import com.google.feedserver.authentication.TokenManagerException.Reason;
 import com.google.inject.Inject;
@@ -44,7 +44,7 @@ import javax.servlet.http.HttpServletResponse;
  * implementation before issuing the token
  *</p>
  * For configuring a concrete instance of {@link TokenManager} please refer to
- * {@link TokenManagerDIModule}
+ * {@link TokenManagerModule}
  * 
  * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
