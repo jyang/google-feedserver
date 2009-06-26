@@ -30,7 +30,8 @@ import java.net.URL;
 /**
  * FeedServer client tool for managing gadgets.
  *
- * 
+ * -op uploadUserGadget -url .../a/example.com/user/john.doe@example.com/g/PrivateGadgetSpec
+ * -gadgetSpecEntityFile <path to spec file>
  */
 public class FeedServerClientGadgetTool extends FeedServerClientTool {
 
