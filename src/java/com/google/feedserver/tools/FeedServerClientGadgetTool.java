@@ -48,8 +48,12 @@ public class FeedServerClientGadgetTool extends FeedServerClientTool {
   protected void processRequest(CommonsCliHelper cliHelper) throws FeedServerClientException,
       MalformedURLException, IOException, AuthenticationException {
     if (OP_UPLOAD_USER_GADGET.equals(op_FLAG)) {
-      getUserCredentials();
-      uploadUserGadget(gadgetSpecEntityFile_FLAG);
+      if (gadgetSpecEntityFile_FLAG == null) {
+        System.err.println("Error: missing flag 'gadgetSpecEntityFile'");
+      } else {
+        getUserCredentials();
+        uploadUserGadget(gadgetSpecEntityFile_FLAG);
+      }
     } else {
       super.processRequest(cliHelper);
     }
