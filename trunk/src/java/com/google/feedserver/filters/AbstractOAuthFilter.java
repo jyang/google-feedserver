@@ -16,26 +16,15 @@
 
 package com.google.feedserver.filters;
 
-import com.google.feedserver.adapters.AbstractManagedCollectionAdapter;
-import com.google.feedserver.config.UserInfo;
-import com.google.feedserver.config.UserInfo.UserInfoProperties;
-import com.google.feedserver.samples.config.HashMapBasedUserInfo;
-
-import net.oauth.OAuthAccessor;
-import net.oauth.OAuthConsumer;
 import net.oauth.OAuthException;
-import net.oauth.OAuthMessage;
 import net.oauth.OAuthServiceProvider;
 import net.oauth.OAuthValidator;
 import net.oauth.SimpleOAuthValidator;
-import net.oauth.server.OAuthServlet;
 
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -53,9 +42,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author abhinavk@gmail.com (Abhinav Khandelwal)
  * 
  */
-public class OAuthFilter implements Filter {
+public abstract class AbstractOAuthFilter implements Filter {
 
-  private static Logger logger = Logger.getLogger(OAuthFilter.class);
+  private static Logger logger = Logger.getLogger(SimpleOAuthFilter.class);
   protected OAuthServiceProvider provider;
   protected KeyManager keyManager;
   protected OAuthValidator validator;
@@ -65,7 +54,7 @@ public class OAuthFilter implements Filter {
    */
   public static final String KEY_MANAGER_CLASS = "KEY_MANAGER";
 
-  public OAuthFilter() {
+  public AbstractOAuthFilter() {
   }
 
   /**
@@ -74,7 +63,7 @@ public class OAuthFilter implements Filter {
    * @param keyManager {@link KeyManager} that stores key for OAuth
    *        verification.
    */
-  public OAuthFilter(KeyManager keyManager) {
+  public AbstractOAuthFilter(KeyManager keyManager) {
     initializeFilter(keyManager);
   }
 
@@ -111,32 +100,8 @@ public class OAuthFilter implements Filter {
    * @param request incoming HttpRequest.
    * @return viewer id for this request.
    */
-  public String authenticate(HttpServletRequest request) throws IOException, OAuthException,
-      URISyntaxException {
-    OAuthMessage message = OAuthServlet.getMessage(request, null);
-    String consumerKey = message.getConsumerKey();
-    String signatureMethod = message.getSignatureMethod();
-    OAuthConsumer consumer = keyManager.getOAuthConsumer(provider, consumerKey, signatureMethod);
-    if (null == consumer) {
-      throw new OAuthException("Not Authorized");
-    }
-    OAuthAccessor accessor = new OAuthAccessor(consumer);
-    message.validateMessage(accessor, validator);
-
-    // Retrieve and set the user info with the OAuth parameters
-    Map<UserInfoProperties, Object> oauthParams = new HashMap<UserInfoProperties, Object>();
-    oauthParams.put(UserInfoProperties.EMAIL, message.getParameter("opensocial_viewer_email"));
-    oauthParams.put(UserInfoProperties.VIEWER_ID, message.getParameter("opensocial_viewer_id"));
-    oauthParams.put(UserInfoProperties.OWNER_EMAIL, message.getParameter("opensocial_owner_email"));
-    oauthParams.put(UserInfoProperties.OWNER_ID, message.getParameter("opensocial_owner_id"));
-    oauthParams.put(UserInfoProperties.APPLICATION_ID, message.getParameter("opensocial_app_id"));
-    oauthParams.put(UserInfoProperties.APPLICATION_URL, message.getParameter("opensocial_app_url"));
-
-    UserInfo userInfo = new HashMapBasedUserInfo(oauthParams);
-    request.setAttribute(AbstractManagedCollectionAdapter.USER_INFO, userInfo);
-
-    return message.getParameter("opensocial_viewer_id");
-  }
+  abstract public String authenticate(HttpServletRequest request)
+  	  throws IOException, OAuthException, URISyntaxException;
 
   protected void sendError(ServletResponse response, int errorCode) throws IOException {
     HttpServletResponse resp = (HttpServletResponse) response;
