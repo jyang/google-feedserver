@@ -17,6 +17,7 @@ package com.google.feedserver.samples.adapters;
 
 import com.google.feedserver.adapters.AbstractManagedCollectionAdapter;
 import com.google.feedserver.adapters.FeedServerAdapterException;
+import com.google.feedserver.config.UserInfo;
 import com.google.feedserver.metadata.FeedInfo;
 
 import com.ibatis.sqlmap.client.SqlMapClient;
@@ -172,11 +173,15 @@ public class IBatisCollectionAdapter extends AbstractManagedCollectionAdapter {
    * @return All parameters on request context
    */
   protected Map<String, Object> getRequestParams(RequestContext request) {
-    HashMap<String, Object> params = new HashMap<String, Object>();
+    Map<String, Object> params = new HashMap<String, Object>();
     Target target = request.getTarget();
     for (String name: target.getParameterNames()) {
       params.put(name, target.getParameter(name));
     }
+
+    UserInfo userInfo = getUserInfoForRequest(request);
+    params.put("opensocial_viewer_email", userInfo.getEmail());
+
     return params;
   }
 }
