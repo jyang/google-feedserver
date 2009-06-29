@@ -17,7 +17,8 @@
 package com.google.feedserver.server.jetty;
 
 import com.google.feedserver.config.FeedServerConfiguration;
-import com.google.feedserver.filters.OAuthFilter;
+import com.google.feedserver.filters.KeyManager;
+import com.google.feedserver.filters.SimpleOAuthFilter;
 import com.google.feedserver.filters.SignedRequestFilter;
 import com.google.feedserver.filters.SimpleKeyMananger;
 import com.google.feedserver.manager.FeedServerProvider;
@@ -37,8 +38,12 @@ import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.FilterHolder;
 import org.mortbay.jetty.servlet.ServletHolder;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.EventListener;
 import java.util.logging.Logger;
+
+import javax.servlet.Filter;
 
 /**
  * Starts the Google FeedServer server using Jetty
@@ -57,24 +62,26 @@ public class StartFeedServerWithJetty {
 
     boolean configureOAuthFilter = false;
     boolean signedRequest = false;
+    String oauthFilterClassName = SimpleOAuthFilter.class.getName();
 
     // Check if the OAuth filter flag has been given as command line input
     if (args != null) {
       for (int i = 0; i < args.length; i++) {
         if (args[i].startsWith("authenticated")) {
           String signedRequests = args[i].substring(args[i].indexOf("=") + 1);
-          if (signedRequests.equals("true")) {
+          if (signedRequests.equalsIgnoreCase("true")) {
             signedRequest = true;
           }
         } else if (args[i].startsWith("OAuth_authenticated")) {
           String oauthFilter = args[i].substring(args[i].indexOf("=") + 1);
-          if (oauthFilter.equals("true")) {
+          if (oauthFilter.equalsIgnoreCase("true")) {
             configureOAuthFilter = true;
           }
+        } else if (args[i].startsWith("oauthFilterClass")) {
+          oauthFilterClassName = args[i].substring(args[i].indexOf("=") + 1);
         }
       }
     }
-
 
     SampleFileSystemFeedConfigStore feedConfigStore = new SampleFileSystemFeedConfigStore();
     log.info("Created a file store");
@@ -95,7 +102,6 @@ public class StartFeedServerWithJetty {
     context.addFilter(XdServletFilter.class, "/*", Handler.DEFAULT);
     context.addFilter(MethodOverrideServletFilter.class, "/*", Handler.DEFAULT);
 
-
     if (signedRequest) {
       ServletHolder servletHolder2 = new ServletHolder(new GetAuthTokenServlet());
       context.addServlet(servletHolder2, "/accounts/ClientLogin");
@@ -106,7 +112,7 @@ public class StartFeedServerWithJetty {
     } else if (configureOAuthFilter) {
       // Register the OAuth filter
       SimpleKeyMananger sKeyManager = new SimpleKeyMananger();
-      OAuthFilter of = new OAuthFilter(sKeyManager);
+      Filter of = createOAuthFilter(oauthFilterClassName, sKeyManager);
       FilterHolder fh = new FilterHolder(of);
       context.addFilter(fh, "/*", org.mortbay.jetty.Handler.DEFAULT);
       log.info("Starting the feedserver to accept OAuth signed requests");
@@ -116,5 +122,14 @@ public class StartFeedServerWithJetty {
     server.start();
 
     return server;
+  }
+  
+  protected static Filter createOAuthFilter(String filterClassName, KeyManager keyManager)
+  		throws ClassNotFoundException, SecurityException, NoSuchMethodException,
+  			IllegalArgumentException, InstantiationException, IllegalAccessException,
+  			InvocationTargetException {
+    Class<?> c = Class.forName(filterClassName);
+    Constructor<?> constructor = c.getConstructor(KeyManager.class);
+    return (Filter) constructor.newInstance(keyManager);
   }
 }
