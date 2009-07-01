@@ -38,7 +38,7 @@ public class ListUserGadgets extends GadgetCommand {
     URL userGadgetFeedUrl = new URL(getUserFeedUrl(PRIVATE_GADGET_SPEC));
     List<GadgetSpecEntity> entities = specClient.getEntities(userGadgetFeedUrl);
     for (GadgetSpecEntity entity: entities) {
-      System.out.println(entity.getName());
+      System.out.println(getUserEntryUrl(PRIVATE_GADGET_SPEC, entity.getName()));
     }
   }
 
