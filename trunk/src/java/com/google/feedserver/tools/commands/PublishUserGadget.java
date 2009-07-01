@@ -17,6 +17,7 @@
 package com.google.feedserver.tools.commands;
 
 import com.google.feedserver.client.FeedServerClient;
+import com.google.feedserver.tools.FeedClient;
 import com.google.feedserver.util.FeedServerClientException;
 import com.google.feedserver.util.FileUtil;
 import com.google.gdata.client.GoogleService;
@@ -74,7 +75,10 @@ public class PublishUserGadget extends GadgetCommand {
       domainGadgetEntity = specClient.getEntity(domainGadgetEntryUrl);
       // domain gadget exists; update
       try {
-        specClient.updateEntity(domainGadgetFeedUrl, userGadgetEntity);
+        if (promptContinue("About to overwrite gadget '" + domainGadgetEntryUrl + "'")) {
+          specClient.updateEntity(domainGadgetFeedUrl, userGadgetEntity);
+        } else
+          return;
       } catch(FeedServerClientException e) {
         throw new Exception("Failed to update gadget '" + domainGadgetEntryUrl + "'");
       }
@@ -106,6 +110,12 @@ public class PublishUserGadget extends GadgetCommand {
           getDomainEntryUrl(PRIVATE_GADGET, domainDirEntity.getId()) + "' and now visible " +
           "in your domain's private gadget directory");
     }
+  }
+
+  protected boolean promptContinue(String message) {
+    System.out.println(message);
+    String answer = FeedClient.getConsole().readLine("Continue? (y/n) ");
+    return "y".equals(answer.toLowerCase());
   }
 
   @Override
