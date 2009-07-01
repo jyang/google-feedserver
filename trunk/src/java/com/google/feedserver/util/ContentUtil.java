@@ -123,6 +123,7 @@ public class ContentUtil {
           IllegalArgumentException, IntrospectionException,
           IllegalAccessException, InvocationTargetException {
     String xmlText = getXmlFromContent(content);
+    xmlText = fixEscaping(xmlText);
     Map<String, Object> properties = xmlUtil.convertXmlToProperties(xmlText);
     if (properties == null) {
       properties = new HashMap<String, Object>();
@@ -132,6 +133,15 @@ public class ContentUtil {
       properties.put(NAME, id);
     }
     beanUtil.convertPropertiesToBean(properties, bean);
+  }
+
+  /**
+   * Temp fix of XML escaping.  Changes "]]>" to "]]&gt;".
+   * @param xmlText Input XML text
+   * @return Escaped XML text
+   */
+  protected String fixEscaping(String xmlText) {
+    return xmlText.replaceAll("]]>", "]]&gt;");
   }
 
   /**
