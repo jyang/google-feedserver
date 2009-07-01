@@ -63,17 +63,17 @@ public class FeedServerClient<T> {
    * Fetches generic "payload-in-content" entry into a {@link FeedServerEntry}.   The
    * FeedServerEntry allows you to return the content of the entry as a java bean.
    * 
-   * @param feedUrl the feed URL which can contain any valid ATOM "query"
+   * @param entryUrl the entry URL which can contain any valid ATOM "query"
    * @return the populated entry.
    * @throws FeedServerClientException if we cannot contact the feedserver, fetch the URL, or 
    * parse the XML.
    * @throws RuntimeException if the bean is not constructed properly and is missing fields.
    */
-  public FeedServerEntry getEntry(URL feedUrl) throws FeedServerClientException {
+  public FeedServerEntry getEntry(URL entryUrl) throws FeedServerClientException {
     try {
-      return service.getEntry(feedUrl, FeedServerEntry.class);
+      return service.getEntry(entryUrl, FeedServerEntry.class);
     } catch (IOException e) {
-      throw new FeedServerClientException("Error while fetching " + feedUrl, e);
+      throw new FeedServerClientException("Error while fetching " + entryUrl, e);
     } catch (ServiceException e) {
       throw new FeedServerClientException(e);
     }
@@ -316,11 +316,13 @@ public class FeedServerClient<T> {
    * @throws FeedServerClientException if any feed communication issues occur or the URL is 
    * malformed.
    */
-  public void insertEntity(URL baseUrl, T entity) throws FeedServerClientException {
+  @SuppressWarnings("unchecked")
+  public T insertEntity(URL baseUrl, T entity) throws FeedServerClientException {
     FeedServerEntry entry = new FeedServerEntry(entity);
     try {
       LOG.info("inserting entry at feed " + baseUrl);
-      service.insert(baseUrl, entry);
+      entry = service.insert(baseUrl, entry);
+      return (T) entry.getEntity(entity.getClass());
     } catch (IOException e) {
       throw new FeedServerClientException(e);
     } catch (ServiceException e) {
