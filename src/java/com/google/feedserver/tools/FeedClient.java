@@ -132,7 +132,7 @@ public class FeedClient {
     }
   }
 
-  protected Console getConsole() {
+  public static Console getConsole() {
     Console console = System.console();
     if (console == null) {
       throw new NullPointerException("no console");
