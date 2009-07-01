@@ -19,7 +19,6 @@ package com.google.feedserver.tools;
 import com.google.feedserver.client.FeedServerClient;
 import com.google.feedserver.util.CommonsCliHelper;
 import com.google.feedserver.util.FeedServerClientException;
-import com.google.gdata.client.GoogleService;
 import com.google.gdata.util.AuthenticationException;
 
 import java.io.File;
@@ -31,16 +30,19 @@ import java.net.URL;
  * FeedServer client tool for managing gadgets.
  *
  * -op uploadUserGadget -url .../a/example.com/user/john.doe@example.com/g/PrivateGadgetSpec
- * -gadgetSpecEntityFile <path to spec file>
+ *     -gadgetSpecEntityFile <path to spec file>
+ *
+ * -op publishUserGadget -url .../a/example.com/user/john.doe@example.com/g/PrivateGadgetSpec
+ *     -gadgetName <gadget name>
  */
 public class FeedServerClientGadgetTool extends FeedServerClientTool {
 
   public static final String APP_NAME = FeedServerClientGadgetTool.class.getName();
 
   public static final String OP_UPLOAD_USER_GADGET = "uploadUserGadget";
+  public static final String OP_PUBLISH_USER_GADGET = "publishUserGadget";
 
-  public static final void main(String[] args) throws MalformedURLException,
-      AuthenticationException, FeedServerClientException, IOException {
+  public static final void main(String[] args) {
     new FeedServerClientGadgetTool().run(args);
   }
 
@@ -53,6 +55,13 @@ public class FeedServerClientGadgetTool extends FeedServerClientTool {
       } else {
         getUserCredentials();
         uploadUserGadget(gadgetSpecEntityFile_FLAG);
+      }
+    } else if (OP_PUBLISH_USER_GADGET.equals(op_FLAG)) {
+      if (gadgetName_FLAG == null) {
+        System.err.println("Error: missing flag 'gadgetName'");
+      } else {
+        getUserCredentials();
+        publishUserGadget(gadgetName_FLAG);
       }
     } else {
       super.processRequest(cliHelper);
@@ -71,7 +80,6 @@ public class FeedServerClientGadgetTool extends FeedServerClientTool {
   }
 
   protected void uploadUserGadget(String gadgetSpecFilePath) throws IOException {
-    GoogleService service = new GoogleService(serviceName_FLAG, APP_NAME);
     FeedServerClient<GadgetSpecEntity> client = new FeedServerClient<GadgetSpecEntity>(
         feedServerClient.getService(), GadgetSpecEntity.class);
     File gadgetSpecFile = new File(gadgetSpecFilePath);
@@ -92,5 +100,16 @@ public class FeedServerClientGadgetTool extends FeedServerClientTool {
     } catch (FeedServerClientException e) {
       System.err.println("Error: Failed to upload gadget '" + gadgetName + "': " + e.getMessage());
     }
+  }
+
+  protected void publishUserGadget(String gadgetName) throws MalformedURLException {
+    FeedServerClient<GadgetSpecEntity> client = new FeedServerClient<GadgetSpecEntity>(
+        feedServerClient.getService(), GadgetSpecEntity.class);
+    URL userFeedUrl = new URL(url_FLAG);
+    URL feedUrl = new URL(getDomainFeedUrl(url_FLAG));
+  }
+
+  protected String getDomainFeedUrl(String userFeedUrl) {
+    return userFeedUrl.replaceFirst("/user/[^/]*/", "");
   }
 }

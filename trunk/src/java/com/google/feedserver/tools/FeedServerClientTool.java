@@ -116,8 +116,8 @@ public class FeedServerClientTool {
     this.feedServerClient = feedServerClient;
   }
 
-  public void run(String[] args) throws FeedServerClientException, MalformedURLException,
-      IOException, AuthenticationException {
+  public void run(String[] args) {
+    try {
     // register command line flags
     CommonsCliHelper cliHelper = createClientHelper(args, getClass());
 
@@ -125,6 +125,9 @@ public class FeedServerClientTool {
 
     // Process the request
     processRequest(cliHelper);
+    } catch(Exception e) {
+      System.err.println("Error: " + e.getMessage());
+    }
   }
 
   /**
@@ -150,10 +153,10 @@ public class FeedServerClientTool {
    * 
    * @param cliHelper The client helper for retrieving the required paramater
    *        values
-   * @throws FeedServerClientException
-   * @throws MalformedURLException
-   * @throws IOException
-   * @throws AuthenticationException
+   * @throws FeedServerClientException 
+   * @throws MalformedURLException 
+   * @throws IOException 
+   * @throws AuthenticationException 
    */
   protected void processRequest(CommonsCliHelper cliHelper) throws FeedServerClientException,
       MalformedURLException, IOException, AuthenticationException {
