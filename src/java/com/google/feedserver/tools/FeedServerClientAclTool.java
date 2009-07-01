@@ -180,8 +180,7 @@ public class FeedServerClientAclTool extends FeedServerClientTool {
   }
   // ACL data model
 
-  public static final void main(String[] args) throws MalformedURLException,
-      AuthenticationException, FeedServerClientException, IOException {
+  public static final void main(String[] args) {
     new FeedServerClientAclTool().run(args);
   }
 
