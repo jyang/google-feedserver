@@ -17,7 +17,9 @@
 package com.google.feedserver.tools;
 
 import com.google.feedserver.client.TypelessFeedServerClient;
+import com.google.feedserver.tools.commands.ListUserGadgets;
 import com.google.feedserver.tools.commands.PublishUserGadget;
+import com.google.feedserver.tools.commands.ShowUserGadget;
 import com.google.feedserver.tools.commands.UploadUserGadget;
 import com.google.feedserver.util.CommonsCliHelper;
 import com.google.feedserver.util.FileUtil;
@@ -98,6 +100,8 @@ public class FeedClient {
     GoogleService service = typelessClient.getService();
     addCommand(new UploadUserGadget(service, fileUtil));
     addCommand(new PublishUserGadget(service, fileUtil));
+    addCommand(new ListUserGadgets(service, fileUtil));
+    addCommand(new ShowUserGadget(service, fileUtil));
   }
 
   protected void addCommand(FeedClientCommand command) {

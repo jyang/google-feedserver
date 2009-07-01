@@ -16,6 +16,7 @@
 
 package com.google.feedserver.tools.commands;
 
+import com.google.feedserver.client.FeedServerClient;
 import com.google.feedserver.tools.FeedClientCommand;
 import com.google.feedserver.util.FileUtil;
 import com.google.gdata.client.GoogleService;
@@ -27,6 +28,8 @@ public abstract class GadgetCommand extends FeedClientCommand {
 
   public static final String PRIVATE_GADGET_SPEC = "PrivateGadgetSpec";
   public static final String PRIVATE_GADGET = "PrivateGadget";
+
+  protected FeedServerClient<GadgetSpecEntity> specClient;
 
   public static class GadgetSpecEntity {
     protected String name;
@@ -41,5 +44,7 @@ public abstract class GadgetCommand extends FeedClientCommand {
 
   public GadgetCommand(GoogleService service, FileUtil fileUtil) {
     super(service, fileUtil);
+
+    specClient = new FeedServerClient<GadgetSpecEntity>(service, GadgetSpecEntity.class);
   }
 }
