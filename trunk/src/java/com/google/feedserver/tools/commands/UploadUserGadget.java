@@ -16,7 +16,6 @@
 
 package com.google.feedserver.tools.commands;
 
-import com.google.feedserver.client.FeedServerClient;
 import com.google.feedserver.util.FeedServerClientException;
 import com.google.feedserver.util.FileUtil;
 import com.google.gdata.client.GoogleService;
@@ -43,22 +42,20 @@ public class UploadUserGadget extends GadgetCommand {
       throw new IllegalArgumentException("Missing first argument for gadget spec file path");
     }
 
-    FeedServerClient<GadgetSpecEntity> client = new FeedServerClient<GadgetSpecEntity>(
-        service, GadgetSpecEntity.class);
     File gadgetSpecFile = new File(gadgetSpecFilePath);
     String gadgetName = gadgetSpecFile.getName();
     URL feedUrl = new URL(getUserFeedUrl(PRIVATE_GADGET_SPEC));
     
     GadgetSpecEntity entity = new GadgetSpecEntity(gadgetName);
     try {
-      client.deleteEntity(feedUrl, entity);
+      specClient.deleteEntity(feedUrl, entity);
     } catch (FeedServerClientException e) {
       // entity doesn't exist
     }
     
     try {
       entity.setSpecContent(fileUtil.readFileContents(gadgetSpecFilePath));
-      client.insertEntity(feedUrl, entity);
+      specClient.insertEntity(feedUrl, entity);
       System.out.println("Gadget '" + gadgetName + "' uploaded successfully");
       System.out.println("URL: " + getUserFeedUrl(PRIVATE_GADGET_SPEC) + "/" + entity.getName());
     } catch (FeedServerClientException e) {

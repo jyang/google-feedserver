@@ -54,9 +54,6 @@ public class PublishUserGadget extends GadgetCommand {
       throw new IllegalArgumentException("Missing first argument for gadget name");
     }
 
-    FeedServerClient<GadgetSpecEntity> specClient = new FeedServerClient<GadgetSpecEntity>(
-        service, GadgetSpecEntity.class);
-
     // read user gadget
     URL userGadgetEntryUrl = new URL(getUserEntryUrl(PRIVATE_GADGET_SPEC, gadgetName));
     GadgetSpecEntity userGadgetEntity;
