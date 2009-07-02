@@ -117,7 +117,6 @@ public class PublishUserGadget extends GadgetCommand {
 
   @Override
   public void usage() {
-    System.out.println("fsct " + getClass().getSimpleName().toLowerCase() +
-        " <gadgetName>");
+    System.out.println("fsct " + getCommandName() + " <gadgetName>");
   }
 }

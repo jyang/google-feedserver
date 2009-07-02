@@ -65,7 +65,6 @@ public class UploadUserGadget extends GadgetCommand {
 
   @Override
   public void usage() {
-    System.out.println("fsct " + getClass().getSimpleName().toLowerCase() +
-        " <gadgetSpecFilePath>");
+    System.out.println("fsct " + getCommandName() + " <gadgetSpecFilePath>");
   }
 }
