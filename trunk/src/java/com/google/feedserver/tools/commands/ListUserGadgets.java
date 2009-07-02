@@ -44,6 +44,6 @@ public class ListUserGadgets extends GadgetCommand {
 
   @Override
   public void usage() {
-    System.out.println("fsct " + getClass().getSimpleName().toLowerCase());
+    System.out.println("fsct " + getCommandName());
   }
 }
