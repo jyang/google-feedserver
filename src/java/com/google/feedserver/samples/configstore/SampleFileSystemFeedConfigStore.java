@@ -122,15 +122,11 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
    */
   public static final String ADAPTER_CLASS_NAME = "className";
 
-
-
   /**
    * Default constructor
    */
   public SampleFileSystemFeedConfigStore() {
   }
-
-
 
   /**
    * Stores the feed configuration to the file system as properties file under
@@ -187,7 +183,6 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
         + namespace + " and adapterName : " + adapterName);
 
     return getAdapterConfig(namespace, adapterName);
-
   }
 
   /*
@@ -267,17 +262,15 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
       // Get the feed configuration
       return getFeedConfiguration(namespace, feedId, feedFile);
     } catch (FileNotFoundException e) {
-      throw new FeedConfigStoreException(Reason.FEED_DOES_NOT_EXIST,
-          "Please check that the feed namespace : " + namespace + " and feedId : " + feedId
-              + " are valid");
+      throw new FeedConfigStoreException(Reason.FEED_DOES_NOT_EXIST, "File '" +
+          feedFile.getAbsolutePath() + "' not found.  Please check namespace '" + namespace +
+          "' and feedId '" + feedId + "'");
     } catch (IOException e) {
       throw new FeedConfigStoreException(Reason.INTERNAL_ERROR,
-          "Problems encountered while fetching the feed configuration for the given namespace : "
-              + namespace + " and feedId : " + feedId);
+          "Problems loading the feed configuration for namespace '" + namespace + "' and feedId '"
+          + feedId + "'");
     }
   }
-
-
 
   /*
    * (non-Javadoc)
@@ -371,7 +364,6 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
 
   }
 
-
   /*
    * (non-Javadoc)
    * 
@@ -384,8 +376,6 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
     File feedFile = getFeedConfigFilePath(namespace, feedId);
     return feedFile.exists();
   }
-
-
 
   /*
    * (non-Javadoc)
@@ -412,11 +402,9 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
 
     // Write the values to the file
     writeToFile(prop, feedFile, false);
-
   }
 
-
-/**
+  /**
    * Adds a adapter configuration with the given namespace. <br/>
    * It expects an instance of {@link NamespacedAdapterConfiguration} as
    * adapter configuration
@@ -470,7 +458,6 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
 
     // Write the contents to the file system
     writeToFile(prop, adapaterFile, true);
-
   }
 
   /*
@@ -488,8 +475,8 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
     Properties prop = extractAdapterConfigProperties((NamespacedAdapterConfiguration) config);
 
     // Get a file handle to feed file location
-    File adapterConfigFile =
-        getFeedConfigFilePath(namespace, ((NamespacedAdapterConfiguration) config).getAdapterName());
+    File adapterConfigFile = getFeedConfigFilePath(
+        namespace, ((NamespacedAdapterConfiguration) config).getAdapterName());
 
     // Check that the file does not exist
     if (!adapterConfigFile.exists()) {
@@ -500,9 +487,7 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
 
     // Write the values to the file
     writeToFile(prop, adapterConfigFile, false);
-
   }
-
 
   /*
    * (non-Javadoc)
@@ -517,7 +502,6 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
     File adapterFile = getAdapterConfigFile(namespace, adapterName);
     return adapterFile.exists();
   }
-
 
   /*
    * (non-Javadoc)
@@ -556,10 +540,7 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
           "Unable to delete the adapter configuration for adaptername : " + adapterId
               + "  for the given namespace : " + namespace);
     }
-
   }
-
-
 
   /*
    * (non-Javadoc)
@@ -572,7 +553,6 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
     throw new FeedConfigStoreException(Reason.INTERNAL_ERROR,
         "This functionality is not implemented");
   }
-
 
   /**
    * Returns the feed configuration for the given feed under the given namespace
@@ -630,8 +610,6 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
 
     return prop;
   }
-
-
 
   /**
    * Extracts properties of the adapter configuration and returns them as
@@ -763,28 +741,26 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
     }
   }
 
-
-
-/**
-	 * Returns the feed configuration with given feedId under the given
-	 * namespace.
-	 * <p>
-	 * The adapter configuratipon is also fetched and set as part of feed
-	 * configuration
-	 * </p>
-	 * 
-	 * @param feedId
-	 *            The feed-id
-	 * @param feedConfigFilePath
-	 *            The handle to the feed config file
-	 * @return The feed configuration
-	 * @throws FileNotFoundException
-	 *             If feed config file is not found
-	 * @throws IOException
-	 *             If problems encountered while reading the config values
-	 * @throws FeedConfigStoreException
-	 *             Any feed store specific problems
-	 */
+  /**
+   * Returns the feed configuration with given feedId under the given
+   * namespace.
+   * <p>
+   * The adapter configuratipon is also fetched and set as part of feed
+   * configuration
+   * </p>
+   * 
+   * @param feedId
+   *            The feed-id
+   * @param feedConfigFilePath
+   *            The handle to the feed config file
+   * @return The feed configuration
+   * @throws FileNotFoundException
+   *             If feed config file is not found
+   * @throws IOException
+   *             If problems encountered while reading the config values
+   * @throws FeedConfigStoreException
+   *             Any feed store specific problems
+   */
   private FeedConfiguration getFeedConfiguration(String namespace, String feedId,
       File feedConfigFilePath) throws FileNotFoundException, IOException, FeedConfigStoreException {
     // Load the properties file
@@ -816,25 +792,25 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
     return feedConfig;
   }
 
-/**
-	 * Returns the adapter configuration with given adapter name under the given
-	 * namespace.
-	 * <p>
-	 * If the config value is a file indicated by '@' at the start of the config
-	 * value, then, the contents of the file are read and set as the config
-	 * value. <br/>
-	 * It adds the reference to feed specific database query file name in the
-	 * config value. <br/>
-	 * </p>
-	 * 
-	 * @param namespace
-	 *            The namespace of the adapter config
-	 * @param adapterName
-	 *            The adapter name
-	 * @return The adapter configuration
-	 * @throws FeedConfigStoreException
-	 *             Any feed store specific problems
-	 */
+  /**
+   * Returns the adapter configuration with given adapter name under the given
+   * namespace.
+   * <p>
+   * If the config value is a file indicated by '@' at the start of the config
+   * value, then, the contents of the file are read and set as the config
+   * value. <br/>
+   * It adds the reference to feed specific database query file name in the
+   * config value. <br/>
+   * </p>
+   * 
+   * @param namespace
+   *            The namespace of the adapter config
+   * @param adapterName
+   *            The adapter name
+   * @return The adapter configuration
+   * @throws FeedConfigStoreException
+   *             Any feed store specific problems
+   */
   private NamespacedAdapterConfiguration getAdapterConfig(String namespace, String adapterName)
       throws FeedConfigStoreException {
     try {
@@ -909,7 +885,6 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
           .getProperty(FeedServerConfiguration.MIXINS)));
     }
     return adapterConfigProperties;
-
   }
 
   /**
@@ -1004,9 +979,7 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
     MixinConfiguration[] implicitMixinConfigs =
         new MixinConfiguration[implicitMixinConfigurations.size()];
     return implicitMixinConfigurations.toArray(implicitMixinConfigs);
-
   }
-
 
   /**
    * Checks if the config properties exist and adds them to the given map. If
@@ -1086,8 +1059,7 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
     return mixinConfigs.toArray(mixinConfig);
   }
 
-
-/**
+  /**
    * The method processes the mixin configuration to check if the given mixin
    * has defined any wrapper config
    * 
@@ -1133,7 +1105,6 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
     return mixinConfigs;
   }
 
-
   /**
    * Return an instance of the namespace server configuration
    * 
@@ -1143,7 +1114,6 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
   private PerNamespaceServerConfiguration getNamesapceServerConfiguration(String namespace) {
     return new PerNamespaceServerConfiguration(FeedServerConfiguration.getIntance(), namespace);
   }
-
 
   /**
    * Checks if the namespace and feed config directories exist and creates them
@@ -1156,7 +1126,8 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
   private File checkNamespaceAndFeedConfigDir(String namespace) throws FeedConfigStoreException {
 
     // Check and ensure tht namespace directory exists
-    File namespaceDirectory = checkNamespaceDirectory(namespace);
+    @SuppressWarnings("unused")
+	File namespaceDirectory = checkNamespaceDirectory(namespace);
 
     String feedConfigPath =
         new StringBuilder(FEED_CONFIGURATION_PATH.replace(namespacePlaceHolder, namespace))
@@ -1208,7 +1179,8 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
    */
   private File checkNamespaceAndAdapterConfigDir(String namespace) throws FeedConfigStoreException {
     // Check and ensure tht namespace directory exists
-    File namespaceDirectory = checkNamespaceDirectory(namespace);
+    @SuppressWarnings("unused")
+	File namespaceDirectory = checkNamespaceDirectory(namespace);
 
     String adapterConfigPath =
         new StringBuilder(ADAPTER_CONFIGURATION_PATH.replace(namespacePlaceHolder, namespace))
@@ -1226,7 +1198,4 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
 
     return adapterConfigDir;
   }
-
-
-
 }
