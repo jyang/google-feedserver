@@ -180,7 +180,9 @@ public class IBatisCollectionAdapter extends AbstractManagedCollectionAdapter {
     }
 
     UserInfo userInfo = getUserInfoForRequest(request);
-    params.put("opensocial_viewer_email", userInfo.getEmail());
+    if (userInfo != null) {
+      params.put("opensocial_viewer_email", userInfo.getEmail());
+    }
 
     return params;
   }
