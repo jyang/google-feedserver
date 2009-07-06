@@ -20,6 +20,7 @@ import com.google.feedserver.client.TypelessFeedServerClient;
 import com.google.feedserver.tools.commands.ListUserGadgets;
 import com.google.feedserver.tools.commands.PublishUserGadget;
 import com.google.feedserver.tools.commands.ShowUserGadget;
+import com.google.feedserver.tools.commands.UploadGadget;
 import com.google.feedserver.tools.commands.UploadUserGadget;
 import com.google.feedserver.util.CommonsCliHelper;
 import com.google.feedserver.util.FileUtil;
@@ -65,6 +66,7 @@ public class FeedClient {
 
   public static void main(String[] args) {
     FeedClient shell = new FeedClient(args);
+    shell.execute(args);
   }
 
   public FeedClient(String[] args) {
@@ -75,8 +77,6 @@ public class FeedClient {
     commandLine = new CommonsCliHelper();
 
     init(args);
-
-    execute(args);
   }
 
   protected void init(String[] args) {
@@ -102,6 +102,7 @@ public class FeedClient {
     addCommand(new PublishUserGadget(service, fileUtil));
     addCommand(new ListUserGadgets(service, fileUtil));
     addCommand(new ShowUserGadget(service, fileUtil));
+    addCommand(new UploadGadget(service, fileUtil));
   }
 
   protected void addCommand(FeedClientCommand command) {
