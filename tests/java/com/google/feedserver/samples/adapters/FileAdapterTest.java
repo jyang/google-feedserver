@@ -131,7 +131,7 @@ public class FileAdapterTest extends TestCase {
 
     EasyMock.replay(fileUtilMock);
 
-    Entry entry = adapter.retrieveEntry(null, ENTRY_ID);
+    adapter.retrieveEntry(null, ENTRY_ID);
 
     EasyMock.verify(fileUtilMock);
   }
@@ -146,7 +146,7 @@ public class FileAdapterTest extends TestCase {
 
     EasyMock.replay(fileUtilMock);
 
-    Entry entry2 = adapter.updateEntry(null, ENTRY_ID, buildEntry());
+    adapter.updateEntry(null, ENTRY_ID, buildEntry());
 
     EasyMock.verify(fileUtilMock);
   }

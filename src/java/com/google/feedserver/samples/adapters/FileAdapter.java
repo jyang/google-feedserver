@@ -42,7 +42,7 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
- * An adapter that uses the file system to store resources.  A directory is stored as a directory.
+ * An adapter that uses the file system to store resources.  A feed is stored as a directory.
  * An entry is stored as a file under that directory.  The name of the entry file is {entryId}.
  */
 public class FileAdapter extends AbstractManagedCollectionAdapter {
@@ -83,7 +83,6 @@ public class FileAdapter extends AbstractManagedCollectionAdapter {
     this(xmlUtil, fileUtil, abdera, config, getFileAdapterConfig(xmlUtil, config));
   }
 
-  @SuppressWarnings("unused")
   public FileAdapter(XmlUtil xmlUtil, FileUtil fileUtil, Abdera abdera,
       FeedConfiguration config, FileAdapterConfig fileAdapterConfig)
       throws IllegalArgumentException, IntrospectionException, IllegalAccessException,
@@ -124,7 +123,6 @@ public class FileAdapter extends AbstractManagedCollectionAdapter {
     }
   }
 
-  @SuppressWarnings("unused")
   @Override
   public void deleteEntry(RequestContext request, Object entryId) throws FeedServerAdapterException {
     if (!fileUtil.delete(getEntityFilePath(entryId))) {
@@ -134,7 +132,6 @@ public class FileAdapter extends AbstractManagedCollectionAdapter {
     }
   }
 
-  @SuppressWarnings("unused")
   @Override
   public FeedInfo getFeedInfo(RequestContext request) throws FeedServerAdapterException {
     return null;
