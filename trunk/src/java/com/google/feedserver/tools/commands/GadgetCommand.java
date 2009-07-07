@@ -30,7 +30,11 @@ public abstract class GadgetCommand extends FeedClientCommand {
   public static final String PRIVATE_GADGET = "PrivateGadget";
 
   protected FeedServerClient<GadgetSpecEntity> specClient;
+  protected FeedServerClient<GadgetDirEntity> dirClient;
 
+  /**
+   * Gadget spec entity bean.
+   */
   public static class GadgetSpecEntity {
     protected String name;
     protected String specContent;
@@ -42,10 +46,23 @@ public abstract class GadgetCommand extends FeedClientCommand {
     public void setSpecContent(String specContent) { this.specContent = specContent; }
   }
 
+  /**
+   * Gadget directory entity bean.
+   */
+  public static class GadgetDirEntity {
+    protected String id;
+    protected String url;
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getUrl() { return url; }
+    public void setUrl(String url) { this.url = url; }
+  }
+
   public GadgetCommand(GoogleService service, FileUtil fileUtil) {
     super(service, fileUtil);
 
     specClient = new FeedServerClient<GadgetSpecEntity>(service, GadgetSpecEntity.class);
+    dirClient = new FeedServerClient<GadgetDirEntity>(service, GadgetDirEntity.class);
   }
 
   protected String getCommandName() {
