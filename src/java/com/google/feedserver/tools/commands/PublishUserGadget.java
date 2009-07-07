@@ -33,15 +33,6 @@ public class PublishUserGadget extends GadgetCommand {
 
   public static final String ERROR_GADGET_ALREADY_EXISTS = "Gadget already exists";
   
-  public static class GadgetDirEntity {
-    protected String id;
-    protected String url;
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
-    public String getUrl() { return url; }
-    public void setUrl(String url) { this.url = url; }
-  }
-
   public PublishUserGadget(GoogleService service, FileUtil fileUtil) {
     super(service, fileUtil);
   }
@@ -87,8 +78,6 @@ public class PublishUserGadget extends GadgetCommand {
     // publish domain gadget
     GadgetDirEntity domainDirEntity = new GadgetDirEntity();
     domainDirEntity.setUrl(domainGadgetEntryUrl.toString());
-    FeedServerClient<GadgetDirEntity> dirClient = new FeedServerClient<GadgetDirEntity>(
-        service, GadgetDirEntity.class);
     URL domainDirFeedUrl = new URL(getDomainFeedUrl(PRIVATE_GADGET));
     try {
       domainDirEntity = dirClient.insertEntity(domainDirFeedUrl, domainDirEntity);
