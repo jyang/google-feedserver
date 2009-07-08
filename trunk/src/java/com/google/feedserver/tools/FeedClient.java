@@ -17,9 +17,13 @@
 package com.google.feedserver.tools;
 
 import com.google.feedserver.client.TypelessFeedServerClient;
+import com.google.feedserver.tools.commands.DeleteGadget;
+import com.google.feedserver.tools.commands.DeleteUserGadget;
+import com.google.feedserver.tools.commands.ListGadgets;
 import com.google.feedserver.tools.commands.ListUserGadgets;
 import com.google.feedserver.tools.commands.PublishUserGadget;
 import com.google.feedserver.tools.commands.ShowUserGadget;
+import com.google.feedserver.tools.commands.UnpublishGadget;
 import com.google.feedserver.tools.commands.UploadGadget;
 import com.google.feedserver.tools.commands.UploadUserGadget;
 import com.google.feedserver.util.CommonsCliHelper;
@@ -98,15 +102,19 @@ public class FeedClient {
 
   protected void addCommands() {
     GoogleService service = typelessClient.getService();
-    addCommand(new UploadUserGadget(service, fileUtil));
-    addCommand(new PublishUserGadget(service, fileUtil));
+    addCommand(new DeleteGadget(service, fileUtil));
+    addCommand(new DeleteUserGadget(service, fileUtil));
+    addCommand(new ListGadgets(service, fileUtil));
     addCommand(new ListUserGadgets(service, fileUtil));
+    addCommand(new PublishUserGadget(service, fileUtil));
     addCommand(new ShowUserGadget(service, fileUtil));
+    addCommand(new UnpublishGadget(service, fileUtil));
     addCommand(new UploadGadget(service, fileUtil));
+    addCommand(new UploadUserGadget(service, fileUtil));
   }
 
   protected void addCommand(FeedClientCommand command) {
-    commands.put(command.getClass().getSimpleName().toLowerCase(), command);
+    commands.put(command.getCommandName().toLowerCase(), command);
     commandLine.register(command.getClass());
   }
 

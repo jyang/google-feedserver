@@ -27,8 +27,6 @@ import java.net.URL;
  * Command for uploading a gadget spec into domain's PrivateGadgetSpec feed.
  *
  * Usage: fsct uploadGadget <gadgetSpecFilePath> <flags ...>
- *
- * TODO: Use a common super class for UploadGadget and UploadUserGadget 
  */
 public class UploadGadget extends GadgetCommand {
 
@@ -58,10 +56,11 @@ public class UploadGadget extends GadgetCommand {
     try {
       entity.setSpecContent(fileUtil.readFileContents(gadgetSpecFilePath));
       specClient.insertEntity(feedUrl, entity);
-      System.out.println("Gadget '" + gadgetName + "' uploaded successfully");
+      System.out.println("Domain gadget '" + gadgetName + "' uploaded successfully");
       System.out.println("URL: " + getDomainFeedUrl(PRIVATE_GADGET_SPEC) + "/" + entity.getName());
     } catch (FeedServerClientException e) {
-      System.err.println("Error: Failed to upload gadget '" + gadgetName + "': " + e.getMessage());
+      System.err.println("Error: Failed to upload domain gadget '" + gadgetName + "': " +
+          e.getMessage());
     }
   }
 

@@ -64,8 +64,4 @@ public abstract class GadgetCommand extends FeedClientCommand {
     specClient = new FeedServerClient<GadgetSpecEntity>(service, GadgetSpecEntity.class);
     dirClient = new FeedServerClient<GadgetDirEntity>(service, GadgetDirEntity.class);
   }
-
-  protected String getCommandName() {
-    return getClass().getSimpleName().toLowerCase();
-  }
 }
