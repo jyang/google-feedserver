@@ -164,15 +164,15 @@ public class FeedServerClient<T> {
   /**
    * Deletes entry specified by supplied URL.  This URL must include the ID.
    * 
-   * @param feedUrl the full URL to the entry in this feed.
+   * @param entryUrl the full URL to the entry in this feed.
    * @throws FeedServerClientException if any communication issues occur with the feed or the
    * feed ID is invalid or malformed..
    */
-  public void deleteEntry(URL feedUrl) throws FeedServerClientException {
+  public void deleteEntry(URL entryUrl) throws FeedServerClientException {
     try {
-      service.delete(feedUrl);
+      service.delete(entryUrl);
     } catch (IOException e) {
-      throw new FeedServerClientException("Error while deleting " + feedUrl, e);
+      throw new FeedServerClientException("Error while deleting " + entryUrl, e);
     } catch (ServiceException e) {
       throw new FeedServerClientException(e);
     }
