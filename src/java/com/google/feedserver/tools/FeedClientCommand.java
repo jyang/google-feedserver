@@ -67,4 +67,13 @@ public abstract class FeedClientCommand {
       return arg;
     }
   }
+
+  /**
+   * Returns class name with initial letter in lower case as command name.
+   * @return Command name
+   */
+  protected String getCommandName() {
+    String className = getClass().getSimpleName(); 
+    return Character.toLowerCase(className.charAt(0)) + className.substring(1);
+  }
 }

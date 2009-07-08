@@ -56,10 +56,11 @@ public class UploadUserGadget extends GadgetCommand {
     try {
       entity.setSpecContent(fileUtil.readFileContents(gadgetSpecFilePath));
       specClient.insertEntity(feedUrl, entity);
-      System.out.println("Gadget '" + gadgetName + "' uploaded successfully");
+      System.out.println("User gadget '" + gadgetName + "' uploaded successfully");
       System.out.println("URL: " + getUserFeedUrl(PRIVATE_GADGET_SPEC) + "/" + entity.getName());
     } catch (FeedServerClientException e) {
-      System.err.println("Error: Failed to upload gadget '" + gadgetName + "': " + e.getMessage());
+      System.err.println("Error: Failed to upload user gadget '" + gadgetName + "': " +
+          e.getMessage());
     }
   }
 
