@@ -16,7 +16,6 @@
 
 package com.google.feedserver.tools.commands;
 
-import com.google.feedserver.client.FeedServerClient;
 import com.google.feedserver.tools.FeedClient;
 import com.google.feedserver.util.FeedServerClientException;
 import com.google.feedserver.util.FileUtil;
