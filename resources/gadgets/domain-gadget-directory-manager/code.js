@@ -107,7 +107,7 @@ var MAX_NO_SCROLL_ROWS = 20;
 var MAX_SCROLLBAR_HEIGHT = 360;
 var MAX_RESULTS = 20;
 
-var SPINNER = '<img src="//www-opensocial.googleusercontent.com/gadgets/proxy/refresh=3600&container=enterprise&gadget=http%3A%2F%2Fgoogle-feedserver.googlecode.com%2Fsvn%2Ftrunk%2Fresources%2Fgadgets%2Fdomain-gadget-directory-manager%2Fspec.xml/http%3A%2F%2Fgoogle-feedserver.googlecode.com%2Fsvn%2Ftrunk%2Fresources%2Fgadgets%2Fdomain-gadget-directory-manager%2Fspinner.gif">';
+var SPINNER = '<img src="//google-feedserver.googlecode.com/svn/trunk/resources/gadgets/private-gadget-editor/spinner.gif">';
 
 var NO_FILTER = 'noRestrictions';
 var WHITE_LIST_FILTER = 'whiteList';
