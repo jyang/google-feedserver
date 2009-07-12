@@ -29,7 +29,6 @@ import org.apache.abdera.protocol.server.provider.managed.ManagedProvider;
 import org.apache.log4j.Logger;
 
 import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * {@link FeedServerProvider} extends {@link ManagedProvider} so that we can use
