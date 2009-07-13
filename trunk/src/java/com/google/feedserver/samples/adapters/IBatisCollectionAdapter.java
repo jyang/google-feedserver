@@ -186,4 +186,9 @@ public class IBatisCollectionAdapter extends AbstractManagedCollectionAdapter {
 
     return params;
   }
+
+  @Override
+  protected String getServerName() {
+    return super.getServerName() + ";" + config.getFeedConfigLocation();
+  }
 }

@@ -16,6 +16,7 @@
 
 package com.google.feedserver.adapters;
 
+import com.google.feedserver.config.FeedServerConfiguration;
 import com.google.feedserver.config.GlobalServerConfiguration;
 import com.google.feedserver.config.NamespacedAdapterConfiguration;
 import com.google.feedserver.config.NamespacedFeedConfiguration;
@@ -43,6 +44,8 @@ import org.apache.abdera.protocol.server.provider.managed.ManagedCollectionAdapt
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -208,7 +211,7 @@ public abstract class AbstractManagedCollectionAdapter extends ManagedCollection
     feed.setId(config.getFeedUri());
     feed.setTitle(feedTitle == null ? "feed" : feedTitle);
     feed.setUpdated(new Date());
-    feed.addAuthor(feedAuthor == null ? "FeedServer" : feedAuthor);
+    feed.addAuthor(feedAuthor == null ? getServerName() : feedAuthor);
 
     return feed;
   }
@@ -426,5 +429,17 @@ public abstract class AbstractManagedCollectionAdapter extends ManagedCollection
       return ((NamespacedAdapterConfiguration) config).getServerConfiguration().getNameSpace();
     }
     return null;
+  }
+
+  protected String getHostName() {
+    try {
+      return InetAddress.getLocalHost().getHostName().toLowerCase();
+    } catch (UnknownHostException e) {
+      return "localhost";
+    }
+  }
+
+  protected String getServerName() {
+    return "feedserver@" + getHostName() + ":" + FeedServerConfiguration.getIntance().getPort();
   }
 }
