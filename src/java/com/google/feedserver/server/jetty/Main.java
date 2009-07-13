@@ -41,8 +41,6 @@ import org.mortbay.jetty.servlet.ServletHolder;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.EventListener;
 import java.util.logging.Logger;
 
@@ -62,10 +60,6 @@ public class Main {
   public static String port_FLAG = "8080";
   public static final String port_HELP = "Port number to run FeedServer at.  Defaults to " +
       port_FLAG;
-
-  public static String serverName_FLAG = getServerName();
-  public static final String serverName_HELP = "Name of server used as author in Atom feeds.  " +
-      "Defaults to " + serverName_FLAG;
 
   public static String useAuth_FLAG = "false";
   public static final String useAuth_HELP = "When true, provides a login servlet at " +
@@ -139,17 +133,5 @@ public class Main {
     Class<?> c = Class.forName(filterClassName);
     Constructor<?> constructor = c.getConstructor(KeyManager.class);
     return (Filter) constructor.newInstance(keyManager);
-  }
-
-  public static String getHostName() {
-    try {
-      return InetAddress.getLocalHost().getHostName().toLowerCase();
-    } catch (UnknownHostException e) {
-      return "localhost";
-    }
-  }
-
-  public static String getServerName() {
-    return "feedserver@" + getHostName() + ":" + port_FLAG;
   }
 }
