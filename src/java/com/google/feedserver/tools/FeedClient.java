@@ -166,7 +166,6 @@ public class FeedClient {
     System.out.println();
     System.out.println("Commands (case insensitive):");
     for (Map.Entry<String, FeedClientCommand> entry: commands.entrySet()) {
-      String commandName = entry.getKey();
       FeedClientCommand command = entry.getValue();
       System.out.print("  ");
       command.usage();
