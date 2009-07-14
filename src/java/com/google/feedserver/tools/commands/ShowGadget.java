@@ -16,21 +16,19 @@
 
 package com.google.feedserver.tools.commands;
 
-import com.google.feedserver.util.FeedServerClientException;
 import com.google.feedserver.util.FileUtil;
 import com.google.gdata.client.GoogleService;
 
 import java.net.URL;
 
 /**
- * Command for deleting a gadget spec from domain's PrivateGadgetSpec feed.
+ * Command for showing the spec of a domain gadget.
  *
- * Usage: fsct deleteGadget <gadgetName> <flags ...>
- *
+ * Usage: fsct showUserGadget <gadgetName> <flags ...>
  */
-public class DeleteGadget extends GadgetCommand {
+public class ShowGadget extends GadgetCommand {
 
-  public DeleteGadget(GoogleService service, FileUtil fileUtil) {
+  public ShowGadget(GoogleService service, FileUtil fileUtil) {
     super(service, fileUtil);
   }
 
@@ -42,19 +40,14 @@ public class DeleteGadget extends GadgetCommand {
       throw new IllegalArgumentException("Missing first argument for gadget name");
     }
 
-    URL entryUrl = new URL(getDomainEntryUrl(PRIVATE_GADGET_SPEC, gadgetName));
-    try {
-      specClient.deleteEntry(entryUrl);
-      System.out.println("Domain gadget '" + gadgetName + "' deleted successfully");
-    } catch (FeedServerClientException e) {
-      System.err.println("Error: Failed to delete domain gadget '" + gadgetName + "': " +
-          e.getMessage());
-    }
+    URL gadgetEntryUrl = new URL(getDomainEntryUrl(PRIVATE_GADGET_SPEC, gadgetName));
+    GadgetSpecEntity entity = specClient.getEntity(gadgetEntryUrl);
+    System.out.println(entity.getSpecContent());
   }
 
   @Override
   public void usage(boolean inShell) {
     System.out.println(getFeedClientCommand(inShell) + getCommandName() + " <gadgetName>");
-    System.out.println("    Deletes a gadget from domain's private gadget store");
+    System.out.println("    Shows the spec of a domain gadget");
   }
 }

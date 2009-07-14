@@ -65,7 +65,8 @@ public class UploadUserGadget extends GadgetCommand {
   }
 
   @Override
-  public void usage() {
-    System.out.println("fsct " + getCommandName() + " <gadgetSpecFilePath>");
+  public void usage(boolean inShell) {
+    System.out.println(getFeedClientCommand(inShell) + getCommandName() + " <gadgetSpecFilePath>");
+    System.out.println("    Uploads a gadget to user's private gadget store");
   }
 }

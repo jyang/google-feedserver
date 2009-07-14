@@ -22,6 +22,8 @@ import com.google.feedserver.tools.commands.DeleteUserGadget;
 import com.google.feedserver.tools.commands.ListGadgets;
 import com.google.feedserver.tools.commands.ListUserGadgets;
 import com.google.feedserver.tools.commands.PublishUserGadget;
+import com.google.feedserver.tools.commands.Shell;
+import com.google.feedserver.tools.commands.ShowGadget;
 import com.google.feedserver.tools.commands.ShowUserGadget;
 import com.google.feedserver.tools.commands.UnpublishGadget;
 import com.google.feedserver.tools.commands.UploadGadget;
@@ -32,7 +34,7 @@ import com.google.gdata.client.GoogleService;
 import com.google.gdata.util.AuthenticationException;
 
 import java.io.Console;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class FeedClient {
@@ -84,7 +86,7 @@ public class FeedClient {
   }
 
   protected void init(String[] args) {
-    commands  = new HashMap<String, FeedClientCommand>();
+    commands  = new LinkedHashMap<String, FeedClientCommand>();
     addCommands();
 
     commandLine.register(FeedClient.class);
@@ -107,6 +109,8 @@ public class FeedClient {
     addCommand(new ListGadgets(service, fileUtil));
     addCommand(new ListUserGadgets(service, fileUtil));
     addCommand(new PublishUserGadget(service, fileUtil));
+    addCommand(new Shell(service, fileUtil, this));
+    addCommand(new ShowGadget(service, fileUtil));
     addCommand(new ShowUserGadget(service, fileUtil));
     addCommand(new UnpublishGadget(service, fileUtil));
     addCommand(new UploadGadget(service, fileUtil));
@@ -118,7 +122,7 @@ public class FeedClient {
     commandLine.register(command.getClass());
   }
 
-  protected void execute(String[] args) {
+  public void execute(String[] args) {
     if (args.length == 0) {
       printUsage(args);
     } else {
@@ -140,6 +144,7 @@ public class FeedClient {
           command.execute(args);
         } catch (Exception e) {
           printError(e.getMessage());
+          e.printStackTrace();
         }
       }
     }
@@ -154,7 +159,7 @@ public class FeedClient {
     }
   }
 
-  protected void printUsage(String[] args) {
+  public void printUsage(String[] args) {
     System.out.println("Usage: fsct <command> <arg> <arg> ... <-flag> <-flag> ...");
     System.out.println("e.g.: fsct uploadUserGadget /tmp/hello-user.xml -userEmail " +
       "john.doe@example.com -host " + host_FLAG);
@@ -164,11 +169,16 @@ public class FeedClient {
     commandLine.usage();
 
     System.out.println();
+    printCommandUsage(false);
+  }
+
+  public void printCommandUsage(boolean inShell) {
     System.out.println("Commands (case insensitive):");
     for (Map.Entry<String, FeedClientCommand> entry: commands.entrySet()) {
       FeedClientCommand command = entry.getValue();
+      System.out.println();
       System.out.print("  ");
-      command.usage();
+      command.usage(inShell);
     }
   }
 

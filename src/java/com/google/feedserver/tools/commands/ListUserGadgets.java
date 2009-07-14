@@ -43,7 +43,8 @@ public class ListUserGadgets extends GadgetCommand {
   }
 
   @Override
-  public void usage() {
-    System.out.println("fsct " + getCommandName());
+  public void usage(boolean inShell) {
+    System.out.println(getFeedClientCommand(inShell) + getCommandName());
+    System.out.println("    Lists gadgets in user's private gadget store");
   }
 }

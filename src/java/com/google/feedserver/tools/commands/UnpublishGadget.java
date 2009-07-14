@@ -61,7 +61,8 @@ public class UnpublishGadget extends GadgetCommand {
   }
 
   @Override
-  public void usage() {
-    System.out.println("fsct " + getCommandName() + " <gadgetName>");
+  public void usage(boolean inShell) {
+    System.out.println(getFeedClientCommand(inShell) + getCommandName() + " <gadgetName>");
+    System.out.println("    Removes a gadget from domain's private gadget directory");
   }
 }
