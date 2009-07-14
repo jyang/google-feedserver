@@ -53,7 +53,8 @@ public class DeleteUserGadget extends GadgetCommand {
   }
 
   @Override
-  public void usage() {
-    System.out.println("fsct " + getCommandName() + " <gadgetName>");
+  public void usage(boolean inShell) {
+    System.out.println(getFeedClientCommand(inShell) + getCommandName() + " <gadgetName>");
+    System.out.println("    Deletes a gadget from user's private gadget store");
   }
 }

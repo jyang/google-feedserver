@@ -99,12 +99,13 @@ public class PublishUserGadget extends GadgetCommand {
 
   protected boolean promptContinue(String message) {
     System.out.println(message);
-    String answer = FeedClient.getConsole().readLine("Continue? (y/n) ");
+    String answer = FeedClient.getConsole().readLine("Continue? (y/N) ");
     return "y".equals(answer.toLowerCase());
   }
 
   @Override
-  public void usage() {
-    System.out.println("fsct " + getCommandName() + " <gadgetName>");
+  public void usage(boolean inShell) {
+    System.out.println(getFeedClientCommand(inShell) + getCommandName() + " <gadgetName>");
+    System.out.println("    Publishes a user gadget to domain's private gadget directory");
   }
 }

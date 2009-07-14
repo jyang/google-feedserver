@@ -31,7 +31,7 @@ public abstract class FeedClientCommand {
   }
 
   abstract public void execute(String[] args) throws Exception;
-  abstract public void usage();
+  abstract public void usage(boolean inShell);
 
   protected String getUserEmail() {
     return FeedClient.userEmail_FLAG;
@@ -66,6 +66,10 @@ public abstract class FeedClientCommand {
     } else {
       return arg;
     }
+  }
+
+  protected String getFeedClientCommand(boolean inShell) {
+    return inShell ? "" : "fsct ";
   }
 
   /**

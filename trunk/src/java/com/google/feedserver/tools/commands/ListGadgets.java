@@ -38,12 +38,13 @@ public class ListGadgets extends GadgetCommand {
     URL gadgetFeedUrl = new URL(getDomainFeedUrl(PRIVATE_GADGET_SPEC));
     List<GadgetSpecEntity> entities = specClient.getEntities(gadgetFeedUrl);
     for (GadgetSpecEntity entity: entities) {
-      System.out.println(getUserEntryUrl(PRIVATE_GADGET_SPEC, entity.getName()));
+      System.out.println(getDomainEntryUrl(PRIVATE_GADGET_SPEC, entity.getName()));
     }
   }
 
   @Override
-  public void usage() {
-    System.out.println("fsct " + getCommandName());
+  public void usage(boolean inShell) {
+    System.out.println(getFeedClientCommand(inShell) + getCommandName());
+    System.out.println("    Lists gadgets in domain's private gadget store");
   }
 }

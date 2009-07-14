@@ -22,7 +22,7 @@ import com.google.gdata.client.GoogleService;
 import java.net.URL;
 
 /**
- * Command for a user gadget.
+ * Command for showing the spec of a user gadget.
  *
  * Usage: fsct showUserGadget <gadgetName> <flags ...>
  */
@@ -46,7 +46,8 @@ public class ShowUserGadget extends GadgetCommand {
   }
 
   @Override
-  public void usage() {
-    System.out.println("fsct " + getCommandName() + " <gadgetName>");
+  public void usage(boolean inShell) {
+    System.out.println(getFeedClientCommand(inShell) + getCommandName() + " <gadgetName>");
+    System.out.println("    Shows the spec of a user gadget");
   }
 }
