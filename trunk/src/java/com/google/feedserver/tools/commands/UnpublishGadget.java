@@ -45,7 +45,7 @@ public class UnpublishGadget extends GadgetCommand {
     }
 
     String domainGadgetEntryUrl = gadgetName.startsWith("http") ? gadgetName :
-        getDomainEntryUrl(PRIVATE_GADGET_SPEC, gadgetName);
+        getCanonicalGadgetSpecUrl(gadgetName);
 
     URL dirQueryUrl = new URL(getDomainFeedUrl(PRIVATE_GADGET) +
         "?url=" + URLEncoder.encode(domainGadgetEntryUrl, "UTF-8"));

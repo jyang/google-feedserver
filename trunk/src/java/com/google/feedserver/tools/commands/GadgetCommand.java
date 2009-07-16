@@ -17,6 +17,7 @@
 package com.google.feedserver.tools.commands;
 
 import com.google.feedserver.client.FeedServerClient;
+import com.google.feedserver.tools.FeedClient;
 import com.google.feedserver.tools.FeedClientCommand;
 import com.google.feedserver.util.FileUtil;
 import com.google.gdata.client.GoogleService;
@@ -64,5 +65,10 @@ public abstract class GadgetCommand extends FeedClientCommand {
 
     specClient = new FeedServerClient<GadgetSpecEntity>(service, GadgetSpecEntity.class);
     dirClient = new FeedServerClient<GadgetDirEntity>(service, GadgetDirEntity.class);
+  }
+
+  protected String getCanonicalGadgetSpecUrl(String gadgetName) {
+    return FeedClient.HOST_DEFAULT + "/a/" + getDomainName() + "/g/" + PRIVATE_GADGET_SPEC + "/" +
+        gadgetName;
   }
 }

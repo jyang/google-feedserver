@@ -42,6 +42,8 @@ public class PublishGadget extends GadgetCommand {
       throw new IllegalArgumentException("Missing first argument for gadget name");
     }
 
+    System.out.println("canonicalGadgetSpecUrl=" + getCanonicalGadgetSpecUrl(gadgetName));
+
     URL domainGadgetEntryUrl = new URL(getDomainEntryUrl(PRIVATE_GADGET_SPEC, gadgetName));
     URL domainGadgetFeedUrl = new URL(getDomainFeedUrl(PRIVATE_GADGET_SPEC));
     GadgetSpecEntity domainGadgetEntity;
@@ -55,8 +57,9 @@ public class PublishGadget extends GadgetCommand {
 
     // publish domain gadget
     // TODO: common with PublishUserGadget
+    String canonicalGadgetSpecUrl = getCanonicalGadgetSpecUrl(gadgetName);
     GadgetDirEntity domainDirEntity = new GadgetDirEntity();
-    domainDirEntity.setUrl(domainGadgetEntryUrl.toString());
+    domainDirEntity.setUrl(canonicalGadgetSpecUrl);
     URL domainDirFeedUrl = new URL(getDomainFeedUrl(PRIVATE_GADGET));
     try {
       domainDirEntity = dirClient.insertEntity(domainDirFeedUrl, domainDirEntity);
@@ -68,10 +71,10 @@ public class PublishGadget extends GadgetCommand {
     }
 
     if (domainDirEntity.getId() == null) {
-      System.out.println("Gadget '" + domainGadgetEntryUrl + "' already published and visible in " +
+      System.out.println("Gadget '" + canonicalGadgetSpecUrl + "' already published and visible in " +
           "your domain's private gadget directory");
     } else {
-      System.out.println("Gadget '" + domainGadgetEntryUrl + "' published successfully to '" +
+      System.out.println("Gadget '" + canonicalGadgetSpecUrl + "' published successfully to '" +
           getDomainEntryUrl(PRIVATE_GADGET, domainDirEntity.getId()) + "' and now visible " +
           "in your domain's private gadget directory");
     }
