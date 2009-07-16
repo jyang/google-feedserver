@@ -42,7 +42,8 @@ import java.util.Map;
 public class FeedClient {
 
   // flags
-  public static String host_FLAG = "http://feedserver-enterprise.googleusercontent.com";
+  public static String HOST_DEFAULT = "http://feedserver-enterprise.googleusercontent.com";
+  public static String host_FLAG = HOST_DEFAULT;
   public static final String host_HELP = "Optional FeedServer host name.  Defaults to '" +
       host_FLAG + "'";
 
