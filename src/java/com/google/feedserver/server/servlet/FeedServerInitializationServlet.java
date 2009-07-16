@@ -44,7 +44,9 @@ import javax.servlet.http.HttpServlet;
  */
 public class FeedServerInitializationServlet extends HttpServlet {
 
-  Logger logger = Logger.getLogger(FeedServerInitializationServlet.class.getName());
+  private static final long serialVersionUID = 1L;
+
+  private Logger logger = Logger.getLogger(FeedServerInitializationServlet.class.getName());
 
   @Override
   public void init(ServletConfig config) throws ServletException {

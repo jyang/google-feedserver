@@ -237,8 +237,6 @@ public class FeedServerClientAclTool extends FeedServerClientTool {
   protected void setAcl(String url, String resource, List<Acl> acls, String aclDef)
       throws MalformedURLException, FeedServerClientException, UnsupportedEncodingException {
     String[] authorizedEntitiesDefs = aclDef.split(",");
-    List<String> addAuthorizedEntities = new ArrayList<String>();
-    List<String> removeAuthorizedAuthities = new ArrayList<String>();
     for (String authorizedEntitiesDef: authorizedEntitiesDefs) {
       String modifier = authorizedEntitiesDef.indexOf('+') > 0 ? "\\+" : "-";
       String[] opEntities = authorizedEntitiesDef.split(modifier);

@@ -23,6 +23,8 @@ package com.google.feedserver.configstore;
  * @author abhinavk@gmail.com (Abhinav Khandelwal)
  */
 public class FeedConfigStoreException extends Exception {
+  private static final long serialVersionUID = 1L;
+
   /**
    * Reason for {@link FeedConfigStoreException}.
    * 

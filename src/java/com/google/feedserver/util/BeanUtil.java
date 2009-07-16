@@ -211,7 +211,6 @@ public class BeanUtil {
    * @throws IllegalAccessException
    * @throws InvocationTargetException
    */
-  @SuppressWarnings("unchecked")
   private void fillBeanInArray(Class<?> propertyType, Object valueArray, int index,
       Object valueObject) throws IntrospectionException, IllegalAccessException,
       InvocationTargetException {
@@ -276,7 +275,6 @@ public class BeanUtil {
         return false;
       }
       for (PropertyDescriptor p : bean1Info.getPropertyDescriptors()) {
-        String name = p.getName();
         Method reader = p.getReadMethod();
         if (reader != null) {
           try {

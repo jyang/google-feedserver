@@ -45,10 +45,8 @@ public class PublishGadget extends GadgetCommand {
     System.out.println("canonicalGadgetSpecUrl=" + getCanonicalGadgetSpecUrl(gadgetName));
 
     URL domainGadgetEntryUrl = new URL(getDomainEntryUrl(PRIVATE_GADGET_SPEC, gadgetName));
-    URL domainGadgetFeedUrl = new URL(getDomainFeedUrl(PRIVATE_GADGET_SPEC));
-    GadgetSpecEntity domainGadgetEntity;
     try {
-      domainGadgetEntity = specClient.getEntity(domainGadgetEntryUrl);
+      specClient.getEntity(domainGadgetEntryUrl);
     } catch(FeedServerClientException e) {
       // domain gadget doesn't exist
       System.err.println("Domain gadget '" + gadgetName + "' does not exist");
@@ -64,7 +62,6 @@ public class PublishGadget extends GadgetCommand {
     try {
       domainDirEntity = dirClient.insertEntity(domainDirFeedUrl, domainDirEntity);
     } catch(FeedServerClientException e) {
-      String message = e.getMessage();
       if (e.getMessage().indexOf(ERROR_GADGET_ALREADY_EXISTS) < 0) {
         throw e;
       }
