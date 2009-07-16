@@ -67,7 +67,7 @@ public class ConfigStoreUtil {
    * @return True if the key is in the map with a non-null value and false
    *         otherwise
    */
-  public static boolean containsKeyWithNonNullValue(Map configProperties, String key) {
+  public static boolean containsKeyWithNonNullValue(Map<?, ?> configProperties, String key) {
     return configProperties.containsKey(key) && null != configProperties.get(key);
   }
 
