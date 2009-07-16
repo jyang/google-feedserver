@@ -106,7 +106,6 @@ public class BeanCliHelper {
     beans = new ArrayList<Object>();
   }
 
-  @SuppressWarnings("unchecked")
   public void register(Object bean) {
     beans.add(bean);
   }
@@ -232,7 +231,6 @@ public class BeanCliHelper {
         // Boolean Flags
         if (field.getType().getName().equals(Boolean.class.getName())
             || field.getType().getName().equals(Boolean.TYPE.getName())) {
-          boolean newValue;
           if (flags.hasOption(argName)) {
             setField(field, bean, new Boolean(true));
           } else if (flags.hasOption("no" + argName)) {
@@ -275,8 +273,6 @@ public class BeanCliHelper {
    */
   private void setField(Field field, Object bean, Object value) {
     try {
-      String methodName =
-          "set" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
       bean.getClass().getMethod(
           "set" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1),
           field.getType()).invoke(bean, value);

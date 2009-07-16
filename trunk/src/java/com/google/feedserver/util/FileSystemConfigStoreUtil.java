@@ -106,8 +106,7 @@ public class FileSystemConfigStoreUtil extends ConfigStoreUtil {
     try {
       reader = getInputStream(filePath);
       byte[] buf = new byte[1024];
-      int numRead = 0;
-      while ((numRead = reader.read(buf)) != -1) {
+      while (reader.read(buf) != -1) {
         String readData = new String(buf);
         fileData.append(readData);
         buf = new byte[1024];

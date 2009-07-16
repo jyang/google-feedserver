@@ -55,9 +55,8 @@ public class PublishUserGadget extends GadgetCommand {
     // copy to domain gadget
     URL domainGadgetEntryUrl = new URL(getDomainEntryUrl(PRIVATE_GADGET_SPEC, gadgetName));
     URL domainGadgetFeedUrl = new URL(getDomainFeedUrl(PRIVATE_GADGET_SPEC));
-    GadgetSpecEntity domainGadgetEntity;
     try {
-      domainGadgetEntity = specClient.getEntity(domainGadgetEntryUrl);
+      specClient.getEntity(domainGadgetEntryUrl);
       // domain gadget exists; update
       try {
         if (promptContinue("About to overwrite gadget '" + domainGadgetEntryUrl + "'")) {
@@ -79,7 +78,6 @@ public class PublishUserGadget extends GadgetCommand {
     try {
       domainDirEntity = dirClient.insertEntity(domainDirFeedUrl, domainDirEntity);
     } catch(FeedServerClientException e) {
-      String message = e.getMessage();
       if (e.getMessage().indexOf(ERROR_GADGET_ALREADY_EXISTS) < 0) {
         throw e;
       }

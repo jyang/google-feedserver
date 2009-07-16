@@ -38,6 +38,8 @@ import java.util.Map;
  */
 public class FeedServerServlet extends AbderaServlet {
 
+  private static final long serialVersionUID = 1L;
+
   GlobalServerConfiguration globalServerConfiguration;
 
   public FeedServerServlet(GlobalServerConfiguration configuration) {

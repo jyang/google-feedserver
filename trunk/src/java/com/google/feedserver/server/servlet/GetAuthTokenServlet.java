@@ -49,6 +49,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public class GetAuthTokenServlet extends HttpServlet {
+  private static final long serialVersionUID = 1L;
+
   /**
    * The tokenmanager instance to be used
    */

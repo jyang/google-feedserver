@@ -24,6 +24,8 @@ package com.google.feedserver.adapters;
  * 
  */
 public class FeedServerAdapterException extends Exception {
+  private static final long serialVersionUID = 1L;
+
   /**
    * Reason for {@link FeedServerAdapterException}.
    * 

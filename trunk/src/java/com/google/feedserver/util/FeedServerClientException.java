@@ -21,7 +21,8 @@ package com.google.feedserver.util;
  */
 public class FeedServerClientException extends Exception {
 
-  
+  private static final long serialVersionUID = 1L;
+
   /**
    * Creates the exception with the specified error message.
    * 
