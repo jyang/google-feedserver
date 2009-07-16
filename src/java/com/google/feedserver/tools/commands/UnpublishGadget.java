@@ -28,6 +28,7 @@ import java.util.List;
  * and domain's private gadget store.
  *
  * Usage: fsct unpublishGadget <gadgetName> <flags ...>
+ * Usage: fsct unpublishGadget <gadgetSpecUrl> <flags ...>
  */
 public class UnpublishGadget extends GadgetCommand {
 
@@ -43,26 +44,34 @@ public class UnpublishGadget extends GadgetCommand {
       throw new IllegalArgumentException("Missing first argument for gadget name");
     }
 
-    String domainGadgetEntryUrl = getDomainEntryUrl(PRIVATE_GADGET_SPEC, gadgetName);
+    String domainGadgetEntryUrl = gadgetName.startsWith("http") ? gadgetName :
+        getDomainEntryUrl(PRIVATE_GADGET_SPEC, gadgetName);
+
     URL dirQueryUrl = new URL(getDomainFeedUrl(PRIVATE_GADGET) +
         "?url=" + URLEncoder.encode(domainGadgetEntryUrl, "UTF-8"));
     List<GadgetDirEntity> dirEntities = dirClient.getEntities(dirQueryUrl);
-    for (GadgetDirEntity dirEntity: dirEntities) {
+
+    if (dirEntities.size() == 0) {
+      System.err.println("Gadget '" + domainGadgetEntryUrl + "' not found in directory");
+    } else {
+      if (dirEntities.size() > 1) {
+        System.err.println("Expected to find 1 gadget in directory but found " + dirEntities.size());
+        System.err.println("Unpublishing only the first");
+      }
+
       // delete from domain's private gadget directory
+      GadgetDirEntity dirEntity = dirEntities.get(0);
       URL dirEntryUrl = new URL(getDomainEntryUrl(PRIVATE_GADGET, dirEntity.getId()));
       dirClient.deleteEntry(dirEntryUrl);
-      System.out.println("Unpublished '" + gadgetName + "' (" + dirEntryUrl + ")");
-
-      // delete from domain's private gadget store
-      URL specEntryUrl = new URL(getDomainEntryUrl(PRIVATE_GADGET_SPEC, gadgetName));
-      specClient.deleteEntry(specEntryUrl);
-      System.out.println("Deleted '" + gadgetName + "' (" + specEntryUrl + ")");
+      System.out.println(
+          "Unpublished gadget '" + dirEntity.getUrl() + "' from '" + dirEntryUrl + "'");
     }
   }
 
   @Override
   public void usage(boolean inShell) {
-    System.out.println(getFeedClientCommand(inShell) + getCommandName() + " <gadgetName>");
+    System.out.println(getFeedClientCommand(inShell) + getCommandName() +
+        " <gadgetName|gadgetSpecUrl>");
     System.out.println("    Removes a gadget from domain's private gadget directory");
   }
 }

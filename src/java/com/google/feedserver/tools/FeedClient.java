@@ -19,8 +19,10 @@ package com.google.feedserver.tools;
 import com.google.feedserver.client.TypelessFeedServerClient;
 import com.google.feedserver.tools.commands.DeleteGadget;
 import com.google.feedserver.tools.commands.DeleteUserGadget;
+import com.google.feedserver.tools.commands.DirGadgets;
 import com.google.feedserver.tools.commands.ListGadgets;
 import com.google.feedserver.tools.commands.ListUserGadgets;
+import com.google.feedserver.tools.commands.PublishGadget;
 import com.google.feedserver.tools.commands.PublishUserGadget;
 import com.google.feedserver.tools.commands.Shell;
 import com.google.feedserver.tools.commands.ShowGadget;
@@ -106,8 +108,10 @@ public class FeedClient {
     GoogleService service = typelessClient.getService();
     addCommand(new DeleteGadget(service, fileUtil));
     addCommand(new DeleteUserGadget(service, fileUtil));
+    addCommand(new DirGadgets(service, fileUtil));
     addCommand(new ListGadgets(service, fileUtil));
     addCommand(new ListUserGadgets(service, fileUtil));
+    addCommand(new PublishGadget(service, fileUtil));
     addCommand(new PublishUserGadget(service, fileUtil));
     addCommand(new Shell(service, fileUtil, this));
     addCommand(new ShowGadget(service, fileUtil));
@@ -144,7 +148,6 @@ public class FeedClient {
           command.execute(args);
         } catch (Exception e) {
           printError(e.getMessage());
-          e.printStackTrace();
         }
       }
     }

@@ -24,13 +24,13 @@ import com.google.gdata.client.GoogleService;
 import java.net.URL;
 
 /**
- * Command for publishing a user gadget to a domain's private gadget directory.
+ * Command for publishing a domain gadget to a domain's private gadget directory.
  *
- * Usage: fsct publishUserGadget <gadgetName> <flags ...>
+ * Usage: fsct publishGadget <gadgetName> <flags ...>
  */
-public class PublishUserGadget extends GadgetCommand {
+public class PublishGadget extends GadgetCommand {
 
-  public PublishUserGadget(GoogleService service, FileUtil fileUtil) {
+  public PublishGadget(GoogleService service, FileUtil fileUtil) {
     super(service, fileUtil);
   }
 
@@ -42,37 +42,19 @@ public class PublishUserGadget extends GadgetCommand {
       throw new IllegalArgumentException("Missing first argument for gadget name");
     }
 
-    // read user gadget
-    URL userGadgetEntryUrl = new URL(getUserEntryUrl(PRIVATE_GADGET_SPEC, gadgetName));
-    GadgetSpecEntity userGadgetEntity;
-    try {
-      userGadgetEntity = specClient.getEntity(userGadgetEntryUrl);
-    } catch(FeedServerClientException e) {
-      throw new FeedServerClientException(
-          "Failed to get user gadget '" + userGadgetEntryUrl + "'", e.getCause());
-    }
-
-    // copy to domain gadget
     URL domainGadgetEntryUrl = new URL(getDomainEntryUrl(PRIVATE_GADGET_SPEC, gadgetName));
     URL domainGadgetFeedUrl = new URL(getDomainFeedUrl(PRIVATE_GADGET_SPEC));
     GadgetSpecEntity domainGadgetEntity;
     try {
       domainGadgetEntity = specClient.getEntity(domainGadgetEntryUrl);
-      // domain gadget exists; update
-      try {
-        if (promptContinue("About to overwrite gadget '" + domainGadgetEntryUrl + "'")) {
-          specClient.updateEntity(domainGadgetFeedUrl, userGadgetEntity);
-        } else
-          return;
-      } catch(FeedServerClientException e) {
-        throw new Exception("Failed to update gadget '" + domainGadgetEntryUrl + "'");
-      }
     } catch(FeedServerClientException e) {
-      // domain gadget doesn't exist; insert
-      specClient.insertEntity(domainGadgetFeedUrl, userGadgetEntity);
+      // domain gadget doesn't exist
+      System.err.println("Domain gadget '" + gadgetName + "' does not exist");
+      return;
     }
 
     // publish domain gadget
+    // TODO: common with PublishUserGadget
     GadgetDirEntity domainDirEntity = new GadgetDirEntity();
     domainDirEntity.setUrl(domainGadgetEntryUrl.toString());
     URL domainDirFeedUrl = new URL(getDomainFeedUrl(PRIVATE_GADGET));
@@ -86,10 +68,10 @@ public class PublishUserGadget extends GadgetCommand {
     }
 
     if (domainDirEntity.getId() == null) {
-      System.out.println("Gadget '" + userGadgetEntryUrl + "' already published and visible in " +
+      System.out.println("Gadget '" + domainGadgetEntryUrl + "' already published and visible in " +
           "your domain's private gadget directory");
     } else {
-      System.out.println("Gadget '" + userGadgetEntryUrl + "' published successfully to '" +
+      System.out.println("Gadget '" + domainGadgetEntryUrl + "' published successfully to '" +
           getDomainEntryUrl(PRIVATE_GADGET, domainDirEntity.getId()) + "' and now visible " +
           "in your domain's private gadget directory");
     }
@@ -104,6 +86,6 @@ public class PublishUserGadget extends GadgetCommand {
   @Override
   public void usage(boolean inShell) {
     System.out.println(getFeedClientCommand(inShell) + getCommandName() + " <gadgetName>");
-    System.out.println("    Publishes a user gadget to domain's private gadget directory");
+    System.out.println("    Publishes a domain gadget to domain's private gadget directory");
   }
 }
