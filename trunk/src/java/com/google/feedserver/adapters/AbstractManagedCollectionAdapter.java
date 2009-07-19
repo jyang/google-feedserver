@@ -408,6 +408,11 @@ public abstract class AbstractManagedCollectionAdapter extends ManagedCollection
     return (UserInfo) request.getAttribute(RequestContext.Scope.REQUEST, USER_INFO);
   }
 
+  public String getUserEmailForRequest(RequestContext request) {
+    UserInfo userInfo = getUserInfoForRequest(request);
+    return userInfo == null ? null : userInfo.getEmail();
+  }
+
   public FeedInfo getFeedInfoFromXml(String feedInfoXml) throws FeedServerAdapterException {
     try {
       return new SimpleFeedInfo(feedInfoXml);

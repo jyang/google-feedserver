@@ -17,7 +17,6 @@ package com.google.feedserver.samples.adapters;
 
 import com.google.feedserver.adapters.AbstractManagedCollectionAdapter;
 import com.google.feedserver.adapters.FeedServerAdapterException;
-import com.google.feedserver.config.UserInfo;
 import com.google.feedserver.metadata.FeedInfo;
 
 import com.ibatis.sqlmap.client.SqlMapClient;
@@ -179,9 +178,9 @@ public class IBatisCollectionAdapter extends AbstractManagedCollectionAdapter {
       params.put(name, target.getParameter(name));
     }
 
-    UserInfo userInfo = getUserInfoForRequest(request);
-    if (userInfo != null) {
-      params.put("opensocial_viewer_email", userInfo.getEmail());
+    String userEmail = getUserEmailForRequest(request);
+    if (userEmail != null) {
+      params.put("opensocial_viewer_email", userEmail);
     }
 
     return params;
