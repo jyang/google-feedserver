@@ -155,9 +155,9 @@ public class FeedServerConfiguration implements GlobalServerConfiguration {
   }
 
   @Override
-  public FeedConfiguration getFeedConfiguration(String namespace, String feedId)
+  public FeedConfiguration getFeedConfiguration(String namespace, String feedId, String userId)
       throws FeedConfigStoreException {
-    return feedConfigStore.getFeedConfiguration(namespace, feedId);
+    return feedConfigStore.getFeedConfiguration(namespace, feedId, userId);
   }
 
   @Override

@@ -46,17 +46,32 @@ public class FeedServerProvider extends ManagedProvider {
   public FeedServerProvider() {
     this(FeedServerConfiguration.getIntance());
     // The target resolver provides the URL path mappings
-    super.setTargetResolver(new RegexTargetResolver().setPattern("/([^/#?]+)/(\\?[^#]*)?",
-        TargetType.TYPE_SERVICE, AbstractManagedCollectionAdapter.PARAM_NAMESPACE).setPattern(
-        "/([^/#?]+)/([^/#?]+);categories", TargetType.TYPE_CATEGORIES,
+    RegexTargetResolver targetResolver = new RegexTargetResolver();
+    // service
+    targetResolver.setPattern("/([^/#?]+)/(\\?[^#]*)?", TargetType.TYPE_SERVICE,
+        AbstractManagedCollectionAdapter.PARAM_NAMESPACE);
+    // categories
+    targetResolver.setPattern("/([^/#?]+)/([^/#?]+);categories", TargetType.TYPE_CATEGORIES,
         AbstractManagedCollectionAdapter.PARAM_NAMESPACE,
-        AbstractManagedCollectionAdapter.CATEGORY_PARAMETER).setPattern(
-        "/([^/#?]+)/([^/#?;]+)(\\?[^#]*)?", TargetType.TYPE_COLLECTION,
-        AbstractManagedCollectionAdapter.PARAM_NAMESPACE,
-        AbstractManagedCollectionAdapter.PARAM_FEED).setPattern(
-        "/([^/#?]+)/([^/#?]+)/([^/#?]+)(\\?[^#]*)?", TargetType.TYPE_ENTRY,
-        AbstractManagedCollectionAdapter.PARAM_NAMESPACE,
-        AbstractManagedCollectionAdapter.PARAM_FEED, AbstractManagedCollectionAdapter.PARAM_ENTRY));
+        AbstractManagedCollectionAdapter.CATEGORY_PARAMETER);
+    // feed
+    targetResolver.setPattern("/([^/#?]+)/([^/#?;]+)(\\?[^#]*)?",
+        TargetType.TYPE_COLLECTION, AbstractManagedCollectionAdapter.PARAM_NAMESPACE,
+        AbstractManagedCollectionAdapter.PARAM_FEED);
+    // entry
+    targetResolver.setPattern("/([^/#?]+)/([^/#?]+)/([^/#?]+)(\\?[^#]*)?", TargetType.TYPE_ENTRY,
+        AbstractManagedCollectionAdapter.PARAM_NAMESPACE, 
+        AbstractManagedCollectionAdapter.PARAM_FEED, AbstractManagedCollectionAdapter.PARAM_ENTRY);
+    // user feed
+    targetResolver.setPattern("/([^/#?]+)/user/([^/#?]+)/([^/#?;]+)(\\?[^#]*)?",
+        TargetType.TYPE_COLLECTION, AbstractManagedCollectionAdapter.PARAM_NAMESPACE,
+        AbstractManagedCollectionAdapter.PARAM_USER, AbstractManagedCollectionAdapter.PARAM_FEED);
+    // user entry
+    targetResolver.setPattern("/([^/#?]+)/user/([^/#?]+)/([^/#?]+)/([^/#?]+)(\\?[^#]*)?",
+        TargetType.TYPE_ENTRY, AbstractManagedCollectionAdapter.PARAM_NAMESPACE,
+        AbstractManagedCollectionAdapter.PARAM_USER, AbstractManagedCollectionAdapter.PARAM_FEED,
+        AbstractManagedCollectionAdapter.PARAM_ENTRY);
+	super.setTargetResolver(targetResolver);
   }
 
   public FeedServerProvider(GlobalServerConfiguration configuration) {
@@ -80,7 +95,8 @@ public class FeedServerProvider extends ManagedProvider {
   public AbstractManagedCollectionAdapter getCollectionAdapter(RequestContext request) {
     try {
       return getCollectionAdapterManager(request).getAdapter(
-          request.getTarget().getParameter(AbstractManagedCollectionAdapter.PARAM_FEED));
+          request.getTarget().getParameter(AbstractManagedCollectionAdapter.PARAM_FEED),
+          request.getTarget().getParameter(AbstractManagedCollectionAdapter.PARAM_USER));
     } catch (Exception e) {
       logger.error(e);
       return null;
