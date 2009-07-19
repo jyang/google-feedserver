@@ -71,8 +71,6 @@ public class ResourceConnectionInfoWrapperTest extends TestCase {
 	EasyMock.verify(requestMock);
 	EasyMock.verify(userInfoMock);
 	EasyMock.verify(entryMock);
-
-	super.tearDown();
   }
 
   protected String getWrapperConfig(String operation, String[] principals) {
