@@ -74,8 +74,9 @@ public interface GlobalServerConfiguration {
    * 
    * @param namespace The namespace the feed is in
    * @param feedId The feed to get the {@link FeedConfiguration} for
+   * @param userId User email of per user feed requested; null if not per user feed
    */
-  public FeedConfiguration getFeedConfiguration(String namespace, String feedId)
+  public FeedConfiguration getFeedConfiguration(String namespace, String feedId, String userId)
       throws FeedConfigStoreException;
 
   /**

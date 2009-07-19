@@ -246,14 +246,14 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
    * #getFeedConfiguration(java.lang.String, java.lang.String)
    */
   @Override
-  public FeedConfiguration getFeedConfiguration(String namespace, String feedId)
+  public FeedConfiguration getFeedConfiguration(String namespace, String feedId, String userId)
       throws FeedConfigStoreException {
 
-    logger.log(Level.FINE, "Retrieving the feed with given namespace : " + namespace
-        + " and feedId : " + feedId);
+    logger.log(Level.FINE, "Retrieving feed config: namespace=" + namespace + " feedId=" +
+        feedId + " userId=" + userId);
 
     // Construct the feed file path
-    File feedFile = getFeedConfigFilePath(namespace, feedId);
+    File feedFile = getFeedConfigFilePath(namespace, feedId, userId);
 
     logger.log(Level.FINEST, "The path of the file to fetch the feed configuration from : "
         + feedFile.getAbsolutePath());
@@ -344,9 +344,10 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
    * #deleteFeed(java.lang.String, java.lang.String)
    */
   @Override
-  public void deleteFeed(String namespace, String feedId) throws FeedConfigStoreException {
+  public void deleteFeed(String namespace, String feedId, String userId)
+      throws FeedConfigStoreException {
     // Construct and get the feed file handle
-    File feedFile = getFeedConfigFilePath(namespace, feedId);
+    File feedFile = getFeedConfigFilePath(namespace, feedId, userId);
 
     // Check that the feed file exists
     if (!feedFile.exists()) {
@@ -371,9 +372,10 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
    * #hasFeed(java.lang.String, java.lang.String)
    */
   @Override
-  public boolean hasFeed(String namespace, String feedId) throws FeedConfigStoreException {
+  public boolean hasFeed(String namespace, String feedId, String userId)
+      throws FeedConfigStoreException {
     // Get the handle to the feed config file
-    File feedFile = getFeedConfigFilePath(namespace, feedId);
+    File feedFile = getFeedConfigFilePath(namespace, feedId, userId);
     return feedFile.exists();
   }
 
@@ -385,13 +387,13 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
    * org.apache.abdera.protocol.server.provider.managed.FeedConfiguration)
    */
   @Override
-  public void updateFeed(String namespace, FeedConfiguration config)
+  public void updateFeed(String namespace, String userId, FeedConfiguration config)
       throws FeedConfigStoreException {
     // Get the feed configuration properties to save to file
     Properties prop = extractFeedConfigProperties(config);
 
     // Get a file handle to feed file location
-    File feedFile = getFeedConfigFilePath(namespace, config.getFeedId());
+    File feedFile = getFeedConfigFilePath(namespace, config.getFeedId(), userId);
 
     // Check that the file does not exist
     if (!feedFile.exists()) {
@@ -554,24 +556,30 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
         "This functionality is not implemented");
   }
 
+  protected File getFeedConfigFilePath(String namespace, String feedId) {
+    return getFeedConfigFilePath(namespace, feedId, null);
+  }
+
   /**
    * Returns the feed configuration for the given feed under the given namespace
    * 
    * @param namespace
    * @param feedId
+   * @param userId
    * @return
    * @see com.google.feedserver.configstore.FeedConfigStore#getFeedConfiguration(String,
-   *      String)
+   *      String, String)
    */
-  private File getFeedConfigFilePath(String namespace, String feedId) {
+  protected File getFeedConfigFilePath(String namespace, String feedId, String userId) {
     // Construct the feed file path
     String pathToFeedFile =
         new StringBuilder(FEED_CONFIGURATION_PATH.replace(namespacePlaceHolder, namespace)).append(
             "/").append(feedId).append(FILE_EXTENSION).toString();
-    // Get a file handle
-    File feedFile = new File(pathToFeedFile);
-
-    return feedFile;
+    if (userId != null) {
+      pathToFeedFile = pathToFeedFile.replaceFirst(FeedServerConfiguration.FEED_CONFIGURATION,
+          FeedServerConfiguration.FEED_CONFIGURATION + "/user");
+    }
+    return new File(pathToFeedFile);
   }
 
   /**

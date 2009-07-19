@@ -106,8 +106,20 @@ public class PerNamespaceServerConfiguration extends ServerConfiguration {
    * @param feedId The feed to get the {@link FeedConfiguration for}
    */
   @Override
-  public FeedConfiguration loadFeedConfiguration(String feedId) throws FeedConfigStoreException {
-    return globalServerConfiguration.getFeedConfiguration(namespace, feedId);
+  public FeedConfiguration loadFeedConfiguration(String feedId)
+      throws FeedConfigStoreException {
+    return loadFeedConfiguration(feedId, null);
+  }
+
+  /**
+   * Gets the Feed configuration for the specified feed
+   * 
+   * @param feedId The feed to get the {@link FeedConfiguration for}
+   * @param userId User email of per user feed requested; null if not per user feed
+   */
+  public FeedConfiguration loadFeedConfiguration(String feedId, String userId)
+      throws FeedConfigStoreException {
+    return globalServerConfiguration.getFeedConfiguration(namespace, feedId, userId);
   }
 
   /**

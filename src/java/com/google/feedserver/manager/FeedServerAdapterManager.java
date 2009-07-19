@@ -44,10 +44,12 @@ public class FeedServerAdapterManager extends CollectionAdapterManager {
    * {@link FeedConfiguration}
    * 
    * @param feedId The feed to get a collection adapter for
+   * @param userId User email of per user feed; null if not per user feed
    */
-  @Override
-  public AbstractManagedCollectionAdapter getAdapter(String feedId) throws Exception {
-    FeedConfiguration feedConfiguration = config.loadFeedConfiguration(feedId);
+  public AbstractManagedCollectionAdapter getAdapter(String feedId, String userId)
+      throws Exception {
+    FeedConfiguration feedConfiguration =
+    	((PerNamespaceServerConfiguration) config).loadFeedConfiguration(feedId, userId);
     return createWrappedAdapter(feedConfiguration, abdera);
   }
 

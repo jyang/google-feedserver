@@ -72,7 +72,7 @@ public class SampleFileSystemFeedConfigStoreTest extends TestCase {
     }
 
     try {
-      feedStoreBasedFeedConfigStore.deleteFeed(NAMESPACE, feedConfiguration.getFeedId());
+      feedStoreBasedFeedConfigStore.deleteFeed(NAMESPACE, feedConfiguration.getFeedId(), null);
     } catch (FeedConfigStoreException e) {
       fail(e.getLocalizedMessage());
       e.printStackTrace();
@@ -84,16 +84,19 @@ public class SampleFileSystemFeedConfigStoreTest extends TestCase {
     assertTrue(feedStoreBasedFeedConfigStore.getFeedIds(NAMESPACE).contains(
         feedConfiguration.getFeedId()));
     assertEquals(1, feedStoreBasedFeedConfigStore.getFeedIds(NAMESPACE).size());
-    feedStoreBasedFeedConfigStore.deleteFeed(NAMESPACE, feedConfiguration.getFeedId());
+    feedStoreBasedFeedConfigStore.deleteFeed(NAMESPACE, feedConfiguration.getFeedId(), null);
     assertEquals(0, feedStoreBasedFeedConfigStore.getFeedIds(NAMESPACE).size());
   }
 
   public void testHasFeed() throws Exception {
-    assertFalse(feedStoreBasedFeedConfigStore.hasFeed(NAMESPACE, feedConfiguration.getFeedId()));
+    assertFalse(feedStoreBasedFeedConfigStore.hasFeed(
+        NAMESPACE, feedConfiguration.getFeedId(), null));
     feedStoreBasedFeedConfigStore.addFeed(NAMESPACE, feedConfiguration);
-    assertTrue(feedStoreBasedFeedConfigStore.hasFeed(NAMESPACE, feedConfiguration.getFeedId()));
-    feedStoreBasedFeedConfigStore.deleteFeed(NAMESPACE, feedConfiguration.getFeedId());
-    assertFalse(feedStoreBasedFeedConfigStore.hasFeed(NAMESPACE, feedConfiguration.getFeedId()));
+    assertTrue(feedStoreBasedFeedConfigStore.hasFeed(
+        NAMESPACE, feedConfiguration.getFeedId(), null));
+    feedStoreBasedFeedConfigStore.deleteFeed(NAMESPACE, feedConfiguration.getFeedId(), null);
+    assertFalse(feedStoreBasedFeedConfigStore.hasFeed(
+        NAMESPACE, feedConfiguration.getFeedId(), null));
   }
 
   public void testGetAdatperConfigWithoutImpliciMixins() throws Exception {

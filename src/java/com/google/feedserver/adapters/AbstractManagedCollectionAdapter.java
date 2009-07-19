@@ -70,6 +70,7 @@ public abstract class AbstractManagedCollectionAdapter extends ManagedCollection
 
   public static final String PARAM_ENTRY = "entry";
   public static final String PARAM_FEED = "feed";
+  public static final String PARAM_USER = "user";
   public static final String PARAM_NAMESPACE = "namespace";
   public static final String PARAM_FEED_TYPE = "feedType";
   public static final String USER_INFO = "__user_info__";

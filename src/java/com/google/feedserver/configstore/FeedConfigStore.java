@@ -33,8 +33,11 @@ public interface FeedConfigStore {
 
   /**
    * Gets the {@link FeedConfiguration} for a specific feed in a namespace
+   * @param namespace Namespace
+   * @param feedId Feed id
+   * @param userId User id of per user feed requested; null if not per user feed
    */
-  public FeedConfiguration getFeedConfiguration(String namespace, String feedId)
+  public FeedConfiguration getFeedConfiguration(String namespace, String feedId, String userId)
       throws FeedConfigStoreException;
 
   /**
@@ -58,8 +61,9 @@ public interface FeedConfigStore {
 
   /**
    * Determines if the given feed is contained within the namespace
+ * @param userId TODO
    */
-  public boolean hasFeed(String namespace, String feedId) throws FeedConfigStoreException;
+  public boolean hasFeed(String namespace, String feedId, String userId) throws FeedConfigStoreException;
 
   /**
    * Add a feed with the given {@link FeedConfiguration} to the namespace
@@ -75,10 +79,11 @@ public interface FeedConfigStore {
    * {@link FeedConfiguration}
    * 
    * @param namespace The namespace to update the feed in
+   * @param userId User id of per user feed requested; null if not per user feed
    * @param config The feed configuration to update the feed with
    * @throws FeedConfigStoreException
    */
-  public void updateFeed(String namespace, FeedConfiguration config)
+  public void updateFeed(String namespace, String userId, FeedConfiguration config)
       throws FeedConfigStoreException;
 
   /**
@@ -86,9 +91,10 @@ public interface FeedConfigStore {
    * 
    * @param namespace The namespace to delete the feed from
    * @param feedId The feed to be deleted
+   * @param userId User id of per user feed requested; null if not per user feed 
    * @throws FeedConfigStoreException
    */
-  public void deleteFeed(String namespace, String feedId) throws FeedConfigStoreException;
+  public void deleteFeed(String namespace, String feedId, String userId) throws FeedConfigStoreException;
 
   /**
    * Gets the adapter configuration for a specific feed in a namespace
