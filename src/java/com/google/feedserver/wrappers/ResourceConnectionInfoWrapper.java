@@ -47,7 +47,7 @@ import com.google.feedserver.util.XmlUtil;
  *     <authorizedEntities repeatable="true">
  *       <operation>create|retrieve|update|delete</operation>
  *       <entities repeatable="true">john.doe@example.com</entities>
- *       <entities repeatable="true">group1@example.com</entities>
+ *       <entities repeatable="true">jane.doe@example.com</entities>
  *     </authorizedEntities>
  *   </acl>
  * </entity>
