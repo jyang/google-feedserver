@@ -17,6 +17,9 @@
 package com.google.feedserver.tools;
 
 import com.google.feedserver.client.FeedServerClient;
+import com.google.feedserver.resource.Acl;
+import com.google.feedserver.resource.AuthorizedEntity;
+import com.google.feedserver.resource.ResourceInfo;
 import com.google.feedserver.util.CommonsCliHelper;
 import com.google.feedserver.util.FeedServerClientException;
 import com.google.gdata.util.AuthenticationException;
@@ -60,125 +63,6 @@ public class FeedServerClientAclTool extends FeedServerClientTool {
 
   public static String acl_FLAG = null;
   public static String acl_HELP = "Access control list";
-
-  // ACL data model
-  public static class ResourceInfo {
-    public static final String FEED = "feed";
-
-    protected String resourceRule;
-    protected String resourceType;
-
-    public ResourceInfo() {
-    }
-
-    public ResourceInfo(String resourceRule, String resourceType) {
-      setResourceRule(resourceRule);
-      setResourceType(resourceType);
-    }
-
-    public String getResourceRule() {
-      return resourceRule;
-    }
-
-    public void setResourceRule(String resourceRule) {
-      this.resourceRule = resourceRule;
-    }
-
-    public String getResourceType() {
-      return resourceType;
-    }
-
-    public void setResourceType(String resourceType) {
-      this.resourceType = resourceType;
-    }
-  }
-
-  public static class AuthorizedEntity {
-    public static final String CREATE = "create";
-    public static final String RETRIEVE = "retrieve";
-    public static final String UPDATE = "update";
-    public static final String DELETE = "delete";
-
-    protected String operation;
-    protected String[] entities;
-
-    public AuthorizedEntity() {
-      entities = new String[0];
-    }
-
-    public AuthorizedEntity(String operation, String[] entities) {
-      setOperation(operation);
-      setEntities(entities);
-    }
-
-    public String getOperation() {
-      return operation;
-    }
-
-    public void setOperation(String operation) {
-      this.operation = operation;
-    }
-
-    public String[] getEntities() {
-      return entities;
-    }
-
-    public void setEntities(String[] entities) {
-      this.entities = entities == null ? new String[0] : entities;
-    }
-
-    public String lookupOperation(char op) {
-      switch(op) {
-        case 'c': return CREATE;
-        case 'r': return RETRIEVE;
-        case 'u': return UPDATE;
-        case 'd': return DELETE;
-        default: return null;
-      }
-    }
-  }
-
-  public static class Acl {
-    protected String name;
-    protected ResourceInfo resourceInfo;
-    protected AuthorizedEntity[] authorizedEntities;
-
-    public Acl() {
-      authorizedEntities = new AuthorizedEntity[0];
-    }
-
-    public Acl(String name, ResourceInfo resourceInfo, AuthorizedEntity[] authorizedEntities) {
-      setName(name);
-      setResourceInfo(resourceInfo);
-      setAuthorizedEntities(authorizedEntities);
-    }
-
-    public String getName() {
-      return name;
-    }
-
-    public void setName(String name) {
-      this.name = name;
-    }
-
-    public ResourceInfo getResourceInfo() {
-      return resourceInfo;
-    }
-
-    public void setResourceInfo(ResourceInfo resourceInfo) {
-      this.resourceInfo = resourceInfo;
-    }
-
-    public AuthorizedEntity[] getAuthorizedEntities() {
-      return authorizedEntities;
-    }
-
-    public void setAuthorizedEntities(AuthorizedEntity[] authorizedEntities) {
-      this.authorizedEntities =
-          authorizedEntities == null ? new AuthorizedEntity[0] : authorizedEntities;
-    }
-  }
-  // ACL data model
 
   public static final void main(String[] args) {
     new FeedServerClientAclTool().run(args);
@@ -264,7 +148,7 @@ public class FeedServerClientAclTool extends FeedServerClientTool {
       } else {
         if (acl.getName() == null) {
           acl.setName(resource);
-          acl.setResourceInfo(new ResourceInfo(resource, ResourceInfo.FEED));
+          acl.setResourceInfo(new ResourceInfo(resource, ResourceInfo.RESOURCE_TYPE_FEED));
           feedServerClient.insertEntity(new URL(url), acl);
         } else {
           feedServerClient.updateEntity(new URL(url), acl);

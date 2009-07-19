@@ -16,9 +16,9 @@
 
 package com.google.feedserver.tools;
 
-import com.google.feedserver.tools.FeedServerClientAclTool.Acl;
-import com.google.feedserver.tools.FeedServerClientAclTool.AuthorizedEntity;
-import com.google.feedserver.tools.FeedServerClientAclTool.ResourceInfo;
+import com.google.feedserver.resource.Acl;
+import com.google.feedserver.resource.AuthorizedEntity;
+import com.google.feedserver.resource.ResourceInfo;
 
 import junit.framework.TestCase;
 
@@ -42,12 +42,12 @@ public class FeedServerClientAclToolTest extends TestCase {
     super.setUp();
 
     aclTool  = new FeedServerClientAclTool();
-    authorizedEntity_r_0 = new AuthorizedEntity(AuthorizedEntity.RETRIEVE, new String[]{USER0});
+    authorizedEntity_r_0 = new AuthorizedEntity(AuthorizedEntity.OPERATION_RETRIEVE, new String[]{USER0});
     authorizedEntity_r_0_1 = new AuthorizedEntity(
-        AuthorizedEntity.RETRIEVE, new String[]{USER0, USER1});
-    authorizedEntity_u_0 = new AuthorizedEntity(AuthorizedEntity.UPDATE, new String[]{USER0});
-    authorizedEntity_r_9 = new AuthorizedEntity(AuthorizedEntity.RETRIEVE, new String[]{USER9});
-    authorizedEntity_u_9 = new AuthorizedEntity(AuthorizedEntity.UPDATE, new String[]{USER9});
+        AuthorizedEntity.OPERATION_RETRIEVE, new String[]{USER0, USER1});
+    authorizedEntity_u_0 = new AuthorizedEntity(AuthorizedEntity.OPERATION_UPDATE, new String[]{USER0});
+    authorizedEntity_r_9 = new AuthorizedEntity(AuthorizedEntity.OPERATION_RETRIEVE, new String[]{USER9});
+    authorizedEntity_u_9 = new AuthorizedEntity(AuthorizedEntity.OPERATION_UPDATE, new String[]{USER9});
   }
 
   protected static void assertAuthorizedEntityEquals(AuthorizedEntity ae1, AuthorizedEntity ae2) {
@@ -63,7 +63,7 @@ public class FeedServerClientAclToolTest extends TestCase {
    * entity with one principal.
    */
   public void testAddAcl0() {
-    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.FEED), null);
+    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.RESOURCE_TYPE_FEED), null);
     aclTool.addAcl(Arrays.asList(acl), 'r', USER9);
 
     assertEquals(1, acl.getAuthorizedEntities().length);
@@ -74,7 +74,7 @@ public class FeedServerClientAclToolTest extends TestCase {
    * Adding the same twice to empty should give you just one.
    */
   public void testAddAcl1() {
-    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.FEED),
+    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.RESOURCE_TYPE_FEED),
         new AuthorizedEntity[0]);
     List<Acl> acls = Arrays.asList(acl);
     aclTool.addAcl(acls, 'r', USER9);
@@ -85,7 +85,7 @@ public class FeedServerClientAclToolTest extends TestCase {
   }
 
   public void testAddAcl2() {
-    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.FEED), null);
+    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.RESOURCE_TYPE_FEED), null);
     List<Acl> acls = Arrays.asList(acl);
     aclTool.addAcl(acls, 'r', USER9);
     aclTool.removeAcl(acls, 'u', USER9);
@@ -99,7 +99,7 @@ public class FeedServerClientAclToolTest extends TestCase {
    * entities each with one principal.
    */
   public void testAddAcl3() {
-    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.FEED), null);
+    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.RESOURCE_TYPE_FEED), null);
     List<Acl> acls = Arrays.asList(acl);
     aclTool.addAcl(acls, 'r', USER9);
     aclTool.addAcl(acls, 'u', USER9);
@@ -114,7 +114,7 @@ public class FeedServerClientAclToolTest extends TestCase {
    * entity with two principals.
    */
   public void testAddAcl4() {
-    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.FEED),
+    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.RESOURCE_TYPE_FEED),
         new AuthorizedEntity[] {authorizedEntity_r_0});
     aclTool.addAcl(Arrays.asList(acl), 'r', USER9);
 
@@ -130,7 +130,7 @@ public class FeedServerClientAclToolTest extends TestCase {
    * entity with three principals.
    */
   public void testAddAcl5() {
-    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.FEED),
+    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.RESOURCE_TYPE_FEED),
         new AuthorizedEntity[] {authorizedEntity_r_0_1});
     aclTool.addAcl(Arrays.asList(acl), 'r', USER9);
 
@@ -146,19 +146,19 @@ public class FeedServerClientAclToolTest extends TestCase {
    * principal.  First authorized entity should have three principals and second unchanged.
    */
   public void testAddAcl6() {
-    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.FEED),
+    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.RESOURCE_TYPE_FEED),
         new AuthorizedEntity[] {authorizedEntity_r_0_1, authorizedEntity_u_0});
     aclTool.addAcl(Arrays.asList(acl), 'r', USER9);
 
     assertEquals(2, acl.getAuthorizedEntities().length);
 
-    assertEquals(AuthorizedEntity.RETRIEVE, acl.getAuthorizedEntities()[0].getOperation());
+    assertEquals(AuthorizedEntity.OPERATION_RETRIEVE, acl.getAuthorizedEntities()[0].getOperation());
     assertEquals(3, acl.getAuthorizedEntities()[0].getEntities().length);
     assertEquals(USER0, acl.getAuthorizedEntities()[0].getEntities()[0]);
     assertEquals(USER1, acl.getAuthorizedEntities()[0].getEntities()[1]);
     assertEquals(USER9, acl.getAuthorizedEntities()[0].getEntities()[2]);
 
-    assertEquals(AuthorizedEntity.UPDATE, acl.getAuthorizedEntities()[1].getOperation());
+    assertEquals(AuthorizedEntity.OPERATION_UPDATE, acl.getAuthorizedEntities()[1].getOperation());
     assertEquals(1, acl.getAuthorizedEntities()[1].getEntities().length);
     assertEquals(USER0, acl.getAuthorizedEntities()[1].getEntities()[0]);
   }
@@ -167,7 +167,7 @@ public class FeedServerClientAclToolTest extends TestCase {
    * Removing from empty should result in empty still.
    */
   public void testRemoveAcl0() {
-    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.FEED),
+    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.RESOURCE_TYPE_FEED),
         new AuthorizedEntity[0]);
     aclTool.removeAcl(Arrays.asList(acl), 'r', USER9);
 
@@ -178,7 +178,7 @@ public class FeedServerClientAclToolTest extends TestCase {
    * Removing a non-existing principal should be no-op. 
    */
   public void testRemoveAcl1() {
-    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.FEED),
+    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.RESOURCE_TYPE_FEED),
         new AuthorizedEntity[]{authorizedEntity_r_0});
     aclTool.removeAcl(Arrays.asList(acl), 'r', USER9);
 
@@ -191,7 +191,7 @@ public class FeedServerClientAclToolTest extends TestCase {
    * Removing a principal with non-existing operation should be no-op. 
    */
   public void testRemoveAcl2() {
-    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.FEED),
+    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.RESOURCE_TYPE_FEED),
         new AuthorizedEntity[]{authorizedEntity_r_0});
     aclTool.removeAcl(Arrays.asList(acl), 'd', USER0);
 
@@ -205,18 +205,18 @@ public class FeedServerClientAclToolTest extends TestCase {
    * unchanged.
    */
   public void testRemoveAcl3() {
-    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.FEED),
+    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.RESOURCE_TYPE_FEED),
         new AuthorizedEntity[] {authorizedEntity_r_0, authorizedEntity_u_0});
     aclTool.removeAcl(Arrays.asList(acl), 'r', USER9);
 
     assertEquals(2, acl.getAuthorizedEntities().length);
 
     assertEquals(1, acl.getAuthorizedEntities()[0].getEntities().length);
-    assertEquals(AuthorizedEntity.RETRIEVE, acl.getAuthorizedEntities()[0].getOperation());
+    assertEquals(AuthorizedEntity.OPERATION_RETRIEVE, acl.getAuthorizedEntities()[0].getOperation());
     assertEquals(USER0, acl.getAuthorizedEntities()[0].getEntities()[0]);
 
     assertEquals(1, acl.getAuthorizedEntities()[1].getEntities().length);
-    assertEquals(AuthorizedEntity.UPDATE, acl.getAuthorizedEntities()[1].getOperation());
+    assertEquals(AuthorizedEntity.OPERATION_UPDATE, acl.getAuthorizedEntities()[1].getOperation());
     assertEquals(USER0, acl.getAuthorizedEntities()[1].getEntities()[0]);
   }
 
@@ -225,7 +225,7 @@ public class FeedServerClientAclToolTest extends TestCase {
    * entities.
    */
   public void testRemoveAcl4() {
-    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.FEED),
+    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.RESOURCE_TYPE_FEED),
         new AuthorizedEntity[] {authorizedEntity_r_0});
     aclTool.removeAcl(Arrays.asList(acl), 'r', USER0);
 
@@ -237,7 +237,7 @@ public class FeedServerClientAclToolTest extends TestCase {
    * authorized entity of first principal.
    */
   public void testRemoveAcl5() {
-    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.FEED),
+    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.RESOURCE_TYPE_FEED),
         new AuthorizedEntity[] {authorizedEntity_r_0_1});
     aclTool.removeAcl(Arrays.asList(acl), 'r', USER1);
 
@@ -251,7 +251,7 @@ public class FeedServerClientAclToolTest extends TestCase {
    * authorized entity of second principal.
    */
   public void testRemoveAcl6() {
-    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.FEED),
+    Acl acl = new Acl("acl0", new ResourceInfo("resourceRule0", ResourceInfo.RESOURCE_TYPE_FEED),
         new AuthorizedEntity[] {authorizedEntity_r_0_1});
     aclTool.removeAcl(Arrays.asList(acl), 'r', USER0);
 
