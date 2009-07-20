@@ -32,6 +32,7 @@ import com.google.feedserver.adapters.AbstractManagedCollectionAdapter;
 import com.google.feedserver.adapters.FeedServerAdapterException;
 import com.google.feedserver.resource.Acl;
 import com.google.feedserver.resource.AuthorizedEntity;
+import com.google.feedserver.util.FileUtil;
 import com.google.feedserver.util.XmlUtil;
 
 /**
@@ -53,6 +54,8 @@ import com.google.feedserver.util.XmlUtil;
  * </entity>
  */
 public class ResourceConnectionInfoWrapper extends AccessControlWrapper {
+
+  public static final String DOMAIN_USERS = "DOMAIN_USERS";
 
   public static class Config {
     protected Acl[] acl;
@@ -79,6 +82,9 @@ public class ResourceConnectionInfoWrapper extends AccessControlWrapper {
 
     xmlUtil = new XmlUtil();
     Config config = new Config();
+    if (wrapperConfig.startsWith("@")) {
+      wrapperConfig = loadWrapperConfig(wrapperConfig.substring(1));
+    }
     xmlUtil.convertXmlToBean(wrapperConfig, config);
 
     resourceAclMap = new HashMap<String, Map<String, Set<String>>>();
@@ -94,6 +100,11 @@ public class ResourceConnectionInfoWrapper extends AccessControlWrapper {
       String path = acl.getResourceInfo().getResourceRule();
       resourceAclMap.put(path, operationPrincipalsMap);
     }
+  }
+
+  protected String loadWrapperConfig(String fileName) throws IOException {
+	String filePath = "conf/feedserver/" + this.getNameSpace() + "/AdapterConfig/acl/" + fileName;
+    return new FileUtil().readFileContents(filePath);
   }
 
   @Override
@@ -121,10 +132,11 @@ public class ResourceConnectionInfoWrapper extends AccessControlWrapper {
     }
 
     String userEmail = getUserEmailForRequest(request);
-    if (!principals.contains(userEmail)) {
-       throw new FeedServerAdapterException(
-           FeedServerAdapterException.Reason.NOT_AUTHORIZED, "viewer '" + userEmail +
-               "' not on principal list for '" + operation + "," + resourcePath + "'");
+    if (!principals.contains(userEmail) &&
+        !(principals.contains(DOMAIN_USERS) && userEmail.endsWith(getNameSpace()))) {
+      throw new FeedServerAdapterException(
+          FeedServerAdapterException.Reason.NOT_AUTHORIZED, "viewer '" + userEmail +
+              "' not on list of principals for '" + operation + "," + resourcePath + "'");
     }
   }
 }
