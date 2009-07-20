@@ -49,10 +49,14 @@ public class ShindigTestOAuthFilter extends AbstractOAuthFilter {
 
     // Retrieve and set the user info with the OAuth parameters
     Map<UserInfoProperties, Object> oauthParams = new HashMap<UserInfoProperties, Object>();
-    oauthParams.put(UserInfoProperties.EMAIL, message.getParameter("opensocial_viewer_id"));
-    oauthParams.put(UserInfoProperties.VIEWER_ID, message.getParameter("opensocial_viewer_id"));
-    oauthParams.put(UserInfoProperties.OWNER_EMAIL, message.getParameter("opensocial_owner_id"));
-    oauthParams.put(UserInfoProperties.OWNER_ID, message.getParameter("opensocial_owner_id"));
+    oauthParams.put(UserInfoProperties.EMAIL,
+        urlDecode(message.getParameter("opensocial_viewer_id")));
+    oauthParams.put(UserInfoProperties.VIEWER_ID,
+        urlDecode(message.getParameter("opensocial_viewer_id")));
+    oauthParams.put(UserInfoProperties.OWNER_EMAIL,
+        urlDecode(message.getParameter("opensocial_owner_id")));
+    oauthParams.put(UserInfoProperties.OWNER_ID,
+        urlDecode(message.getParameter("opensocial_owner_id")));
     oauthParams.put(UserInfoProperties.APPLICATION_ID, message.getParameter("opensocial_app_id"));
     oauthParams.put(UserInfoProperties.APPLICATION_URL, message.getParameter("opensocial_app_url"));
 
