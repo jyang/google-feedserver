@@ -24,7 +24,9 @@ import net.oauth.SimpleOAuthValidator;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -140,5 +142,14 @@ public abstract class AbstractOAuthFilter implements Filter {
   }
 
   public void destroy() {
+  }
+
+  protected String urlDecode(String s) {
+    try {
+      return URLDecoder.decode(s, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      // UTF-8 is indeed supported; won't come here
+      return s;
+    }
   }
 }
