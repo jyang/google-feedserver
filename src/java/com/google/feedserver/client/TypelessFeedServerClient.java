@@ -19,7 +19,13 @@ import com.google.feedserver.util.ContentUtil;
 import com.google.feedserver.util.FeedServerClientException;
 import com.google.feedserver.util.XmlUtil;
 import com.google.gdata.client.GoogleService;
+import com.google.gdata.data.Content;
+import com.google.gdata.data.HtmlTextConstruct;
 import com.google.gdata.data.OtherContent;
+import com.google.gdata.data.PlainTextConstruct;
+import com.google.gdata.data.TextConstruct;
+import com.google.gdata.data.TextContent;
+import com.google.gdata.data.XhtmlTextConstruct;
 import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ResourceNotFoundException;
 import com.google.gdata.util.ServiceException;
@@ -342,27 +348,71 @@ public class TypelessFeedServerClient {
   private Map<String, Object> getMapFromEntry(FeedServerEntry entry)
       throws FeedServerClientException {
     // Get XML and convert to primitive Object map.
-    OtherContent content = (OtherContent) entry.getContent();
-    log.info("Entry info " + content.getXml().getBlob());
-    XmlUtil xmlUtil = new XmlUtil();
-    try {
-      String xmlText = content.getXml().getBlob();
-      // TODO : This is a temporary work-around till a solution for escaping the
-      // '>' by the GData client library is worked
-      xmlText = xmlText.replaceAll("]]>", "]]&gt;");
-      Map<String, Object> entity = xmlUtil.convertXmlToProperties(xmlText);
-      if (entity == null) {
-        entity = new HashMap<String, Object>();
+    Content content = entry.getContent();
+    if (content instanceof OtherContent) {
+      OtherContent otherContent = (OtherContent) content;
+      log.info("Entry info " + otherContent.getXml().getBlob());
+      XmlUtil xmlUtil = new XmlUtil();
+      try {
+        String xmlText = otherContent.getXml().getBlob();
+        // TODO : This is a temporary work-around till a solution for escaping the
+        // '>' by the GData client library is worked
+        xmlText = xmlText.replaceAll("]]>", "]]&gt;");
+        Map<String, Object> entity = xmlUtil.convertXmlToProperties(xmlText);
+        if (entity == null) {
+          entity = new HashMap<String, Object>();
+        }
+        // copy id which is the same as self and edit link
+        entity.put(ContentUtil.ID, entry.getId());
+        return entity;
+      } catch (SAXException e) {
+        throw new FeedServerClientException(e);
+      } catch (IOException e) {
+        throw new FeedServerClientException(e);
+      } catch (ParserConfigurationException e) {
+        throw new RuntimeException(e);
       }
-      // copy id which is the same as self and edit link
-      entity.put(ContentUtil.ID, entry.getId());
+    } else if (content instanceof TextContent) {
+      TextContent textContent = (TextContent) content;
+      TextConstruct textConstruct = textContent.getContent();
+
+      int type = textContent.getContent().getType();
+      String typeName;
+      String text;
+      switch (type) {
+        case TextConstruct.Type.HTML:
+          typeName = "html";
+          text = ((HtmlTextConstruct) textConstruct).getHtml();
+          break;
+
+        case TextConstruct.Type.TEXT:
+          typeName = "text";
+          text = ((PlainTextConstruct) textConstruct).getPlainText();
+          break;
+
+        case TextConstruct.Type.XHTML:
+          typeName = "xhtml";
+          text = ((XhtmlTextConstruct) textConstruct).getXhtml().getBlob();
+          break;
+
+        default:
+          typeName = "unknown";
+          text = textConstruct.toString();
+      }
+
+      Map<String, Object> entity = new HashMap<String, Object>();
+      entity.put("content", text);
+      entity.put("type", typeName);
+
+      String lang = textContent.getContent().getLang();
+      if (lang != null) {
+        entity.put("lang", lang);
+      }
+
       return entity;
-    } catch (SAXException e) {
-      throw new FeedServerClientException(e);
-    } catch (IOException e) {
-      throw new FeedServerClientException(e);
-    } catch (ParserConfigurationException e) {
-      throw new RuntimeException(e);
+    } else {
+      throw new FeedServerClientException("Unsupported content class " +
+          content.getClass().getName());
     }
   }
 
