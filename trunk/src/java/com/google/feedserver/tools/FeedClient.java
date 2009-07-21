@@ -16,10 +16,10 @@
 
 package com.google.feedserver.tools;
 
-import com.google.feedserver.client.TypelessFeedServerClient;
 import com.google.feedserver.tools.commands.DeleteGadget;
 import com.google.feedserver.tools.commands.DeleteUserGadget;
 import com.google.feedserver.tools.commands.DirGadgets;
+import com.google.feedserver.tools.commands.GetFeed;
 import com.google.feedserver.tools.commands.ListGadgets;
 import com.google.feedserver.tools.commands.ListUserGadgets;
 import com.google.feedserver.tools.commands.PublishGadget;
@@ -33,7 +33,6 @@ import com.google.feedserver.tools.commands.UploadUserGadget;
 import com.google.feedserver.util.CommonsCliHelper;
 import com.google.feedserver.util.FileUtil;
 import com.google.gdata.client.GoogleService;
-import com.google.gdata.util.AuthenticationException;
 
 import java.io.Console;
 import java.util.LinkedHashMap;
@@ -69,7 +68,6 @@ public class FeedClient {
 
   // instance variables
   protected Map<String, FeedClientCommand> commands;
-  protected TypelessFeedServerClient typelessClient;
   protected FileUtil fileUtil;
   protected CommonsCliHelper commandLine;
 
@@ -79,19 +77,15 @@ public class FeedClient {
   }
 
   public FeedClient(String[] args) {
-    GoogleService service = new GoogleService(
-        serviceName_FLAG, FeedClient.class.getName(), authnURLProtocol_FLAG, authnURL_FLAG);
-    typelessClient = new TypelessFeedServerClient(service);
     fileUtil = new FileUtil();
     commandLine = new CommonsCliHelper();
 
-    init(args);
+    initCommandLine(args);
+    login();
+    initCommands();
   }
 
-  protected void init(String[] args) {
-    commands  = new LinkedHashMap<String, FeedClientCommand>();
-    addCommands();
-
+  protected void initCommandLine(String[] args) {
     commandLine.register(FeedClient.class);
     commandLine.parse(args);
   }
@@ -105,11 +99,15 @@ public class FeedClient {
     }
   }
 
-  protected void addCommands() {
-    GoogleService service = typelessClient.getService();
+  protected void initCommands() {
+    GoogleService service = new GoogleService(
+        serviceName_FLAG, FeedClient.class.getName(), authnURLProtocol_FLAG, authnURL_FLAG);
+
+    commands  = new LinkedHashMap<String, FeedClientCommand>();
     addCommand(new DeleteGadget(service, fileUtil));
     addCommand(new DeleteUserGadget(service, fileUtil));
     addCommand(new DirGadgets(service, fileUtil));
+    addCommand(new GetFeed(service, fileUtil));
     addCommand(new ListGadgets(service, fileUtil));
     addCommand(new ListUserGadgets(service, fileUtil));
     addCommand(new PublishGadget(service, fileUtil));
@@ -121,7 +119,7 @@ public class FeedClient {
     addCommand(new UploadGadget(service, fileUtil));
     addCommand(new UploadUserGadget(service, fileUtil));
   }
-
+  
   protected void addCommand(FeedClientCommand command) {
     commands.put(command.getCommandName().toLowerCase(), command);
     commandLine.register(command.getClass());
@@ -131,15 +129,6 @@ public class FeedClient {
     if (args.length == 0) {
       printUsage(args);
     } else {
-      // login
-      login();
-      try {
-        typelessClient.setUserCredentials(userEmail_FLAG, password_FLAG);
-      } catch (AuthenticationException e) {
-        printError(e.getMessage());
-        return;
-      }
-
       // execute command
       FeedClientCommand command = commands.get(args[0].toLowerCase());
       if (command == null) {
