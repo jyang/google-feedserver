@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -43,6 +44,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class SimpleOAuthFilter extends AbstractOAuthFilter {
 
+  private static final Logger logger = Logger.getLogger(SimpleOAuthFilter.class.getName());
+
   public SimpleOAuthFilter(KeyManager keyManager) {
     super(keyManager);
   }
@@ -50,15 +53,20 @@ public class SimpleOAuthFilter extends AbstractOAuthFilter {
   @Override
   public String authenticate(HttpServletRequest request) throws IOException, OAuthException,
       URISyntaxException {
+    logger.info("verifying signed fetch ...");
+
     OAuthMessage message = OAuthServlet.getMessage(request, null);
     String consumerKey = message.getConsumerKey();
     String signatureMethod = message.getSignatureMethod();
     OAuthConsumer consumer = keyManager.getOAuthConsumer(provider, consumerKey, signatureMethod);
     if (null == consumer) {
-      throw new OAuthException("Not Authorized");
+      logger.info("signed fetch verification failed: consumer is null");
+      throw new OAuthException("Unauthorized");
     }
     OAuthAccessor accessor = new OAuthAccessor(consumer);
     message.validateMessage(accessor, validator);
+
+    logger.info("signed fetch verified");
 
     // Retrieve and set the user info with the OAuth parameters
     Map<UserInfoProperties, Object> oauthParams = new HashMap<UserInfoProperties, Object>();
