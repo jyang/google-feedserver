@@ -24,6 +24,7 @@ import com.google.feedserver.filters.SimpleKeyMananger;
 import com.google.feedserver.manager.FeedServerProvider;
 import com.google.feedserver.samples.config.AllowAllAclValidator;
 import com.google.feedserver.samples.configstore.SampleFileSystemFeedConfigStore;
+import com.google.feedserver.samples.manager.XmlWrapperManager;
 import com.google.feedserver.server.servlet.GetAuthTokenServlet;
 import com.google.feedserver.server.servlet.GuiceServletContextListener;
 import com.google.feedserver.server.servlet.MethodOverrideServletFilter;
@@ -90,7 +91,7 @@ public class Main {
     FeedServerConfiguration config = FeedServerConfiguration.createIntance(feedConfigStore);
     config.setAclValidator(new AllowAllAclValidator());
     config.initialize(new SimpleCommandLineParser(args));
-    config.setWrapperManagerClassName("com.google.feedserver.samples.manager.XmlWrapperManager");
+    config.setWrapperManagerClassName(XmlWrapperManager.class.getName());
     // set up server
     Server server = new Server(config.getPort());
     Context context = new Context(server, "/", Context.SESSIONS);
