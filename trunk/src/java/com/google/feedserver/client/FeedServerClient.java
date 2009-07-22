@@ -20,13 +20,13 @@ import com.google.inject.Inject;
 import com.google.feedserver.util.FeedServerClientException;
 
 import org.apache.commons.beanutils.BeanMap;
-import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Implements a parameterized Gdata feed client for FeedServer "payload-in-content" feeds employing
@@ -40,7 +40,7 @@ public class FeedServerClient<T> {
   private static final String NAME_ELEMENT = "name";
 
   // Logging instance
-  private static final Logger LOG = Logger.getLogger(FeedServerClient.class);
+  private static final Logger LOG = Logger.getLogger(FeedServerClient.class.getName());
   
   // Dependencies
   private GoogleService service; 
