@@ -21,12 +21,11 @@ import net.oauth.OAuthServiceProvider;
 import net.oauth.OAuthValidator;
 import net.oauth.SimpleOAuthValidator;
 
-import org.apache.log4j.Logger;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -46,7 +45,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public abstract class AbstractOAuthFilter implements Filter {
 
-  private static Logger logger = Logger.getLogger(SimpleOAuthFilter.class);
+  private static Logger logger = Logger.getLogger(SimpleOAuthFilter.class.getName());
+
   protected OAuthServiceProvider provider;
   protected KeyManager keyManager;
   protected OAuthValidator validator;
@@ -129,14 +129,14 @@ public abstract class AbstractOAuthFilter implements Filter {
         // Initialize the filter with the key manager class
         initializeFilter(keyManager);
       } catch (InstantiationException e) {
-        logger.error("Problems encountered while creating an instance of key manager : "
-            + keyManagerClassName, e);
+        logger.severe("Problems encountered while creating an instance of key manager : "
+            + keyManagerClassName);
       } catch (IllegalAccessException e) {
-        logger.error("Problems encountered while creating an instance of key manager : "
-            + keyManagerClassName, e);
+        logger.severe("Problems encountered while creating an instance of key manager : "
+            + keyManagerClassName);
       } catch (ClassNotFoundException e) {
-        logger.error("Unable to locate and create an instance of key manager : "
-            + keyManagerClassName + " Ensure that the required class is packaged with the jars", e);
+        logger.severe("Unable to locate and create an instance of key manager : "
+            + keyManagerClassName + " Ensure that the required class is packaged with the jars");
       }
     }
   }

@@ -31,7 +31,6 @@ import com.google.gdata.util.ResourceNotFoundException;
 import com.google.gdata.util.ServiceException;
 import com.google.inject.Inject;
 
-import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -41,6 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -63,7 +63,7 @@ import javax.xml.parsers.ParserConfigurationException;
 public class TypelessFeedServerClient {
 
   // Logging instance
-  private static final Logger log = Logger.getLogger(TypelessFeedServerClient.class);
+  private static final Logger log = Logger.getLogger(TypelessFeedServerClient.class.getName());
 
   // Dependencies
   private GoogleService service;

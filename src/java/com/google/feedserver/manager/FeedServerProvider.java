@@ -26,9 +26,9 @@ import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.TargetType;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 import org.apache.abdera.protocol.server.provider.managed.ManagedProvider;
-import org.apache.log4j.Logger;
 
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * {@link FeedServerProvider} extends {@link ManagedProvider} so that we can use
@@ -98,7 +98,7 @@ public class FeedServerProvider extends ManagedProvider {
           request.getTarget().getParameter(AbstractManagedCollectionAdapter.PARAM_FEED),
           request.getTarget().getParameter(AbstractManagedCollectionAdapter.PARAM_USER));
     } catch (Exception e) {
-      logger.error(e);
+      logger.severe(e.getMessage());
       return null;
     }
   }
