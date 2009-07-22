@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -54,6 +55,8 @@ import com.google.feedserver.util.XmlUtil;
  * </entity>
  */
 public class ResourceConnectionInfoWrapper extends AccessControlWrapper {
+
+  private static Logger logger = Logger.getLogger(ResourceConnectionInfoWrapper.class.getName());
 
   public static final String DOMAIN_USERS = "DOMAIN_USERS";
 
@@ -125,6 +128,7 @@ public class ResourceConnectionInfoWrapper extends AccessControlWrapper {
     }
 
     Set<String> principals = operationPrincipalsMap.get(operation);
+    logger.info("checkAccess: principals=" + principals);
     if (principals == null) {
       throw new FeedServerAdapterException(
           FeedServerAdapterException.Reason.NOT_AUTHORIZED, "No ACL defined for '" +
@@ -132,11 +136,14 @@ public class ResourceConnectionInfoWrapper extends AccessControlWrapper {
     }
 
     String userEmail = getUserEmailForRequest(request);
+    logger.info("checkAccess: userEmail=" + userEmail);
     if (!principals.contains(userEmail) &&
         !(principals.contains(DOMAIN_USERS) && userEmail.endsWith(getNameSpace()))) {
       throw new FeedServerAdapterException(
           FeedServerAdapterException.Reason.NOT_AUTHORIZED, "viewer '" + userEmail +
               "' not on list of principals for '" + operation + "," + resourcePath + "'");
     }
+
+    logger.info("checkAccess: access granted");
   }
 }
