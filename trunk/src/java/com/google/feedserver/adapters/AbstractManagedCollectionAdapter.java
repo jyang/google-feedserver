@@ -219,6 +219,7 @@ public abstract class AbstractManagedCollectionAdapter extends ManagedCollection
 
   protected void addEditLinkToEntry(Entry entry) {
     if (ProviderHelper.getEditUriFromEntry(entry) == null) {
+      setEntryIdIfNull(entry);
       entry.addLink(entry.getId().toString(), "edit");
     }
   }
