@@ -53,7 +53,7 @@ import javax.servlet.Filter;
  * @author rakeshs101981@gmail.com (Rakesh Shete)
  */
 public class Main {
-  private static Logger log = Logger.getLogger(Main.class.getName());
+  private static Logger logger = Logger.getLogger(Main.class.getName());
 
   public static final String OAUTH_SIGNED_FETCH_FILTER_CLASS_NAME =
 	  SimpleOAuthFilter.class.getName();
@@ -87,13 +87,14 @@ public class Main {
     commandLine.parse(args);
 
     SampleFileSystemFeedConfigStore feedConfigStore = new SampleFileSystemFeedConfigStore();
-    log.info("Created a file store");
+    logger.info("Created a file system config store");
     FeedServerConfiguration config = FeedServerConfiguration.createIntance(feedConfigStore);
     config.setAclValidator(new AllowAllAclValidator());
     config.initialize(new SimpleCommandLineParser(args));
     config.setWrapperManagerClassName(XmlWrapperManager.class.getName());
     // set up server
     Server server = new Server(config.getPort());
+    server.getConnectors()[0].setHost("localhost");  // listen on localhost:{port} only
     Context context = new Context(server, "/", Context.SESSIONS);
 
     // Add the Abdera servlet
@@ -111,7 +112,7 @@ public class Main {
       context.addFilter(SignedRequestFilter.class, "/*", org.mortbay.jetty.Handler.DEFAULT);
       EventListener listener = new GuiceServletContextListener();
       context.addEventListener(listener);
-      log.info("Starting the feedserver to accept signed requests");
+      logger.info("Starting FeedServer to accept signed requests");
     } else if (!useOAuthSignedFetch_FLAG.equalsIgnoreCase("false")) {
       // Register the OAuth filter
       SimpleKeyMananger sKeyManager = new SimpleKeyMananger();
@@ -119,7 +120,7 @@ public class Main {
    		  OAUTH_SIGNED_FETCH_FILTER_CLASS_NAME : useOAuthSignedFetch_FLAG, sKeyManager);
       FilterHolder fh = new FilterHolder(of);
       context.addFilter(fh, "/*", org.mortbay.jetty.Handler.DEFAULT);
-      log.info("Starting the feedserver to accept OAuth signed requests");
+      logger.info("Starting FeedServer to accept OAuth signed requests");
     }
 
     // start server
