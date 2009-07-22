@@ -78,8 +78,8 @@ public abstract class AbstractOAuthFilter implements Filter {
     this.keyManager = keyManager;
     provider = new OAuthServiceProvider(null, null, null);
     validator = new SimpleOAuthValidator();
-    logger.info("Initialized the OAuth filter successfully with key manager : "
-        + keyManager.toString());
+    logger.info("Initialized OAuth filter with key manager: "
+        + keyManager.getClass().getName());
   }
 
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
