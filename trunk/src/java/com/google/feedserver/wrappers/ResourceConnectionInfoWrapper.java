@@ -121,6 +121,7 @@ public class ResourceConnectionInfoWrapper extends AccessControlWrapper {
         checkAccess(operation, request, null);
         return;
       } catch(FeedServerAdapterException e) {
+        logger.info("checkAccess: access denied");
         throw new FeedServerAdapterException(
             FeedServerAdapterException.Reason.NOT_AUTHORIZED, "No ACL defined for '" +
                 operation + "," + resourcePath + "'; " + e.getMessage());
@@ -130,6 +131,7 @@ public class ResourceConnectionInfoWrapper extends AccessControlWrapper {
     Set<String> principals = operationPrincipalsMap.get(operation);
     logger.info("checkAccess: principals=" + principals);
     if (principals == null) {
+      logger.info("checkAccess: access denied");
       throw new FeedServerAdapterException(
           FeedServerAdapterException.Reason.NOT_AUTHORIZED, "No ACL defined for '" +
               operation + "," + resourcePath + "'");
@@ -139,6 +141,7 @@ public class ResourceConnectionInfoWrapper extends AccessControlWrapper {
     logger.info("checkAccess: userEmail=" + userEmail);
     if (!principals.contains(userEmail) &&
         !(principals.contains(DOMAIN_USERS) && userEmail.endsWith(getNameSpace()))) {
+      logger.info("checkAccess: access denied");
       throw new FeedServerAdapterException(
           FeedServerAdapterException.Reason.NOT_AUTHORIZED, "viewer '" + userEmail +
               "' not on list of principals for '" + operation + "," + resourcePath + "'");
