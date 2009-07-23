@@ -66,12 +66,17 @@ public class SimpleOAuthFilter extends AbstractOAuthFilter {
     OAuthAccessor accessor = new OAuthAccessor(consumer);
     message.validateMessage(accessor, validator);
 
+    String viewerEmail = message.getParameter("opensocial_viewer_email");
+    if (viewerEmail == null) {
+      logger.info("signed fetch verification failed: viewer email is null");
+      throw new OAuthException("Missing user identity opensocial_viewer_email");
+    }
+
     logger.info("signed fetch verified");
 
     // Retrieve and set the user info with the OAuth parameters
     Map<UserInfoProperties, Object> oauthParams = new HashMap<UserInfoProperties, Object>();
-    oauthParams.put(UserInfoProperties.EMAIL,
-        urlDecode(message.getParameter("opensocial_viewer_email")));
+    oauthParams.put(UserInfoProperties.EMAIL, urlDecode(viewerEmail));
     oauthParams.put(UserInfoProperties.VIEWER_ID, message.getParameter("opensocial_viewer_id"));
     oauthParams.put(UserInfoProperties.OWNER_EMAIL,
         urlDecode(message.getParameter("opensocial_owner_email")));
