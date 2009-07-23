@@ -33,6 +33,7 @@ import com.google.feedserver.adapters.AbstractManagedCollectionAdapter;
 import com.google.feedserver.adapters.FeedServerAdapterException;
 import com.google.feedserver.resource.Acl;
 import com.google.feedserver.resource.AuthorizedEntity;
+import com.google.feedserver.util.FileSystemConfigStoreUtil;
 import com.google.feedserver.util.FileUtil;
 import com.google.feedserver.util.XmlUtil;
 
@@ -59,6 +60,7 @@ public class ResourceConnectionInfoWrapper extends AccessControlWrapper {
   private static Logger logger = Logger.getLogger(ResourceConnectionInfoWrapper.class.getName());
 
   public static final String DOMAIN_USERS = "DOMAIN_USERS";
+  public static final String ANYONE = "*";
 
   public static class Config {
     protected Acl[] acl;
@@ -85,7 +87,7 @@ public class ResourceConnectionInfoWrapper extends AccessControlWrapper {
 
     xmlUtil = new XmlUtil();
     Config config = new Config();
-    if (wrapperConfig.startsWith("@")) {
+    if (wrapperConfig.startsWith(FileSystemConfigStoreUtil.FILE_INDICATOR)) {
       wrapperConfig = loadWrapperConfig(wrapperConfig.substring(1));
     }
     xmlUtil.convertXmlToBean(wrapperConfig, config);
@@ -139,12 +141,23 @@ public class ResourceConnectionInfoWrapper extends AccessControlWrapper {
 
     String userEmail = getUserEmailForRequest(request);
     logger.info("checkAccess: userEmail=" + userEmail);
-    if (!principals.contains(userEmail) &&
-        !(principals.contains(DOMAIN_USERS) && userEmail.endsWith(getNameSpace()))) {
-      logger.info("checkAccess: access denied");
-      throw new FeedServerAdapterException(
-          FeedServerAdapterException.Reason.NOT_AUTHORIZED, "viewer '" + userEmail +
-              "' not on list of principals for '" + operation + "," + resourcePath + "'");
+
+    if (userEmail == null) {
+      // user unauthenticated
+      if (!principals.contains(ANYONE)) {
+        throw new FeedServerAdapterException(
+            FeedServerAdapterException.Reason.NOT_AUTHORIZED, "viewer unauthenticated and " +
+                ANYONE + " not allowed for '" + operation + "," + resourcePath + "'");
+      }
+    } else {
+      // user authenticated
+      if (!principals.contains(userEmail) &&
+          !(principals.contains(DOMAIN_USERS) && userEmail.endsWith(getNameSpace()))) {
+        logger.info("checkAccess: access denied");
+        throw new FeedServerAdapterException(
+            FeedServerAdapterException.Reason.NOT_AUTHORIZED, "viewer '" + userEmail +
+                "' not on list of principals for '" + operation + "," + resourcePath + "'");
+      }
     }
 
     logger.info("checkAccess: access granted");
