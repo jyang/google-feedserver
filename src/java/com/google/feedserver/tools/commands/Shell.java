@@ -21,6 +21,9 @@ import com.google.feedserver.tools.FeedClientCommand;
 import com.google.feedserver.util.FileUtil;
 import com.google.gdata.client.GoogleService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Command for starting FSCT shell to execute multiple commands with one login.
  *
@@ -42,11 +45,7 @@ public class Shell extends FeedClientCommand {
   @Override
   public void execute(String[] shellArgs) throws Exception {
     for (;;) {
-      String command = FeedClient.getConsole().readLine(PROMPT);
-      String[] args = command.split(" ");
-      for (int i = 0; i < args.length; i++) {
-        args[i] = args[i].trim();
-      }
+      String[] args = parseCommandLine(FeedClient.getConsole().readLine(PROMPT));
 
       if (isCommand(args, getCommandName())) {
         // already in shell: ignore
@@ -72,6 +71,19 @@ public class Shell extends FeedClientCommand {
       FeedClient shell = new FeedClient(args);
       shell.execute(args);
     }
+  }
+
+  protected static String[] parseCommandLine(String commandLine) {
+    String[] args = commandLine.split(" ");
+    List<String> outList = new ArrayList<String>();
+    for (int i = 0; i < args.length; i++) {
+      args[i] = args[i].trim();
+      if (!args[i].isEmpty()) {
+        outList.add(args[i]);
+      }
+    }
+    String[] outArgs = new String[outList.size()];
+    return outList.toArray(outArgs);
   }
 
   protected boolean isCommand(String[] args, String commandName) {
