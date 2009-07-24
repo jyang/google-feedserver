@@ -20,6 +20,7 @@ import com.google.feedserver.tools.commands.DeleteGadget;
 import com.google.feedserver.tools.commands.DeleteUserGadget;
 import com.google.feedserver.tools.commands.DirGadgets;
 import com.google.feedserver.tools.commands.GetFeed;
+import com.google.feedserver.tools.commands.InsertEntry;
 import com.google.feedserver.tools.commands.ListGadgets;
 import com.google.feedserver.tools.commands.ListUserGadgets;
 import com.google.feedserver.tools.commands.PublishGadget;
@@ -33,6 +34,7 @@ import com.google.feedserver.tools.commands.UploadUserGadget;
 import com.google.feedserver.util.CommonsCliHelper;
 import com.google.feedserver.util.FileUtil;
 import com.google.gdata.client.GoogleService;
+import com.google.gdata.util.AuthenticationException;
 
 import java.io.Console;
 import java.util.LinkedHashMap;
@@ -70,6 +72,7 @@ public class FeedClient {
   protected Map<String, FeedClientCommand> commands;
   protected FileUtil fileUtil;
   protected CommonsCliHelper commandLine;
+  protected GoogleService service;
 
   public static void main(String[] args) {
     FeedClient shell = new FeedClient(args);
@@ -77,30 +80,39 @@ public class FeedClient {
   }
 
   public FeedClient(String[] args) {
-    fileUtil = new FileUtil();
-    commandLine = new CommonsCliHelper();
+    this();
 
     initCommandLine(args);
-    login();
     initCommands();
   }
 
+  protected FeedClient() {
+    fileUtil = new FileUtil();
+    commandLine = new CommonsCliHelper();
+  }
+
   protected void initCommandLine(String[] args) {
+    // trim all values
+    for (int i = 0; i < args.length; i++) {
+      args[i] = args[i].trim();
+    }
+    
     commandLine.register(FeedClient.class);
     commandLine.parse(args);
   }
 
-  protected void login() {
+  protected void login() throws AuthenticationException {
     while (userEmail_FLAG == null || userEmail_FLAG.trim().isEmpty()) {
       userEmail_FLAG = getConsole().readLine("User email: ");
     }
     while (password_FLAG == null || password_FLAG.trim().isEmpty()) {
       password_FLAG = new String(getConsole().readPassword("Password: "));
     }
+    service.setUserCredentials(userEmail_FLAG, password_FLAG);
   }
 
   protected void initCommands() {
-    GoogleService service = new GoogleService(
+    service = new GoogleService(
         serviceName_FLAG, FeedClient.class.getName(), authnURLProtocol_FLAG, authnURL_FLAG);
 
     commands  = new LinkedHashMap<String, FeedClientCommand>();
@@ -108,6 +120,7 @@ public class FeedClient {
     addCommand(new DeleteUserGadget(service, fileUtil));
     addCommand(new DirGadgets(service, fileUtil));
     addCommand(new GetFeed(service, fileUtil));
+    addCommand(new InsertEntry(service, fileUtil));
     addCommand(new ListGadgets(service, fileUtil));
     addCommand(new ListUserGadgets(service, fileUtil));
     addCommand(new PublishGadget(service, fileUtil));
@@ -128,17 +141,18 @@ public class FeedClient {
   public void execute(String[] args) {
     if (args.length == 0) {
       printUsage(args);
+      return;
+    }
+
+    FeedClientCommand command = commands.get(args[0].toLowerCase());
+    if (command == null) {
+      printError("command '" + args[0] + "' not found");
     } else {
-      // execute command
-      FeedClientCommand command = commands.get(args[0].toLowerCase());
-      if (command == null) {
-        printError("command '" + args[0] + "' not found");
-      } else {
-        try {
-          command.execute(args);
-        } catch (Exception e) {
-          printError(e.getMessage());
-        }
+      try {
+        login();
+        command.execute(args);
+      } catch (Exception e) {
+        printError(e.getMessage());
       }
     }
   }
