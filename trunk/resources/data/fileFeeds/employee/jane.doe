@@ -1,0 +1,8 @@
+<entity>
+  <employeeNumber>1002</employeeNumber>
+  <lastName>Doe</lastName>
+  <firstName>Jane</firstName>
+  <jobTitle>Chief Human Officer</jobTitle>
+  <location>NYC-B1</location>
+  <phoneOffice>212-555-1212</phoneOffice>
+</entity>

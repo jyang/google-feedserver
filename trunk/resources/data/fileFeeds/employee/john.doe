@@ -1,0 +1,8 @@
+<entity>
+  <employeeNumber>1001</employeeNumber>
+  <lastName>Doe</lastName>
+  <firstName>John</firstName>
+  <jobTitle>Regular Human</jobTitle>
+  <location>MTV-B1</location>
+  <phoneOffice>650-555-1212</phoneOffice>
+</entity>
