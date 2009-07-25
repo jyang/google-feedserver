@@ -34,4 +34,14 @@ public class ShellTest extends TestCase {
     assertEquals("b", args[1]);
     assertEquals("c", args[2]);
   }
+
+  public void testReadCommandLine3() {
+    String[] args = Shell.parseCommandLine("");
+    assertEquals(0, args.length);
+  }
+
+  public void testReadCommandLine4() {
+    String[] args = Shell.parseCommandLine("   ");
+    assertEquals(0, args.length);
+  }
 }
