@@ -85,8 +85,7 @@ public class FileAdapter extends AbstractManagedCollectionAdapter {
 
   public FileAdapter(XmlUtil xmlUtil, FileUtil fileUtil, Abdera abdera,
       FeedConfiguration config, FileAdapterConfig fileAdapterConfig)
-      throws IllegalArgumentException, IntrospectionException, IllegalAccessException,
-      InvocationTargetException, SAXException, IOException, ParserConfigurationException {
+      throws IllegalArgumentException {
     super(abdera, config);
 
     this.xmlUtil = xmlUtil;
@@ -133,7 +132,7 @@ public class FileAdapter extends AbstractManagedCollectionAdapter {
   }
 
   @Override
-  public FeedInfo getFeedInfo(RequestContext request) throws FeedServerAdapterException {
+  public FeedInfo getFeedInfo(RequestContext request) {
     return null;
   }
 

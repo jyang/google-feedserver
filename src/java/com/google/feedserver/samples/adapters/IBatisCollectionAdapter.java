@@ -162,7 +162,7 @@ public class IBatisCollectionAdapter extends AbstractManagedCollectionAdapter {
   }
 
   @Override
-  public FeedInfo getFeedInfo(RequestContext request) throws FeedServerAdapterException {
+  public FeedInfo getFeedInfo(RequestContext request) {
     return getFeedInfoFromConfig(request);
   }
 

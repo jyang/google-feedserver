@@ -398,7 +398,7 @@ public abstract class AbstractManagedCollectionAdapter extends ManagedCollection
   }
 
   @SuppressWarnings({"unchecked"})
-  public FeedInfo getFeedInfoFromConfig(RequestContext request) throws FeedServerAdapterException {
+  public FeedInfo getFeedInfoFromConfig(RequestContext request) {
     return getFeedInfoFromMap((Map<String, Object>) getConfiguration().getTypeMetadataConfig());
   }
 
