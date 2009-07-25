@@ -47,29 +47,24 @@ public class Shell extends FeedClientCommand {
     for (;;) {
       String[] args = parseCommandLine(FeedClient.getConsole().readLine(PROMPT));
 
-      if (isCommand(args, getCommandName())) {
+      if (args.length == 0) {
+        // empty command line; do nothing
+      } else if (isCommand(args, getCommandName())) {
         // already in shell: ignore
-        continue;
-      }
-
-      if (isCommand(args, COMMAND_QUIT)) {
+      } else if (isCommand(args, COMMAND_QUIT)) {
         break;
-      }
-
-      if (isCommand(args, COMMAND_HELP)) {
+      } else if (isCommand(args, COMMAND_HELP)) {
         feedClient.printCommandUsage(true);
 
         System.out.println();
         System.out.println("  " + COMMAND_QUIT);
         System.out.println("    Quits shell");
+      } else {
+        args = append(args, shellArgs);
 
-        continue;
+        FeedClient shell = new FeedClient(args);
+        shell.execute(args);
       }
-
-      args = append(args, shellArgs);
-
-      FeedClient shell = new FeedClient(args);
-      shell.execute(args);
     }
   }
 
