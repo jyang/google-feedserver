@@ -171,11 +171,12 @@ public class FileAdapter extends AbstractManagedCollectionAdapter {
       File feedDir = new File(feedDirPath);
       Feed feed = createFeed();
       for (File entityFile: feedDir.listFiles()) {
-        String entityFileContent;
-          entityFileContent = fileUtil.readFileContents(entityFile);
-        Map<String, Object> entityProperties = xmlUtil.convertXmlToProperties(entityFileContent);
-        entityProperties.put(ContentUtil.ID, entityFile.getName());
-        createEntryFromProperties(feed, entityProperties);
+        if (entityFile.isFile() && !entityFile.isHidden()) {
+          String entityFileContent = fileUtil.readFileContents(entityFile);
+          Map<String, Object> entityProperties = xmlUtil.convertXmlToProperties(entityFileContent);
+          entityProperties.put(ContentUtil.ID, entityFile.getName());
+          createEntryFromProperties(feed, entityProperties);
+        }
       }
       return feed;
     } catch (IOException e) {
