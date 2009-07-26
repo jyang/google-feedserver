@@ -91,7 +91,7 @@ public class ResourceConnectionInfoWrapper extends AccessControlWrapper {
       wrapperConfig = loadWrapperConfig(wrapperConfig.substring(1));
     }
     xmlUtil.convertXmlToBean(wrapperConfig, config);
-
+    
     resourceAclMap = new HashMap<String, Map<String, Set<String>>>();
     for (Acl acl: config.getAcl()) {
       Map<String, Set<String>> operationPrincipalsMap = new HashMap<String, Set<String>>();
@@ -105,6 +105,8 @@ public class ResourceConnectionInfoWrapper extends AccessControlWrapper {
       String path = acl.getResourceInfo().getResourceRule();
       resourceAclMap.put(path, operationPrincipalsMap);
     }
+
+    logger.info("ResourceConnectionInfoWrapper config=" + resourceAclMap);
   }
 
   protected String loadWrapperConfig(String fileName) throws IOException {
@@ -113,7 +115,7 @@ public class ResourceConnectionInfoWrapper extends AccessControlWrapper {
   }
 
   @Override
-  protected void checkAccess(String operation, RequestContext request, Object entryId)
+  protected void doCheckAccess(String operation, RequestContext request, Object entryId)
       throws FeedServerAdapterException {
     String resourcePath = entryId == null ? "/" : "/" + entryId;
     Map<String, Set<String>> operationPrincipalsMap = resourceAclMap.get(resourcePath);

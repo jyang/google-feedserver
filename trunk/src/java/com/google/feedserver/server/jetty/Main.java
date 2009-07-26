@@ -18,13 +18,13 @@ package com.google.feedserver.server.jetty;
 
 import com.google.feedserver.config.FeedServerConfiguration;
 import com.google.feedserver.filters.KeyManager;
-import com.google.feedserver.filters.SimpleOAuthFilter;
 import com.google.feedserver.filters.SignedRequestFilter;
 import com.google.feedserver.filters.SimpleKeyMananger;
 import com.google.feedserver.manager.FeedServerProvider;
 import com.google.feedserver.samples.config.AllowAllAclValidator;
 import com.google.feedserver.samples.configstore.SampleFileSystemFeedConfigStore;
 import com.google.feedserver.samples.manager.XmlWrapperManager;
+import com.google.feedserver.server.FlagConfig;
 import com.google.feedserver.server.servlet.GetAuthTokenServlet;
 import com.google.feedserver.server.servlet.GuiceServletContextListener;
 import com.google.feedserver.server.servlet.MethodOverrideServletFilter;
@@ -55,25 +55,6 @@ import javax.servlet.Filter;
 public class Main {
   private static Logger logger = Logger.getLogger(Main.class.getName());
 
-  public static final String OAUTH_SIGNED_FETCH_FILTER_CLASS_NAME =
-	  SimpleOAuthFilter.class.getName();
-
-  public static String port_FLAG = "8080";
-  public static final String port_HELP = "Port number to run FeedServer at.  Defaults to " +
-      port_FLAG;
-
-  public static String useAuth_FLAG = "false";
-  public static final String useAuth_HELP = "When true, provides a login servlet at " +
-      "/accounts/ClientLogin that mimics Google's ClientLogin to get an authentication token " +
-      "that FeedServer can then verify.  Defaults to " + useAuth_FLAG;
-
-  public static String useOAuthSignedFetch_FLAG = "false";
-  public static final String useOAuthSignedFetch_HELP = "When true, FeedServer expects requests " +
-      "sent to it to be signed with OAuth signed fetch and verifies them to get viewer " +
-      "information.  A value other than true or false is a regarded as the class " +
-      "name of the OAuth signed fetch filter to be used.  Value true is equivalent to " +
-      OAUTH_SIGNED_FETCH_FILTER_CLASS_NAME + ".  Defaults to " + useOAuthSignedFetch_FLAG;
-
   protected CommonsCliHelper commandLine;
 
   public static void main(String[] args) throws Exception {
@@ -83,7 +64,7 @@ public class Main {
   public Main(String[] args) throws Exception {
     // parse command line flags
     commandLine = new CommonsCliHelper();
-    commandLine.register(Main.class);
+    commandLine.register(FlagConfig.class);
     commandLine.parse(args);
 
     SampleFileSystemFeedConfigStore feedConfigStore = new SampleFileSystemFeedConfigStore();
@@ -106,18 +87,18 @@ public class Main {
     context.addFilter(XdServletFilter.class, "/*", Handler.DEFAULT);
     context.addFilter(MethodOverrideServletFilter.class, "/*", Handler.DEFAULT);
 
-    if (useAuth_FLAG.equalsIgnoreCase("true")) {
+    if (FlagConfig.enableAuth_FLAG.equalsIgnoreCase("true")) {
       ServletHolder servletHolder2 = new ServletHolder(new GetAuthTokenServlet());
       context.addServlet(servletHolder2, "/accounts/ClientLogin");
       context.addFilter(SignedRequestFilter.class, "/*", org.mortbay.jetty.Handler.DEFAULT);
       EventListener listener = new GuiceServletContextListener();
       context.addEventListener(listener);
       logger.info("Starting FeedServer to accept signed requests");
-    } else if (!useOAuthSignedFetch_FLAG.equalsIgnoreCase("false")) {
+    } else if (!FlagConfig.enableOAuthSignedFetch_FLAG.equalsIgnoreCase("false")) {
       // Register the OAuth filter
       SimpleKeyMananger sKeyManager = new SimpleKeyMananger();
-      Filter of = createOAuthFilter(useOAuthSignedFetch_FLAG.equalsIgnoreCase("true") ?
-   		  OAUTH_SIGNED_FETCH_FILTER_CLASS_NAME : useOAuthSignedFetch_FLAG, sKeyManager);
+      Filter of = createOAuthFilter(FlagConfig.enableOAuthSignedFetch_FLAG.equalsIgnoreCase("true") ?
+   		  FlagConfig.OAUTH_SIGNED_FETCH_FILTER_CLASS_NAME : FlagConfig.enableOAuthSignedFetch_FLAG, sKeyManager);
       FilterHolder fh = new FilterHolder(of);
       context.addFilter(fh, "/*", org.mortbay.jetty.Handler.DEFAULT);
       logger.info("Starting FeedServer to accept OAuth signed requests");

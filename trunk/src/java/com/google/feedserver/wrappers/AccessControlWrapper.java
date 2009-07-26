@@ -31,6 +31,7 @@ import org.xml.sax.SAXException;
 import com.google.feedserver.adapters.AbstractManagedCollectionAdapter;
 import com.google.feedserver.adapters.FeedServerAdapterException;
 import com.google.feedserver.resource.AuthorizedEntity;
+import com.google.feedserver.server.FlagConfig;
 
 /**
  * Wrapper that controls access to resources
@@ -59,8 +60,15 @@ public abstract class AccessControlWrapper extends ManagedCollectionAdapterWrapp
     super(target, wrapperConfig);
   }
 
-  protected abstract void checkAccess(String operation, RequestContext request, Object entryId)
-      throws FeedServerAdapterException;
+  protected void checkAccess(String operation, RequestContext request, Object entryId)
+      throws FeedServerAdapterException {
+    if (new Boolean(FlagConfig.enableAccessControl_FLAG).equals(Boolean.TRUE)) {
+      doCheckAccess(operation, request, entryId);
+    }
+  }
+
+  protected abstract void doCheckAccess(String operation, RequestContext request, Object entryId)
+  throws FeedServerAdapterException;
 
   @Override
   public Entry createEntry(RequestContext request, Entry entry)
