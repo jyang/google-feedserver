@@ -75,7 +75,7 @@ public class Main {
     config.setWrapperManagerClassName(XmlWrapperManager.class.getName());
     // set up server
     Server server = new Server(config.getPort());
-    server.getConnectors()[0].setHost("localhost");  // listen on localhost:{port} only
+//    server.getConnectors()[0].setHost("localhost");  // listen on localhost:{port} only
     Context context = new Context(server, "/", Context.SESSIONS);
 
     // Add the Abdera servlet
