@@ -397,7 +397,7 @@ public abstract class AbstractManagedCollectionAdapter extends ManagedCollection
     return id;
   }
 
-  @SuppressWarnings({"unchecked"})
+  @SuppressWarnings("unchecked")
   public FeedInfo getFeedInfoFromConfig(RequestContext request) {
     return getFeedInfoFromMap((Map<String, Object>) getConfiguration().getTypeMetadataConfig());
   }
