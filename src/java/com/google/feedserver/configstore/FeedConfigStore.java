@@ -185,4 +185,12 @@ public interface FeedConfigStore {
    * @throws FeedConfigStoreException
    */
   public void disallowAdapter(String namespace, String adapterId) throws FeedConfigStoreException;
+
+  /**
+   * Resolves referenced value
+   * @param namespace Namespace
+   * @param valueReference Reference to another value
+   * @return Referenced value
+   */
+  public String resolveFeedConfigReferencedValue(String namespace, String valueReference);
 }

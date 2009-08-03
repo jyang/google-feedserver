@@ -28,6 +28,7 @@ import com.google.feedserver.samples.config.MapMixinConfiguration;
 import com.google.feedserver.samples.config.XmlMixinConfiguration;
 import com.google.feedserver.util.ConfigStoreUtil;
 import com.google.feedserver.util.FileSystemConfigStoreUtil;
+import com.google.feedserver.util.FileUtil;
 
 import org.apache.abdera.protocol.server.provider.managed.CollectionAdapterConfiguration;
 import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
@@ -122,10 +123,13 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
    */
   public static final String ADAPTER_CLASS_NAME = "className";
 
+  protected FileUtil fileUtil;
+
   /**
    * Default constructor
    */
   public SampleFileSystemFeedConfigStore() {
+    fileUtil = new FileUtil();
   }
 
   /**
@@ -372,8 +376,7 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
    * #hasFeed(java.lang.String, java.lang.String)
    */
   @Override
-  public boolean hasFeed(String namespace, String feedId, String userId)
-      throws FeedConfigStoreException {
+  public boolean hasFeed(String namespace, String feedId, String userId) {
     // Get the handle to the feed config file
     File feedFile = getFeedConfigFilePath(namespace, feedId, userId);
     return feedFile.exists();
@@ -498,8 +501,7 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
    * #hasAdapterConfiguration(java.lang.String, java.lang.String)
    */
   @Override
-  public boolean hasAdapterConfiguration(String namespace, String adapterName)
-      throws FeedConfigStoreException {
+  public boolean hasAdapterConfiguration(String namespace, String adapterName) {
     // Get the handle to the adapter config file
     File adapterFile = getAdapterConfigFile(namespace, adapterName);
     return adapterFile.exists();
@@ -566,7 +568,7 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
    * @param namespace
    * @param feedId
    * @param userId
-   * @return
+   * @return Feed config file path
    * @see com.google.feedserver.configstore.FeedConfigStore#getFeedConfiguration(String,
    *      String, String)
    */
@@ -580,6 +582,32 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
           FeedServerConfiguration.FEED_CONFIGURATION + "/user");
     }
     return new File(pathToFeedFile);
+  }
+
+  /**
+   * Resolves referenced value in a configuration file
+   * @param namespace Namespace
+   * @param valueReference Reference to embedded value in the form of @fileName
+   * @return Content of referenced file
+   */
+  @Override
+  public String resolveFeedConfigReferencedValue(String namespace, String valueReference) {
+    if (valueReference.startsWith(FileSystemConfigStoreUtil.FILE_INDICATOR)) {
+      String path = new StringBuilder(
+          FEED_CONFIGURATION_PATH.replace(namespacePlaceHolder, namespace))
+          .append("/")
+          .append(valueReference.substring(FileSystemConfigStoreUtil.FILE_INDICATOR.length()))
+          .toString();
+      try {
+        return fileUtil.readFileContents(path);
+      } catch (IOException e) {
+        logger.severe(e.getMessage());
+        return null;
+      }
+    } else {
+      // no reference: return the value itself
+      return valueReference;
+    }
   }
 
   /**
@@ -788,6 +816,8 @@ public class SampleFileSystemFeedConfigStore implements FeedConfigStore {
         .getProperty(FeedConfiguration.PROP_TITLE_NAME));
     propertiesMap.put(FeedServerConfiguration.CONFIG_VALUE_KEY, prop
         .get(FeedServerConfiguration.CONFIG_VALUE_KEY));
+    propertiesMap.put(FeedServerConfiguration.FEED_TYPE_CONFIG_KEY, prop
+        .get(FeedServerConfiguration.FEED_TYPE_CONFIG_KEY));
     propertiesMap.put(FeedConfiguration.PROP_SUB_URI_NAME, subUri);
 
     // Get the adapter configuration

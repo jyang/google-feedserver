@@ -133,7 +133,7 @@ public class FileAdapter extends AbstractManagedCollectionAdapter {
 
   @Override
   public FeedInfo getFeedInfo(RequestContext request) {
-    return null;
+    return getFeedInfoFromConfig(request);
   }
 
   @Override
