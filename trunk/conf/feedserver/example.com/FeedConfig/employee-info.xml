@@ -1,0 +1,38 @@
+<entityInfo>
+  <properties repeatable="true">
+    <typeName>number</typeName>
+    <name>employeeNumber</name>
+    <label>Emp#</label>
+    <isRepeatable>false</isRepeatable>
+  </properties>
+  <properties>
+    <typeName>string</typeName>
+    <name>lastName</name>
+    <label>Last Name</label>
+    <isRepeatable>false</isRepeatable>
+  </properties>
+  <properties>
+    <typeName>string</typeName>
+    <name>firstName</name>
+    <label>First Name</label>
+    <isRepeatable>false</isRepeatable>
+  </properties>
+  <properties>
+    <typeName>string</typeName>
+    <name>jobTitle</name>
+    <label>Title</label>
+    <isRepeatable>false</isRepeatable>
+  </properties>
+  <properties>
+    <typeName>string</typeName>
+    <name>location</name>
+    <label>Location</label>
+    <isRepeatable>false</isRepeatable>
+  </properties>
+  <properties>
+    <typeName>string</typeName>
+    <name>phoneOffice</name>
+    <label>Office Phone</label>
+    <isRepeatable>false</isRepeatable>
+  </properties>
+</entityInfo>

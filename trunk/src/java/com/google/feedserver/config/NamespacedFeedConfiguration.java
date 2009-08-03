@@ -16,12 +16,20 @@
 
 package com.google.feedserver.config;
 
+import com.google.feedserver.configstore.FeedConfigStore;
+import com.google.feedserver.metadata.SimpleFeedInfo;
 import com.google.feedserver.util.FeedServerUtil;
+import com.google.feedserver.util.XmlUtil;
 
 import org.apache.abdera.protocol.server.provider.managed.FeedConfiguration;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Hosted version of {@link FeedConfiguration}
@@ -30,8 +38,11 @@ import java.util.Map;
  * 
  */
 public class NamespacedFeedConfiguration extends FeedConfiguration {
+  private static Logger logger = Logger.getLogger(NamespacedFeedConfiguration.class.getName());
+
   protected final Map<String, Object> properties;
   protected NamespacedAdapterConfiguration adapterConfiguration;
+  protected XmlUtil xmlUtil;
 
   /**
    * Creates a new {@link NamespacedFeedConfiguration} using the properties for
@@ -56,6 +67,7 @@ public class NamespacedFeedConfiguration extends FeedConfiguration {
         FeedServerUtil.getStringProperty(properties, FeedServerConfiguration.FEED_ADAPTER_NAME_KEY),
         serverConfiguration);
     this.properties = new HashMap<String, Object>(properties);
+    this.xmlUtil = new XmlUtil();
     setAdapterConfig(adapterConfiguration);
   }
 
@@ -105,7 +117,27 @@ public class NamespacedFeedConfiguration extends FeedConfiguration {
   }
 
   public Object getTypeMetadataConfig() {
-    return properties.get(FeedServerConfiguration.FEED_TYPE_CONFIG_KEY);
+    String feedInfoValue = (String) properties.get(FeedServerConfiguration.FEED_TYPE_CONFIG_KEY);
+    if (feedInfoValue != null) {
+      FeedConfigStore configStore =
+          getServerConfiguration().getGolbalServerConfiguration().getFeedConfigStore();
+      String namespace = getServerConfiguration().getNameSpace();
+      feedInfoValue = configStore.resolveFeedConfigReferencedValue(namespace, feedInfoValue.trim());
+      try {
+        return xmlUtil.convertXmlToProperties(feedInfoValue);
+      } catch (SAXException e) {
+        logger.warning(e.getMessage());
+        return null;
+      } catch (IOException e) {
+        logger.warning(e.getMessage());
+        return null;
+      } catch (ParserConfigurationException e) {
+        logger.warning(e.getMessage());
+        return null;
+      }
+    } else {
+      return null;
+    }
   }
 
   /**

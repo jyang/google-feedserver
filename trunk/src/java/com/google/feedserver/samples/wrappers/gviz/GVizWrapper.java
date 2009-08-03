@@ -17,6 +17,7 @@ package com.google.feedserver.samples.wrappers.gviz;
 
 import com.google.feedserver.adapters.AbstractManagedCollectionAdapter;
 import com.google.feedserver.adapters.FeedServerAdapterException;
+import com.google.feedserver.metadata.FeedInfo;
 import com.google.feedserver.wrappers.ManagedCollectionAdapterWrapper;
 
 import org.apache.abdera.Abdera;
@@ -51,7 +52,7 @@ public class GVizWrapper extends ManagedCollectionAdapterWrapper {
 
   @Override
   public Feed retrieveFeed(RequestContext request) throws FeedServerAdapterException {
-    // TODO Auto-generated method stub
+    FeedInfo feedInfo = getFeedInfo(request);
     return super.retrieveFeed(request);
   }
 }

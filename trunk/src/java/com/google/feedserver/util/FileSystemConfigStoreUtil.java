@@ -36,7 +36,7 @@ public class FileSystemConfigStoreUtil extends ConfigStoreUtil {
    * The character that indicates that the string value following it is a
    * filename
    */
-  public static String FILE_INDICATOR = "@";
+  public static final String FILE_INDICATOR = "@";
 
   private FileSystemConfigStoreUtil() {
   }
