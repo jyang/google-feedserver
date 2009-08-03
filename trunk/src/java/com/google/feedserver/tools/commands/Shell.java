@@ -45,7 +45,7 @@ public class Shell extends FeedClientCommand {
   @Override
   public void execute(String[] shellArgs) throws Exception {
     for (;;) {
-      String[] args = parseCommandLine(FeedClient.getConsole().readLine(PROMPT));
+      String[] args = parseCommandLine(FeedClient.readLine(PROMPT));
 
       if (args.length == 0) {
         // empty command line; do nothing

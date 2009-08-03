@@ -59,7 +59,8 @@ public class PublishUserGadget extends GadgetCommand {
       specClient.getEntity(domainGadgetEntryUrl);
       // domain gadget exists; update
       try {
-        if (promptContinue("About to overwrite gadget '" + domainGadgetEntryUrl + "'")) {
+        if (FeedClient.promptContinue("About to overwrite gadget '" +
+            domainGadgetEntryUrl + "'")) {
           specClient.updateEntity(domainGadgetFeedUrl, userGadgetEntity);
         } else
           return;
@@ -91,12 +92,6 @@ public class PublishUserGadget extends GadgetCommand {
           getDomainEntryUrl(PRIVATE_GADGET, domainDirEntity.getId()) + "' and now visible " +
           "in your domain's private gadget directory");
     }
-  }
-
-  protected boolean promptContinue(String message) {
-    System.out.println(message);
-    String answer = FeedClient.getConsole().readLine("Continue? (y/N) ");
-    return "y".equals(answer.toLowerCase());
   }
 
   @Override
