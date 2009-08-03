@@ -34,10 +34,17 @@ public class DirGadgets extends GadgetCommand {
 
   @Override
   public void execute(String[] args) throws Exception {
-    String gadgetDirectoryUrl = getDomainFeedUrl(PRIVATE_GADGET) + "?nocache=1";
-    List<GadgetDirEntity> dirEntities = dirClient.getEntities(new URL(gadgetDirectoryUrl));
-    for (GadgetDirEntity e: dirEntities) {
-      System.out.println(e.getId() + ": " + e.getUrl());
+    for (int startIndex = 1;; startIndex += 20) {
+      String gadgetDirectoryUrl = getDomainFeedUrl(PRIVATE_GADGET) +
+          "?nocache=1&start-index=" + startIndex;
+      List<GadgetDirEntity> dirEntities = dirClient.getEntities(new URL(gadgetDirectoryUrl));
+      if (dirEntities.size() == 0) {
+        break;
+      } else {
+        for (GadgetDirEntity e: dirEntities) {
+          System.out.println(e.getId() + ": " + e.getUrl());
+        }
+      }
     }
   }
 

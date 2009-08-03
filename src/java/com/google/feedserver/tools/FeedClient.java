@@ -36,7 +36,9 @@ import com.google.feedserver.util.FileUtil;
 import com.google.gdata.client.GoogleService;
 import com.google.gdata.util.AuthenticationException;
 
-import java.io.Console;
+import jline.ConsoleReader;
+
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -68,6 +70,15 @@ public class FeedClient {
   public static final String serviceName_HELP = "Optional service name.  Defaults to '" +
       serviceName_FLAG + "'";
 
+  protected static ConsoleReader consoleReader;
+  static {
+    try {
+      consoleReader = new ConsoleReader();
+    } catch (IOException e) {
+      printError(e.getMessage());
+    }
+  }
+
   // instance variables
   protected Map<String, FeedClientCommand> commands;
   protected FileUtil fileUtil;
@@ -77,6 +88,38 @@ public class FeedClient {
   public static void main(String[] args) {
     FeedClient shell = new FeedClient(args);
     shell.execute(args);
+  }
+  
+  /**
+   * Reads a line from console
+   * @param prompt Prompt to print
+   * @return Line entered on console
+   * @throws IOException
+   */
+  public static String readLine(String prompt) throws IOException {
+    return consoleReader.readLine(prompt);
+  }
+
+  /**
+   * Reads a password from console
+   * @param prompt Prompt to print
+   * @return Password entered on console
+   * @throws IOException
+   */
+  public static String readPassword(String prompt) throws IOException {
+    return consoleReader.readLine(prompt, new Character('*'));
+  }
+
+  /**
+   * Prompts user to continue or stop
+   * @param message Message to show
+   * @return true if user wants to continue; false otherwise
+   * @throws IOException
+   */
+  public static boolean promptContinue(String message) throws IOException {
+    System.out.println(message);
+    String answer = readLine("Continue? (y/N) ");
+    return "y".equals(answer.toLowerCase());
   }
 
   public FeedClient(String[] args) {
@@ -101,12 +144,12 @@ public class FeedClient {
     commandLine.parse(args);
   }
 
-  protected void login() throws AuthenticationException {
+  protected void login() throws AuthenticationException, IOException {
     while (userEmail_FLAG == null || userEmail_FLAG.trim().isEmpty()) {
-      userEmail_FLAG = getConsole().readLine("User email: ");
+      userEmail_FLAG = readLine("User email: ");
     }
     while (password_FLAG == null || password_FLAG.trim().isEmpty()) {
-      password_FLAG = new String(getConsole().readPassword("Password: "));
+      password_FLAG = new String(readPassword("Password: "));
     }
     service.setUserCredentials(userEmail_FLAG, password_FLAG);
   }
@@ -157,15 +200,6 @@ public class FeedClient {
     }
   }
 
-  public static Console getConsole() {
-    Console console = System.console();
-    if (console == null) {
-      throw new NullPointerException("no console");
-    } else {
-      return console;
-    }
-  }
-
   public void printUsage(String[] args) {
     System.out.println("Usage: fsct <command> <arg> <arg> ... <-flag> <-flag> ...");
     System.out.println("e.g.: fsct uploadUserGadget /tmp/hello-user.xml -userEmail " +
@@ -189,7 +223,7 @@ public class FeedClient {
     }
   }
 
-  protected void printError(String message) {
+  protected static void printError(String message) {
     System.err.println("Error: " + message);
   }
 }

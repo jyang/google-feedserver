@@ -16,7 +16,6 @@
 
 package com.google.feedserver.tools.commands;
 
-import com.google.feedserver.tools.FeedClient;
 import com.google.feedserver.util.FeedServerClientException;
 import com.google.feedserver.util.FileUtil;
 import com.google.gdata.client.GoogleService;
@@ -75,12 +74,6 @@ public class PublishGadget extends GadgetCommand {
           getDomainEntryUrl(PRIVATE_GADGET, domainDirEntity.getId()) + "' and now visible " +
           "in your domain's private gadget directory");
     }
-  }
-
-  protected boolean promptContinue(String message) {
-    System.out.println(message);
-    String answer = FeedClient.getConsole().readLine("Continue? (y/N) ");
-    return "y".equals(answer.toLowerCase());
   }
 
   @Override
