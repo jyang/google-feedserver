@@ -27,8 +27,8 @@ import java.util.Map;
 /**
  * Command for inserting an entity into a feed.
  *
- * Usage: fsct insertEntry <feedUrl> <entityFilePath> <flags ...>
- *   feedUrl: relative to host
+ * Usage: fsct insertEntry <feedUrlPath> <entityFilePath> <flags ...>
+ *   feedUrlPath: part of feed URL after host
  */
 public class InsertEntry extends TypelessCommand {
 
@@ -38,8 +38,8 @@ public class InsertEntry extends TypelessCommand {
 
   @Override
   public void execute(String[] args) throws Exception {
-    String relativeFeedUrl = checkNotFlag(args[1]);
-    if (relativeFeedUrl == null) {
+    String feedUrlPath = checkNotFlag(args[1]);
+    if (feedUrlPath == null) {
       throw new IllegalArgumentException("Missing first argument for relative feed URL");
     }
 
@@ -50,7 +50,7 @@ public class InsertEntry extends TypelessCommand {
 
     String entityXml = new FileUtil().readFileContents(entitFilePath);
     Map<String, Object> entity = new XmlUtil().convertXmlToProperties(entityXml);
-    String feedUrl = FeedClient.host_FLAG + relativeFeedUrl;
+    String feedUrl = FeedClient.host_FLAG + feedUrlPath;
     Map<String, Object> insertedEntity =
         typelessClient.insertEntry(new URL(feedUrl), entity);
     System.out.println(insertedEntity);
@@ -59,7 +59,10 @@ public class InsertEntry extends TypelessCommand {
   @Override
   public void usage(boolean inShell) {
     System.out.println(getFeedClientCommand(inShell) + getCommandName() +
-        " <relativeFeedUrl> <entityFilePath> <flags ...>");
-    System.out.println("    Inserts an enttry into a feed");
+        " <feedUrlPath> <entityFilePath> <flags ...>");
+    System.out.println("    Inserts an entry into a feed. <feedUrlPath> is the part of feed " +
+        "URL after host. For example, if feed URL is " +
+        "'http://feedserver-enterprise.googleusercontent.com/a/example.com/g/PrivateGadgetSpec', " +
+        "<feedUrlPath> is '/a/example.com/g/PrivateGadgetSpec'");
   }
 }

@@ -27,8 +27,8 @@ import java.util.Map;
 /**
  * Command for getting a domain feed.
  *
- * Usage: fsct getFeed <feedUrl> <flags ...>
- *   feedUrl: relative to host
+ * Usage: fsct getFeed <feedUrlPath> <flags ...>
+ *   feedUrlPath: part of feed URL after host
  */
 public class GetFeed extends TypelessCommand {
 
@@ -38,13 +38,13 @@ public class GetFeed extends TypelessCommand {
 
   @Override
   public void execute(String[] args) throws Exception {
-    String relativeFeedUrl = checkNotFlag(args[1]);
+    String feedUrlPath = checkNotFlag(args[1]);
 
-    if (relativeFeedUrl == null) {
+    if (feedUrlPath == null) {
       throw new IllegalArgumentException("Missing first argument for relative feed URL");
     }
 
-    String feedUrl = FeedClient.host_FLAG + relativeFeedUrl;
+    String feedUrl = FeedClient.host_FLAG + feedUrlPath;
     List<Map<String, Object>> entities = typelessClient.getEntries(new URL(feedUrl));
     System.out.println(entities);
   }
@@ -52,7 +52,10 @@ public class GetFeed extends TypelessCommand {
   @Override
   public void usage(boolean inShell) {
     System.out.println(getFeedClientCommand(inShell) + getCommandName() +
-        " <relativeFeedUrl> <flags ...>");
-    System.out.println("    Gets a domain feed");
+        " <feedUrlPath> <flags ...>");
+    System.out.println("    Gets a domain feed. <feedUrlPath> is the part of feed " +
+        "URL after host. For example, if feed URL is " +
+        "'http://feedserver-enterprise.googleusercontent.com/a/example.com/g/PrivateGadgetSpec', " +
+        "<feedUrlPath> is '/a/example.com/g/PrivateGadgetSpec'");
   }
 }
