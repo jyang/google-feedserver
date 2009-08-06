@@ -29,7 +29,7 @@ public class StringToNumericCallback implements TypeHandlerCallback {
   }
 
   public void setParameter(ParameterSetter setter, Object parameter) throws SQLException {
-    setter.setInt(Integer.parseInt((String) parameter));
+    setter.setFloat(Float.parseFloat((String) parameter));
   }
 
   public Object valueOf(String s) {
