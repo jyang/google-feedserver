@@ -79,7 +79,7 @@ public class Main {
     Context context = new Context(server, "/", Context.SESSIONS);
 
     // Add the Abdera servlet
-    ServletHolder servletHolder = new ServletHolder(new AbderaServlet());
+    ServletHolder servletHolder = new ServletHolder(new GVizServlet());
     servletHolder.setInitParameter(ServiceManager.PROVIDER, FeedServerProvider.class.getName());
     context.addServlet(servletHolder, "/*");
 
