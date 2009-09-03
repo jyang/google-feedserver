@@ -7,7 +7,7 @@ var privateGadgetSpecFeedUrl = null;
 var SERVICE_NAME = 'esp';
 var APP_NAME = 'private-gadget-editor';
 
-var SPINNER = '<img src="//google-feedserver.googlecode.com/svn/trunk/resources/gadgets/private-gadget-editor/spinner.gif">';
+var SPINNER = '<img src="http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/private-gadget-editor/spinner.gif">';
 var DEFAULT_SPINNER_ID = 'spinner';
 
 function $(id) {
