@@ -107,7 +107,7 @@ var MAX_NO_SCROLL_ROWS = 20;
 var MAX_SCROLLBAR_HEIGHT = 360;
 var MAX_RESULTS = 20;
 
-var SPINNER = '<img src="//google-feedserver.googlecode.com/svn/trunk/resources/gadgets/private-gadget-editor/spinner.gif">';
+var SPINNER = '<img src="http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/private-gadget-editor/spinner.gif">';
 
 var NO_FILTER = 'noRestrictions';
 var WHITE_LIST_FILTER = 'whiteList';
