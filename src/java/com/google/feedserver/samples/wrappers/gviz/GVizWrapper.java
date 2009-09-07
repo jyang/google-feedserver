@@ -59,7 +59,7 @@ public class GVizWrapper extends ManagedCollectionAdapterWrapper {
   public static final String PARAMETER_TQ = "tq";
   public static final String PARAMETER_TQH = "tqh";
   public static final String PARAMETER_TQX = "tqx";
-  public static final String PARAMETER_OUTPUT = "out";
+  public static final String PARAMETER_OUTPUT = "alt";
 
 
   /**
@@ -90,16 +90,16 @@ public class GVizWrapper extends ManagedCollectionAdapterWrapper {
     String tq = null;
     String tqh = null;
     String tqx = null;
-    String alt = null;
+    String out = null;
 
     if (request != null) {
-      alt = request.getParameter(PARAMETER_OUTPUT);
+      out = request.getParameter(PARAMETER_OUTPUT);
       tq = request.getParameter(PARAMETER_TQ);
       tqh = request.getParameter(PARAMETER_TQH);
       tqx = request.getParameter(PARAMETER_TQX);
     }
 
-    if (!"gviz".equalsIgnoreCase(alt)) {
+    if (!"gviz".equalsIgnoreCase(out)) {
       return super.retrieveFeed(request);
     }
     
