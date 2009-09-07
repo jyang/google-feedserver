@@ -1,9 +1,7 @@
 package com.google.feedserver.server.jetty;
 
+import com.google.feedserver.samples.wrappers.gviz.GVizWrapper;
 import com.google.feedserver.util.XmlUtil;
-import com.google.gdata.util.common.base.StringUtil;
-
-import com.sun.org.apache.xml.internal.security.utils.XMLUtils;
 
 import org.apache.abdera.protocol.error.Error;
 import org.apache.abdera.protocol.server.FilterChain;
@@ -22,7 +20,6 @@ import java.util.Date;
 import java.util.Map;
 
 import javax.activation.MimeType;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
@@ -69,7 +66,7 @@ public class GVizServlet extends AbderaServlet {
             response.setHeader(name, value.toString());
         }
       }
-      if ("gviz".equalsIgnoreCase(request.getParameter("out"))) {      
+      if ("gviz".equalsIgnoreCase(request.getParameter(GVizWrapper.PARAMETER_OUTPUT))) {      
         outputGViz(request, response, context);
       }
       else if (!request.getMethod().equals("HEAD") && context.hasEntity()) {
