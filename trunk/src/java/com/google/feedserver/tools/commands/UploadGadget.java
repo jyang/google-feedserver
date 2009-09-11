@@ -45,14 +45,14 @@ public class UploadGadget extends GadgetCommand {
     File gadgetSpecFile = new File(gadgetSpecFilePath);
     String gadgetName = gadgetSpecFile.getName();
     URL feedUrl = new URL(getDomainFeedUrl(PRIVATE_GADGET_SPEC));
-    
+
     GadgetSpecEntity entity = new GadgetSpecEntity(gadgetName);
     try {
       specClient.deleteEntity(feedUrl, entity);
     } catch (FeedServerClientException e) {
       // entity doesn't exist
     }
-    
+
     try {
       entity.setSpecContent(fileUtil.readFileContents(gadgetSpecFilePath));
       specClient.insertEntity(feedUrl, entity);
