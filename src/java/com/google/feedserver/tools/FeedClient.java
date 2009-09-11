@@ -19,6 +19,7 @@ package com.google.feedserver.tools;
 import com.google.feedserver.tools.commands.DeleteGadget;
 import com.google.feedserver.tools.commands.DeleteUserGadget;
 import com.google.feedserver.tools.commands.DirGadgets;
+import com.google.feedserver.tools.commands.GetEntry;
 import com.google.feedserver.tools.commands.GetFeed;
 import com.google.feedserver.tools.commands.InsertEntry;
 import com.google.feedserver.tools.commands.ListGadgets;
@@ -89,7 +90,7 @@ public class FeedClient {
     FeedClient shell = new FeedClient(args);
     shell.execute(args);
   }
-  
+
   /**
    * Reads a line from console
    * @param prompt Prompt to print
@@ -139,7 +140,7 @@ public class FeedClient {
     for (int i = 0; i < args.length; i++) {
       args[i] = args[i].trim();
     }
-    
+
     commandLine.register(FeedClient.class);
     commandLine.parse(args);
   }
@@ -158,10 +159,11 @@ public class FeedClient {
     service = new GoogleService(
         serviceName_FLAG, FeedClient.class.getName(), authnURLProtocol_FLAG, authnURL_FLAG);
 
-    commands  = new LinkedHashMap<String, FeedClientCommand>();
+    commands = new LinkedHashMap<String, FeedClientCommand>();
     addCommand(new DeleteGadget(service, fileUtil));
     addCommand(new DeleteUserGadget(service, fileUtil));
     addCommand(new DirGadgets(service, fileUtil));
+    addCommand(new GetEntry(service, fileUtil));
     addCommand(new GetFeed(service, fileUtil));
     addCommand(new InsertEntry(service, fileUtil));
     addCommand(new ListGadgets(service, fileUtil));
@@ -175,7 +177,7 @@ public class FeedClient {
     addCommand(new UploadGadget(service, fileUtil));
     addCommand(new UploadUserGadget(service, fileUtil));
   }
-  
+
   protected void addCommand(FeedClientCommand command) {
     commands.put(command.getCommandName().toLowerCase(), command);
     commandLine.register(command.getClass());
