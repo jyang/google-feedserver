@@ -75,6 +75,9 @@ if (location.host.indexOf('gmodules.com') > 0) {
   </div>
 </div>
 
+<p style="color:red">Because of Firefox regressions, this editor is broken for both 3.5 and 3.0 and will be deprecated soon.
+Please find <a href="http://www.google.com/support/forum/p/apps-apis/thread?tid=7f3eb4c84bad2a97">instructions</a>
+of how to use the command line tool FSCT to manage private gadgets for your domain.</p>
 
 <textarea id="editor" class="codepress gadget"></textarea>
 <iframe id="codepress-iframe" style="display:none"></iframe>
