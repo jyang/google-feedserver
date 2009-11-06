@@ -16,16 +16,25 @@
 
 package com.google.feedserver.tools;
 
+import com.google.feedserver.tools.commands.AddBlackListedGadget;
+import com.google.feedserver.tools.commands.AddWhiteListedGadget;
 import com.google.feedserver.tools.commands.DeleteGadget;
 import com.google.feedserver.tools.commands.DeleteUserGadget;
 import com.google.feedserver.tools.commands.DirGadgets;
+import com.google.feedserver.tools.commands.DirPublicGadgets;
 import com.google.feedserver.tools.commands.GetEntry;
 import com.google.feedserver.tools.commands.GetFeed;
+import com.google.feedserver.tools.commands.ListBlackListedGadgets;
+import com.google.feedserver.tools.commands.RemoveBlackListedGadget;
+import com.google.feedserver.tools.commands.ShowPublicGadgetDirFilter;
 import com.google.feedserver.tools.commands.InsertEntry;
 import com.google.feedserver.tools.commands.ListGadgets;
 import com.google.feedserver.tools.commands.ListUserGadgets;
+import com.google.feedserver.tools.commands.ListWhiteListedGadgets;
 import com.google.feedserver.tools.commands.PublishGadget;
 import com.google.feedserver.tools.commands.PublishUserGadget;
+import com.google.feedserver.tools.commands.RemoveWhiteListedGadget;
+import com.google.feedserver.tools.commands.SetPublicGadgetDirFilter;
 import com.google.feedserver.tools.commands.Shell;
 import com.google.feedserver.tools.commands.ShowGadget;
 import com.google.feedserver.tools.commands.ShowUserGadget;
@@ -160,18 +169,27 @@ public class FeedClient {
         serviceName_FLAG, FeedClient.class.getName(), authnURLProtocol_FLAG, authnURL_FLAG);
 
     commands = new LinkedHashMap<String, FeedClientCommand>();
+    addCommand(new AddBlackListedGadget(service, fileUtil));
+    addCommand(new AddWhiteListedGadget(service, fileUtil));
     addCommand(new DeleteGadget(service, fileUtil));
     addCommand(new DeleteUserGadget(service, fileUtil));
     addCommand(new DirGadgets(service, fileUtil));
+    addCommand(new DirPublicGadgets(service, fileUtil));
     addCommand(new GetEntry(service, fileUtil));
     addCommand(new GetFeed(service, fileUtil));
     addCommand(new InsertEntry(service, fileUtil));
     addCommand(new ListGadgets(service, fileUtil));
     addCommand(new ListUserGadgets(service, fileUtil));
+    addCommand(new ListBlackListedGadgets(service, fileUtil));
+    addCommand(new ListWhiteListedGadgets(service, fileUtil));
     addCommand(new PublishGadget(service, fileUtil));
     addCommand(new PublishUserGadget(service, fileUtil));
+    addCommand(new RemoveBlackListedGadget(service, fileUtil));
+    addCommand(new RemoveWhiteListedGadget(service, fileUtil));
+    addCommand(new SetPublicGadgetDirFilter(service, fileUtil));
     addCommand(new Shell(service, fileUtil, this));
     addCommand(new ShowGadget(service, fileUtil));
+    addCommand(new ShowPublicGadgetDirFilter(service, fileUtil));
     addCommand(new ShowUserGadget(service, fileUtil));
     addCommand(new UnpublishGadget(service, fileUtil));
     addCommand(new UploadGadget(service, fileUtil));
