@@ -29,6 +29,7 @@ public abstract class GadgetCommand extends FeedClientCommand {
 
   public static final String PRIVATE_GADGET_SPEC = "PrivateGadgetSpec";
   public static final String PRIVATE_GADGET = "PrivateGadget";
+  public static final String GADGET = "Gadget";
   public static final String ERROR_GADGET_ALREADY_EXISTS = "Gadget already exists";
 
   protected FeedServerClient<GadgetSpecEntity> specClient;
