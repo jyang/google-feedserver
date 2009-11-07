@@ -308,6 +308,7 @@
     <copy file="${lib.home}/commons-logging-1.0.4.jar" todir="${fsct.temp.dir}/lib" />
     <copy file="${lib.home}/gdata-client-1.0.jar" todir="${fsct.temp.dir}/lib" />
     <copy file="${lib.home}/gdata-core-1.0.jar" todir="${fsct.temp.dir}/lib" />
+    <copy file="${lib.home}/jline-0.9.94.jar" todir="${fsct.temp.dir}/lib" />
     <copy file="${lib.home}/log4j-1.2.14.jar" todir="${fsct.temp.dir}/lib" />
     <zip destfile="${dist.home}/fsct.zip" basedir="${fsct.temp.dir}/.." includes="fsct/**"/>
     <delete dir="${fsct.temp.dir}" />
