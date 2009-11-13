@@ -102,6 +102,12 @@ a.right {
 }
 </style>
 
+<script>
+function html_sanitize(s) {
+  return s;
+};
+</script>
+
 <!--
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 -->
@@ -114,9 +120,9 @@ a.right {
   </div>
   <div class="button-bar right-container">
     <select id="directory-filter-type" onchange="changeDirectoryFilter()" disabled>
-     <option selected value="noRestrictions">No Restrictions</option>
-     <option value="whiteList">White List</option>
-     <option value="blackList">Black List</option>
+     <option selected value="NO_RESTRICTION">No Filter</option>
+     <option value="WHITE_LIST">White List Filter</option>
+     <option value="BLACK_LIST">Black List Filter</option>
     </select> <span id="directory-filter-spinner"></span>
     <button id="add-gadget" class="right" onclick="showPublicGadgets()"
         disabled="true">Add Gadgets</button>
