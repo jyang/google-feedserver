@@ -109,9 +109,9 @@ var MAX_RESULTS = 20;
 
 var SPINNER = '<img src="http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/private-gadget-editor/spinner.gif">';
 
-var NO_FILTER = 'noRestrictions';
-var WHITE_LIST_FILTER = 'whiteList';
-var BLACK_LIST_FILTER = 'blackList';
+var NO_FILTER = 'NO_RESTRICTION';
+var WHITE_LIST_FILTER = 'WHITE_LIST';
+var BLACK_LIST_FILTER = 'BLACK_LIST';
 
 var EMPTY_RESPONSE = 'empty response';
 
@@ -595,7 +595,7 @@ function hidePublicGadgets() {
 };
 
 function getGadgetUniqueName(gadgetId) {
-  return 'g' + gadgetId;
+  return gadgetId;
 };
 
 function isGadgetInFilterList(gadgetId, filteredList) {
@@ -643,8 +643,8 @@ function removeGadgetFromFilterList(gadgetId) {
     var gadget = getDomainFilterListedGadgets()[i].content.entity;
     if (gadget.gadgetId == gadgetId) {
       var service = createService();
-      service.deleteEntry(getDomainFilterListedGadgetFeedUrl() + '/g' + gadgetId,
-          function(response) {
+      service.deleteEntry(getDomainFilterListedGadgetFeedUrl() + '/' +
+          getGadgetUniqueName(gadgetId), function(response) {
         getDomainFilterListedGadgets().splice(i, 1);
         gadget.$state = STATE_OK;
         showGadgetFilterList();
@@ -809,7 +809,7 @@ GadgetDirectory.prototype.setContent = function(content) {
 };
 
 GadgetDirectory.prototype.show = function(loadMore) {
-  this.showWidgets(); 
+  this.showWidgets();
 
   var searchTerm = this.getSearchTerm();
   if (searchTerm != this.lastSearchTerm_) {
@@ -859,7 +859,7 @@ GadgetDirectory.prototype.showBusy = function(busy) {
 GadgetDirectory.prototype.load = function(searchTerm, loadMore, continuation) {
   if (this.gadgets_.length == 0 || loadMore) {
     var service = createService();
-    var query = new google.gdata.client.Query(this.feedUrl_);
+    var query = noCache(new google.gdata.client.Query(this.feedUrl_));
     query.setParam('start-index', this.startIndex_);
     query.setParam('max-results', this.maxResults_);
     if (searchTerm) {
@@ -998,6 +998,8 @@ function showMessage(message) {
 };
 
 function detectDomainName() {
+  return 'joonix.net';
+
   var params = location.href.split('&');
   for (var i = 0; i < params.length; i++) {
     if (params[i].indexOf('parent=') == 0) {
@@ -1015,14 +1017,15 @@ function detectDomainName() {
 function initGadget() {
   var tabset = new gadgets.TabSet(null, 'Private Directory');
   tabset.alignTabs('left', 1);
-//   tabset.addTab('Public Directory', {
-//       contentContainer: $('tab-public'),
-//       callback: function() {
-//         initDirectoryFilter();
-//         gadgets.window.adjustHeight();
-//       },
-//       tooltip: 'manage domain public gadget directory'
-//   });
+   tabset.addTab('Public Directory', {
+       contentContainer: $('tab-public'),
+       callback: function() {
+         initDirectoryFilter();
+         gadgets.window.adjustHeight();
+       },
+       tooltip: 'manage domain public gadget directory'
+    }
+  );
   tabset.addTab('Private Directory', {
       contentContainer: $('tab-private'),
       callback: gadgets.window.adjustHeight(),
