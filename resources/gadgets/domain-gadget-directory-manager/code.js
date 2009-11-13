@@ -998,8 +998,6 @@ function showMessage(message) {
 };
 
 function detectDomainName() {
-  return 'joonix.net';
-
   var params = location.href.split('&');
   for (var i = 0; i < params.length; i++) {
     if (params[i].indexOf('parent=') == 0) {
