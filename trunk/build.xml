@@ -269,6 +269,7 @@
        <fileset dir="${lib.home}" includes="commons-lang-*.jar"></fileset>
        <fileset dir="${lib.home}" includes="commons-logging-*.jar"></fileset>
        <fileset dir="${lib.home}" includes="gdata-*.jar"></fileset>
+       <fileset dir="${lib.home}" includes="google-collect-*.jar"></fileset>
        <fileset dir="${lib.home}" includes="log4j-*.jar"></fileset>
     </copy>
     <copy todir="${clienttools.temp.dir}/bin">
@@ -308,6 +309,7 @@
     <copy file="${lib.home}/commons-logging-1.0.4.jar" todir="${fsct.temp.dir}/lib" />
     <copy file="${lib.home}/gdata-client-1.0.jar" todir="${fsct.temp.dir}/lib" />
     <copy file="${lib.home}/gdata-core-1.0.jar" todir="${fsct.temp.dir}/lib" />
+    <copy file="${lib.home}/google-collect-1.0-rc1.jar" todir="${fsct.temp.dir}/lib" />
     <copy file="${lib.home}/jline-0.9.94.jar" todir="${fsct.temp.dir}/lib" />
     <copy file="${lib.home}/log4j-1.2.14.jar" todir="${fsct.temp.dir}/lib" />
     <zip destfile="${dist.home}/fsct.zip" basedir="${fsct.temp.dir}/.." includes="fsct/**"/>
