@@ -87,8 +87,9 @@ public class IBatisCollectionAdapter extends AbstractManagedCollectionAdapter {
         && serverConfig.getFeedNamespacePrefix().length() > 0) {
       feed.declareNS(serverConfig.getFeedNamespace(), serverConfig.getFeedNamespacePrefix());
     }
-    for (Map<String, Object> row : rows)
+    for (Map<String, Object> row : rows) {
       createEntryFromProperties(feed, row);
+    }
     return feed;
   }
 
