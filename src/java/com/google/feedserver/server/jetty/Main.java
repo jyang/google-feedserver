@@ -33,7 +33,6 @@ import com.google.feedserver.util.SimpleCommandLineParser;
 import com.google.xdp.XdServletFilter;
 
 import org.apache.abdera.protocol.server.ServiceManager;
-import org.apache.abdera.protocol.server.servlet.AbderaServlet;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
