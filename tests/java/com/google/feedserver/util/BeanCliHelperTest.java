@@ -72,7 +72,7 @@ public class BeanCliHelperTest extends TestCase {
     super.tearDown();
   }
 
-  public void testSuccessfulArgParse() throws ConfigurationBeanException {
+  public void testSuccessfulArgParse() throws Exception {
     beanCliHelper.register(testBean);
     beanCliHelper.parse(testArgs);
     assertEquals("clitest1", testBean.getOption1());
@@ -81,7 +81,7 @@ public class BeanCliHelperTest extends TestCase {
     assertEquals(false, testBean.getBoolOption4().booleanValue());
   }
 
-  public void testSuccessfulConfFileOnlyConfig() throws ConfigurationBeanException {
+  public void testSuccessfulConfFileOnlyConfig() throws Exception {
     BeanCliHelper.setTestFileContents(testBeanConfFile);
     beanCliHelper.register(testBean);
     beanCliHelper.parse(confFileOnly);
@@ -91,7 +91,7 @@ public class BeanCliHelperTest extends TestCase {
     assertEquals(true, testBean.getBoolOption4().booleanValue());
   }
 
-  public void testSuccessfulConfFileAndArgs() throws ConfigurationBeanException {
+  public void testSuccessfulConfFileAndArgs() throws Exception {
     BeanCliHelper.setTestFileContents(testBeanConfFile);
     beanCliHelper.register(testBean);
     beanCliHelper.parse(incompleteArgs);
@@ -105,7 +105,7 @@ public class BeanCliHelperTest extends TestCase {
     assertEquals(false, testBean.getBoolOption4().booleanValue());
   }
 
-  public void testExtraArgs() {
+  public void testExtraArgs() throws Exception {
     beanCliHelper.register(testBean);
     try {
       beanCliHelper.parse(extraArgs);
@@ -116,7 +116,7 @@ public class BeanCliHelperTest extends TestCase {
     fail("Expected Unrecognized option error.");
   }
 
-  public void testBrokenIntValue() {
+  public void testBrokenIntValue() throws Exception {
     BeanCliHelper.setTestFileContents(brokenIntegerConfFile);
     beanCliHelper.register(testBean);
     try {
