@@ -37,6 +37,7 @@ import java.beans.IntrospectionException;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -73,13 +74,14 @@ public class FileAdapter extends AbstractManagedCollectionAdapter {
 
   public FileAdapter(Abdera abdera, FeedConfiguration config) throws IllegalArgumentException,
       IntrospectionException, IllegalAccessException, InvocationTargetException, SAXException,
-      IOException, ParserConfigurationException {
+      IOException, ParserConfigurationException, ParseException {
     this(new XmlUtil(), new FileUtil(), abdera, config);
   }
 
   public FileAdapter(XmlUtil xmlUtil, FileUtil fileUtil, Abdera abdera, FeedConfiguration config)
       throws IllegalArgumentException, IntrospectionException, IllegalAccessException,
-      InvocationTargetException, SAXException, IOException, ParserConfigurationException {
+      InvocationTargetException, SAXException, IOException, ParserConfigurationException,
+      ParseException {
     this(xmlUtil, fileUtil, abdera, config, getFileAdapterConfig(xmlUtil, config));
   }
 
@@ -214,7 +216,8 @@ public class FileAdapter extends AbstractManagedCollectionAdapter {
 
   protected static FileAdapterConfig getFileAdapterConfig(XmlUtil xmlUtil, FeedConfiguration config)
       throws IntrospectionException, IllegalAccessException, InvocationTargetException,
-      SAXException, IOException, ParserConfigurationException {
+      SAXException, IOException, ParserConfigurationException, IllegalArgumentException,
+      ParseException {
     NamespacedAdapterConfiguration adapterConfig =
         (NamespacedAdapterConfiguration) config.getAdapterConfiguration();
     String fileAdapterConfigValue =

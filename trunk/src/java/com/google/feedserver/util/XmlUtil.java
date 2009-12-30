@@ -22,6 +22,7 @@ import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -176,10 +177,12 @@ public class XmlUtil {
    * @throws SAXException
    * @throws IOException
    * @throws ParserConfigurationException
+   * @throws ParseException 
    */
   public void convertXmlToBean(String xmlText, Object bean)
       throws IllegalArgumentException, IntrospectionException, IllegalAccessException,
-          InvocationTargetException, SAXException, IOException, ParserConfigurationException {
+          InvocationTargetException, SAXException, IOException, ParserConfigurationException,
+          ParseException {
     beanUtil.convertPropertiesToBean(convertXmlToProperties(xmlText), bean);
   }
 }

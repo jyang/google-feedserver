@@ -18,6 +18,7 @@ package com.google.feedserver.wrappers;
 import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -82,7 +83,7 @@ public class ResourceConnectionInfoWrapper extends AccessControlWrapper {
   public ResourceConnectionInfoWrapper(AbstractManagedCollectionAdapter target,
       String wrapperConfig) throws IllegalArgumentException, IntrospectionException,
       IllegalAccessException, InvocationTargetException, SAXException, IOException,
-      ParserConfigurationException {
+      ParserConfigurationException, ParseException {
     super(target, wrapperConfig);
 
     xmlUtil = new XmlUtil();

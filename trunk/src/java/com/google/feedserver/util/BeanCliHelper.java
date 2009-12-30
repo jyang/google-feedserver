@@ -116,7 +116,8 @@ public class BeanCliHelper {
    * 
    * @param args command-line.
    */
-  public void parse(String[] args) throws ConfigurationBeanException {
+  public void parse(String[] args) throws ConfigurationBeanException, ParseException,
+      java.text.ParseException {
     options = createOptions();
     GnuParser parser = new GnuParser();
     try {
@@ -152,7 +153,8 @@ public class BeanCliHelper {
    * the flag on the commandline, we no-op and assume they want to configure
    * entirely from defaults or commandline.
    */
-  private void populateBeansFromConfigFile() throws ConfigurationBeanException {
+  private void populateBeansFromConfigFile() throws ConfigurationBeanException, ParseException,
+      java.text.ParseException {
 
     populateBeansFromCommandLine(); // we do an initial pass to pick up
     // ConfigFile flag

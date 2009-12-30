@@ -25,6 +25,7 @@ import org.xml.sax.SAXException;
 import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -160,6 +161,8 @@ public class FeedServerEntry extends BaseEntry<FeedServerEntry> {
     } catch (InstantiationException e) {
       throw new RuntimeException("Could not instantiate bean class" + entityClass.getName());
     } catch (IOException e) {
+      throw new FeedServerClientException(e);
+    } catch (ParseException e) {
       throw new FeedServerClientException(e);
     }
   }
