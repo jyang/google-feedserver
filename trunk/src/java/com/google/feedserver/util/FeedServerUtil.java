@@ -80,7 +80,8 @@ public class FeedServerUtil {
         Object[] valueObjects = (Object[]) value;
         for (int i = 0; i < valueObjects.length; i++) {
           Element node = doc.createElement(key);
-          node.appendChild(doc.createTextNode(valueObjects[i].toString()));
+          node.appendChild(doc.createTextNode(
+              valueObjects[i] == null ? "" : valueObjects[i].toString()));
           if (0 == i) {
             node.setAttribute("repeatable", "true");
           }
