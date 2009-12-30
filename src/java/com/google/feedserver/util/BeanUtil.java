@@ -81,9 +81,6 @@ public class BeanUtil {
     primitiveTypes.add(String.class);
   }
 
-  protected static final SimpleDateFormat TIMESTAMP_FORMAT =
-      new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
-
   /**
    * Converts a JavaBean to a collection of properties
    * 
@@ -100,9 +97,7 @@ public class BeanUtil {
       if (reader != null) {
         Object value = reader.invoke(bean);
         if (null != value) {
-          if (value instanceof Timestamp) {
-            properties.put(name, value.toString());
-          } else if (isBean(value.getClass())) {
+          if (isBean(value.getClass())) {
             if (value.getClass().isArray()) {
               Object[] valueArray = (Object[]) value;
               if (valueArray.length == 0) {
@@ -145,7 +140,7 @@ public class BeanUtil {
    */
   public void convertPropertiesToBean(Map<String, Object> properties, Object bean)
       throws IntrospectionException, IllegalArgumentException, IllegalAccessException,
-      InvocationTargetException, ParseException {
+      InvocationTargetException {
     BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass(), Object.class);
     for (PropertyDescriptor p : beanInfo.getPropertyDescriptors()) {
       String name = p.getName();
@@ -173,8 +168,6 @@ public class BeanUtil {
               fillBeanInArray(propertyType, beanArray, 0, value);
             }
             value = beanArray;
-          } else if (propertyType == Timestamp.class) {
-            value = new Timestamp(TIMESTAMP_FORMAT.parse((String) value).getTime());
           } else {
             Object beanObject = createBeanObject(propertyType, value);
             value = beanObject;
@@ -202,6 +195,7 @@ public class BeanUtil {
               throw new IllegalArgumentException("Conversion failed for " + "property '" + name
                   + "' with value '" + value + "'", e);
             }
+
           }
         }
         // We only write values that are present in the map. This allows
@@ -218,13 +212,11 @@ public class BeanUtil {
    * @param valueObject
    * @throws IntrospectionException
    * @throws IllegalAccessException
-   * @throws IllegalArgumentException 
    * @throws InvocationTargetException
-   * @throws ParseException 
    */
   private void fillBeanInArray(Class<?> propertyType, Object valueArray, int index,
       Object valueObject) throws IntrospectionException, IllegalAccessException,
-      InvocationTargetException, IllegalArgumentException, ParseException {
+      InvocationTargetException {
     Object beanObject = createBeanObject(propertyType, valueObject);
     Array.set(valueArray, index, beanObject);
   }
@@ -235,18 +227,13 @@ public class BeanUtil {
    * @return Bean object
    * @throws IntrospectionException
    * @throws IllegalAccessException
-   * @throws IllegalArgumentException 
    * @throws InvocationTargetException
-   * @throws ParseException 
    */
   @SuppressWarnings("unchecked")
   private Object createBeanObject(Class<?> propertyType, Object valueObject)
-      throws IntrospectionException, IllegalAccessException, InvocationTargetException,
-      IllegalArgumentException, ParseException {
+      throws IntrospectionException, IllegalAccessException, InvocationTargetException {
     Object beanObject = createBeanInstance(propertyType);
-    if (!(beanObject instanceof Timestamp)) {
-      convertPropertiesToBean((Map) valueObject, beanObject);
-    }
+    convertPropertiesToBean((Map) valueObject, beanObject);
     return beanObject;
   }
 
