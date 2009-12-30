@@ -37,6 +37,7 @@ import java.util.logging.Logger;
  */
 public class FeedServerClient<T> {
   
+  private static final String ID_ELEMENT = "id";
   private static final String NAME_ELEMENT = "name";
 
   // Logging instance
@@ -152,7 +153,6 @@ public class FeedServerClient<T> {
    * @throws RuntimeException if the bean is not constructed properly and is missing fields.
    */
   public List<T> getEntities(URL feedUrl) throws FeedServerClientException {
-    
     List<FeedServerEntry> entries = getEntries(feedUrl);
     List<T> entities = new ArrayList<T>();
     for (FeedServerEntry entry : entries) {
@@ -187,9 +187,15 @@ public class FeedServerClient<T> {
    * feed ID is invalid or malformed.
    */
   public void deleteEntry(URL baseUrl, FeedServerEntry entry) throws FeedServerClientException {
-    String name = (String) getBeanProperty(NAME_ELEMENT, entry.getEntity(entityClass), new String());
+    Object id = getBeanProperty(NAME_ELEMENT, entry.getEntity(entityClass));
+    if (id == null) {
+      id = getBeanProperty(ID_ELEMENT, entry.getEntity(entityClass));
+    }
+    if (id == null) {
+      throw new FeedServerClientException("name or id is required in the entry to update");
+    }
     try {
-      URL feedUrl = new URL(baseUrl.toString() + "/" + name);
+      URL feedUrl = new URL(baseUrl.toString() + "/" + id);
       LOG.info("deleting entry at feed " + feedUrl);
       deleteEntry(feedUrl);
     } catch (MalformedURLException e) {
@@ -206,9 +212,15 @@ public class FeedServerClient<T> {
    * feed ID is invalid or malformed.
    */
   public void deleteEntity(URL baseUrl, T entity) throws FeedServerClientException {
-    String name = (String) getBeanProperty(NAME_ELEMENT, entity, new String());
+    Object id = getBeanProperty(NAME_ELEMENT, entity);
+    if (id == null) {
+      id = getBeanProperty(ID_ELEMENT, entity);
+    }
+    if (id == null) {
+      throw new FeedServerClientException("name or id is required in the entry to update");
+    }
     try {
-      URL feedUrl = new URL(baseUrl.toString() + "/" + name);
+      URL feedUrl = new URL(baseUrl.toString() + "/" + id);
       LOG.info("deleting entry at feed " + feedUrl);
       deleteEntry(feedUrl);
     } catch (MalformedURLException e) {
@@ -255,10 +267,16 @@ public class FeedServerClient<T> {
    * @throws FeedServerClientException if any feed communication errors occur.
    */
   public void updateEntry(URL baseUrl, FeedServerEntry entry) throws FeedServerClientException {
-    String name = (String) getBeanProperty(NAME_ELEMENT, entry.getEntity(entityClass), new String());
+    Object id = getBeanProperty(NAME_ELEMENT, entry.getEntity(entityClass));
+    if (id == null) {
+      id = getBeanProperty(ID_ELEMENT, entry.getEntity(entityClass));
+    }
+    if (id == null) {
+      throw new FeedServerClientException("name or id is required in the entry to update");
+    }
     try {
-      LOG.info("updating entry at feed " + baseUrl + "/" + name);
-      URL url = new URL(baseUrl + "/" + name);
+      LOG.info("updating entry at feed " + baseUrl + "/" + id);
+      URL url = new URL(baseUrl + "/" + id);
       service.update(url, entry);
     } catch (IOException e) {
       throw new FeedServerClientException(e);
@@ -385,11 +403,10 @@ public class FeedServerClient<T> {
    * 
    * @param propertyName the property to read from the bean.
    * @param bean the bean to read from.
-   * @param container the place to put the read value.
    * @return the container supplied.
    * @throws FeedServerClientException if any problems exist with the bean.
    */
-  private Object getBeanProperty(String propertyName, T bean, Object container) throws 
+  private Object getBeanProperty(String propertyName, T bean) throws 
       FeedServerClientException {
     try {
       BeanMap beanMap = new BeanMap(bean);
