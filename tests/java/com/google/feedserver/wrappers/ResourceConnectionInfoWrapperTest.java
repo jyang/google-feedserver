@@ -25,6 +25,7 @@ import com.google.feedserver.adapters.AbstractManagedCollectionAdapter;
 import com.google.feedserver.adapters.FeedServerAdapterException;
 import com.google.feedserver.config.UserInfo;
 import com.google.feedserver.resource.AuthorizedEntity;
+import com.google.feedserver.server.FlagConfig;
 
 import junit.framework.TestCase;
 
@@ -41,6 +42,12 @@ public class ResourceConnectionInfoWrapperTest extends TestCase {
   RequestContext requestMock;
   UserInfo userInfoMock;
   Entry entryMock;
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    FlagConfig.enableAccessControl_FLAG = "true";
+  }
 
   protected static interface AdapterCall {
     public void invoke(AbstractManagedCollectionAdapter adapter) throws FeedServerAdapterException;
