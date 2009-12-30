@@ -24,6 +24,7 @@ import org.xml.sax.SAXException;
 import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -104,10 +105,11 @@ public class ContentUtil {
    * @throws IOException 
    * @throws SAXException 
    * @throws IllegalArgumentException 
+   * @throws ParseException 
    */
   public void fillBean(OtherContent content, Object bean) throws IllegalArgumentException,
       SAXException, IOException, ParserConfigurationException, IntrospectionException,
-      IllegalAccessException, InvocationTargetException {
+      IllegalAccessException, InvocationTargetException, ParseException {
     fillBean(content, bean, null);
   }
 
@@ -121,7 +123,7 @@ public class ContentUtil {
   public void fillBean(OtherContent content, Object bean, String id)
       throws SAXException, IOException, ParserConfigurationException,
           IllegalArgumentException, IntrospectionException,
-          IllegalAccessException, InvocationTargetException {
+          IllegalAccessException, InvocationTargetException, ParseException {
     String xmlText = getXmlFromContent(content);
     xmlText = fixEscaping(xmlText);
     Map<String, Object> properties = xmlUtil.convertXmlToProperties(xmlText);
@@ -152,7 +154,7 @@ public class ContentUtil {
   public void fillBean(Entry entry, Object bean)
       throws IllegalArgumentException, SAXException, IOException,
           ParserConfigurationException, IntrospectionException,
-          IllegalAccessException, InvocationTargetException {
+          IllegalAccessException, InvocationTargetException, ParseException {
     Content content = entry.getContent();
     if (content instanceof OtherContent) {
       fillBean((OtherContent) content, bean);
