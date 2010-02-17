@@ -137,7 +137,7 @@ public class GadgetContainerStateClient {
    * Gets gadget container state of a Sites page.
    * @param domainName Domain name
    * @param siteName Site name
-   * @param pageWuid Page WUID
+   * @param containerId Gadget container id (page WUID)
    * @param uriEncodedEmail URI encoded user email address e.g. "john.doe%40domain.com"
    * @return List of gadget states
    * @throws FeedServerClientException
@@ -145,18 +145,18 @@ public class GadgetContainerStateClient {
    * @throws AuthenticationException
    */
   public List<GadgetState> getContainerState(String domainName, String siteName,
-      String pageWuid, String uriEncodedEmail)
+      String containerId, String uriEncodedEmail)
       throws FeedServerClientException, MalformedURLException, AuthenticationException {
     FeedServerClient<GadgetState> feedServerClient = getFeedServerClient();
     return feedServerClient.getEntities(new URL(getContainerStateFeedUrl(domainName, siteName,
-        pageWuid, uriEncodedEmail)));
+        containerId, uriEncodedEmail)));
   }
 
   /**
    * Inserts a new gadget into a gadget container.
    * @param domainName Domain name
    * @param siteName Site name
-   * @param pageWuid Page WUID
+   * @param containerId Gadget container id (page WUID)
    * @param uriEncodedEmail URI encoded user email address e.g. "john.doe%40domain.com"
    * @param gadgetState Gadget state to insert
    * @return Inserted gadget state
@@ -165,20 +165,20 @@ public class GadgetContainerStateClient {
    * @throws FeedServerClientException
    */
   public GadgetState insertGadgetState(String domainName, String siteName,
-      String pageWuid, String uriEncodedEmail, GadgetState gadgetState)
+      String containerId, String uriEncodedEmail, GadgetState gadgetState)
       throws AuthenticationException, MalformedURLException, FeedServerClientException {
     return getFeedServerClient().insertEntity(new URL(getContainerStateFeedUrl(domainName, siteName,
-        pageWuid, uriEncodedEmail)), gadgetState);
+        containerId, uriEncodedEmail)), gadgetState);
   }
 
   protected FeedServerClient<GadgetState> getFeedServerClient() throws AuthenticationException {
     return new FeedServerClient<GadgetState>(getService(), GadgetState.class);
   }
   
-  protected String getContainerStateFeedUrl(String domainName, String webSpaceName,
-      String pageWuid, String uriEncodedEmail) {
+  protected String getContainerStateFeedUrl(String domainName, String siteName,
+      String containerId, String uriEncodedEmail) {
     return "http://feedserver-enterprise.googleusercontent.com/a/" + domainName + "/user/" +
-        webSpaceName + "_" + pageWuid + "_" + uriEncodedEmail + "/g/ContainerState";
+        siteName + "_" + containerId + "_" + uriEncodedEmail + "/g/ContainerState";
   }
 
   protected GoogleService getService() throws AuthenticationException {
