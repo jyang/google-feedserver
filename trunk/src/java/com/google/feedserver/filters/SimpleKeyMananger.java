@@ -54,10 +54,7 @@ public class SimpleKeyMananger implements KeyManager {
           + "-----END CERTIFICATE-----\n";
 
   public SimpleKeyMananger() {
-
   }
-
-
 
   private static final List<KeyType> RSA_SHA1_KEY_TYPES = new ArrayList<KeyType>();
 
