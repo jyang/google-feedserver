@@ -23,6 +23,7 @@ import com.google.feedserver.config.PerNamespaceServerConfiguration;
 
 import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.RequestContext;
+import org.apache.abdera.protocol.server.ResponseContext;
 import org.apache.abdera.protocol.server.TargetType;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 import org.apache.abdera.protocol.server.provider.managed.ManagedProvider;
@@ -120,5 +121,12 @@ public class FeedServerProvider extends ManagedProvider {
   protected PerNamespaceServerConfiguration getServerConfiguration(RequestContext request) {
     return new PerNamespaceServerConfiguration(globalServerConfiguration, request.getTarget()
         .getParameter(AbstractManagedCollectionAdapter.PARAM_NAMESPACE));
+  }
+
+  @Override
+  protected ResponseContext createErrorResponse(RequestContext request, Throwable t) {
+    ResponseContext response = super.createErrorResponse(request, t);
+    response.setStatusText(response.getStatusText() + ": " + t.getMessage());
+    return response;
   }
 }
