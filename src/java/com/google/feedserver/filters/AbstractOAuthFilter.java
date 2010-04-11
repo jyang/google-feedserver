@@ -146,7 +146,7 @@ public abstract class AbstractOAuthFilter implements Filter {
 
   protected String urlDecode(String s) {
     try {
-      return URLDecoder.decode(s, "UTF-8");
+      return s == null ? null : URLDecoder.decode(s, "UTF-8");
     } catch (UnsupportedEncodingException e) {
       // UTF-8 is indeed supported; won't come here
       return s;
