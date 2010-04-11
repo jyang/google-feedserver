@@ -16,6 +16,7 @@
 
 package com.google.feedserver.adapters;
 
+import com.google.feedserver.adapters.FeedServerAdapterException.Reason;
 import com.google.feedserver.config.FeedServerConfiguration;
 import com.google.feedserver.config.GlobalServerConfiguration;
 import com.google.feedserver.config.NamespacedAdapterConfiguration;
@@ -157,7 +158,23 @@ public abstract class AbstractManagedCollectionAdapter extends ManagedCollection
   }
 
   protected ResponseContext sendErrorResponse(RequestContext request, FeedServerAdapterException e) {
-    return ProviderHelper.servererror(request, e.getMessage(), e);
+    switch(e.getReason()) {
+      case NOT_AUTHORIZED:
+        return ProviderHelper.forbidden(request, e.getMessage());
+
+      case ENTRY_DOES_NOT_EXIST:
+        return ProviderHelper.notfound(request, e.getMessage());
+
+      case ENTITY_DATA_INVALID:
+      case INVALID_INPUT:
+        return ProviderHelper.badrequest(request, e.getMessage());
+
+      case ENTRY_ALREADY_EXISTS:
+        return ProviderHelper.conflict(request, e.getMessage());
+
+      default:
+        return ProviderHelper.servererror(request, e.getMessage(), e);
+    }
   }
 
   protected ResponseContext sendSuccessfulDeleteResponse() {
