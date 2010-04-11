@@ -14,7 +14,7 @@
  * the License.
  */
 
-package com.google.feedserver.ibatisCallbackHandlers;
+package com.google.feedserver.ibatis;
 
 import com.ibatis.sqlmap.client.extensions.ParameterSetter;
 import com.ibatis.sqlmap.client.extensions.ResultGetter;
@@ -22,7 +22,8 @@ import com.ibatis.sqlmap.client.extensions.TypeHandlerCallback;
 
 import java.sql.SQLException;
 
-public class StringToNumericCallback implements TypeHandlerCallback {
+public class StringToNumericConverter implements TypeHandlerCallback {
+  @Override
   public Object getResult(ResultGetter getter) throws SQLException {
     // TODO: May need to use Long, BigInteger or BigDecimal
     return new Integer(getter.getInt()).toString();
