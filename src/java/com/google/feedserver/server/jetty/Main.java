@@ -82,7 +82,16 @@ public class Main {
     servletHolder.setInitParameter(ServiceManager.PROVIDER, FeedServerProvider.class.getName());
     context.addServlet(servletHolder, "/*");
 
-    // Register the filters
+    addFilters(context);
+
+    // start server
+    server.start();
+    server.join();
+  }
+
+  protected void addFilters(Context context) throws ClassNotFoundException, NoSuchMethodException,
+      InstantiationException, IllegalAccessException, InvocationTargetException {
+
     context.addFilter(XdServletFilter.class, "/*", Handler.DEFAULT);
     context.addFilter(MethodOverrideServletFilter.class, "/*", Handler.DEFAULT);
 
@@ -92,20 +101,17 @@ public class Main {
       context.addFilter(SignedRequestFilter.class, "/*", org.mortbay.jetty.Handler.DEFAULT);
       EventListener listener = new GuiceServletContextListener();
       context.addEventListener(listener);
-      logger.info("Starting FeedServer to accept signed requests");
+      logger.info("FeedServer to accept signed requests");
     } else if (!FlagConfig.enableOAuthSignedFetch_FLAG.equalsIgnoreCase("false")) {
       // Register the OAuth filter
       SimpleKeyMananger sKeyManager = new SimpleKeyMananger();
-      Filter of = createOAuthFilter(FlagConfig.enableOAuthSignedFetch_FLAG.equalsIgnoreCase("true") ?
-   		  FlagConfig.OAUTH_SIGNED_FETCH_FILTER_CLASS_NAME : FlagConfig.enableOAuthSignedFetch_FLAG, sKeyManager);
-      FilterHolder fh = new FilterHolder(of);
-      context.addFilter(fh, "/*", org.mortbay.jetty.Handler.DEFAULT);
-      logger.info("Starting FeedServer to accept OAuth signed requests");
+      Filter oauthFilter = 
+          createOAuthFilter(FlagConfig.enableOAuthSignedFetch_FLAG.equalsIgnoreCase("true") ?
+          FlagConfig.OAUTH_SIGNED_FETCH_FILTER_CLASS_NAME :
+   		    FlagConfig.enableOAuthSignedFetch_FLAG, sKeyManager);
+      context.addFilter(new FilterHolder(oauthFilter), "/*", org.mortbay.jetty.Handler.DEFAULT);
+      logger.info("FeedServer to accept OAuth signed requests");
     }
-
-    // start server
-    server.start();
-    server.join();
   }
   
   protected Filter createOAuthFilter(String filterClassName, KeyManager keyManager)
