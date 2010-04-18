@@ -53,7 +53,6 @@ public class SimpleOAuthFilter extends AbstractOAuthFilter {
   @Override
   public String authenticate(HttpServletRequest request) throws IOException, OAuthException,
       URISyntaxException {
-    logger.info("verifying signed fetch ...");
 
     OAuthMessage message = OAuthServlet.getMessage(request, null);
     String consumerKey = message.getConsumerKey();
@@ -72,7 +71,6 @@ public class SimpleOAuthFilter extends AbstractOAuthFilter {
       throw new OAuthException("Missing user identity opensocial_viewer_email");
     }
 
-    logger.info("signed fetch verified");
 
     // Retrieve and set the user info with the OAuth parameters
     Map<UserInfoProperties, Object> oauthParams = new HashMap<UserInfoProperties, Object>();
@@ -87,6 +85,7 @@ public class SimpleOAuthFilter extends AbstractOAuthFilter {
     UserInfo userInfo = new HashMapBasedUserInfo(oauthParams);
     request.setAttribute(AbstractManagedCollectionAdapter.USER_INFO, userInfo);
 
+    logger.info("signed fetch verified: " + viewerEmail);
     return message.getParameter("opensocial_viewer_id");
   }
 }
