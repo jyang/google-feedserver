@@ -71,7 +71,6 @@ public class SimpleOAuthFilter extends AbstractOAuthFilter {
       throw new OAuthException("Missing user identity opensocial_viewer_email");
     }
 
-
     // Retrieve and set the user info with the OAuth parameters
     Map<UserInfoProperties, Object> oauthParams = new HashMap<UserInfoProperties, Object>();
     oauthParams.put(UserInfoProperties.EMAIL, urlDecode(viewerEmail));
