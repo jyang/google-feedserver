@@ -38,22 +38,6 @@
 }
 </style>
 
-<script type="text/javascript">
-function addScript(src) {
-  var script = document.createElement('script');
-  script.src = src;
-  document.body.appendChild(script);
-};
-
-if (location.host.indexOf('gmodules.com') > 0) {
-  addScript('/ig/modules/codepress/codepress.js?ts=092908');
-  addScript('/ig/modules/codepress/codepress_wrapper.js?ts=092908');
-} else {
-  addScript('http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/private-gadget-editor/codepress.js');
-  addScript('http://www.google.com/ig/modules/codepress/codepress_wrapper.js?ts=092908');
-}
-</script>
-
 <!--
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 -->
@@ -75,12 +59,7 @@ if (location.host.indexOf('gmodules.com') > 0) {
   </div>
 </div>
 
-<p style="color:red">Because of Firefox regressions, this editor is broken for both 3.5 and 3.0 and will be deprecated soon.
-Please find <a href="http://www.google.com/support/forum/p/apps-apis/thread?tid=7f3eb4c84bad2a97" target="help">instructions</a>
-of how to use the command line tool FSCT to manage private gadgets for your domain.</p>
-
-<textarea id="editor" class="codepress gadget"></textarea>
-<iframe id="codepress-iframe" style="display:none"></iframe>
+<textarea id="editor"></textarea>
 
 <textarea id="gadget-spec-template" style="display:none">
 <?xml version="1.0" encoding="UTF-8"?>

@@ -10,6 +10,15 @@ var APP_NAME = 'private-gadget-editor';
 var SPINNER = '<img src="http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/private-gadget-editor/spinner.gif">';
 var DEFAULT_SPINNER_ID = 'spinner';
 
+var editor = {
+  getCode: function() {
+		return document.getElementById('editor').value;
+  },
+  setCode: function(text) {
+		document.getElementById('editor').value = text;
+  }
+};
+
 function $(id) {
   return document.getElementById(id);
 };
@@ -91,7 +100,6 @@ function editSelectedGadget() {
       setNameOfGadgetBeingEdited(name);
       entryOfGadgetBeingEdited = response.entry;
       editor.setCode(response.entry.content.entity.specContent);
-      editor.editor.syntaxHighlight('init');
     }, function(response) {
       stopSpinner();
       showMessage('Error: failed to open gadget spec "' + name + '"');
@@ -122,7 +130,6 @@ function deleteSelectedGadget() {
 function newGadget() {
   setNameOfGadgetBeingEdited('');
   editor.setCode(getGadgetSpecTemplate());
-  editor.editor.syntaxHighlight('init');
   showPrivateGadgetNames();
   entryOfGadgetBeingEdited = {xmlns: 'http://www.w3.org/2005/Atom', content: {
       type: 'application/xml', entity: {name: '', specContent: ''}}};
@@ -177,7 +184,6 @@ function openGadgetByUrl() {
         entryOfGadgetBeingEdited = {xmlns: 'http://www.w3.org/2005/Atom', content: {
           type: 'application/xml', entity: {name: '', specContent: response.text}}};
         editor.setCode(response.text);
-        editor.editor.syntaxHighlight('init');
       }
     }, params);
   }
@@ -191,24 +197,6 @@ function getGadgetSpecTemplate() {
 function showMessage(message) {
   var miniMessage = new gadgets.MiniMessage(null, document.getElementById('message-box'));
   miniMessage.createDismissibleMessage(message);
-};
-
-//// google.load('gdata', '1.x', {packages: ['core']});
-// google.load('gdata', '1.x', {packages: ['core'], 'other_params': 'debug=1'});
-// google.setOnLoadCallback(initEditor);
-
-function initCodePress() {
-  editor.style.height = '400px';
-  CodePressWrapper.init();
-
-  if (location.href.indexOf('codePressReloaded') < 0) {
-    setTimeout(function() {
-      if (!$('codepress-iframe').editor) {
-        location.href += '&codePressReloaded';
-        location.reload();
-      }
-    }, 500);
-  }
 };
 
 function detectDomainName() {
@@ -239,7 +227,6 @@ function initGadget() {
 };
 
 function init() {
-  initCodePress();
   initGadget();
   initEditor();
 };
