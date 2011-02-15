@@ -42,7 +42,10 @@
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 -->
 <script type="text/javascript" src="http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/private-gadget-editor/gdata-core.js"></script>
+<!--
 <script type="text/javascript" src="http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/private-gadget-editor/code.js"></script>
+-->
+<script type="text/javascript" src="http://olive-garden.dyndns.org/private-gadget-editor.js?1827384712384"></script>
 
 <div id="button-bar right-container">
   <span id="gadget-list">Loading ...</span>
