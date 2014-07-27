@@ -109,10 +109,10 @@ function html_sanitize(s) {
 </script>
 
 <!--
-<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 -->
-<script type="text/javascript" src="http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/domain-gadget-directory-manager/gdata-core.js"></script>
-<script type="text/javascript" src="http://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/domain-gadget-directory-manager/code.js"></script>
+<script type="text/javascript" src="https://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/domain-gadget-directory-manager/gdata-core.js"></script>
+<script type="text/javascript" src="https://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/domain-gadget-directory-manager/code.js"></script>
 
 <div id="tab-public" style="display:none">
   <div class="instruction">
