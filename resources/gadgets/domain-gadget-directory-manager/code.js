@@ -1015,15 +1015,15 @@ function detectDomainName() {
 function initGadget() {
   var tabset = new gadgets.TabSet(null, 'Private Directory');
   tabset.alignTabs('left', 1);
-   tabset.addTab('Public Directory', {
-       contentContainer: $('tab-public'),
-       callback: function() {
-         initDirectoryFilter();
-         gadgets.window.adjustHeight();
-       },
-       tooltip: 'manage domain public gadget directory'
-    }
-  );
+//   tabset.addTab('Public Directory', {
+//       contentContainer: $('tab-public'),
+//       callback: function() {
+//         initDirectoryFilter();
+//         gadgets.window.adjustHeight();
+//       },
+//       tooltip: 'manage domain public gadget directory'
+//    }
+//  );
   tabset.addTab('Private Directory', {
       contentContainer: $('tab-private'),
       callback: gadgets.window.adjustHeight(),

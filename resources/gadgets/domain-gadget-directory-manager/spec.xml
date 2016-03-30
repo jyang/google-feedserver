@@ -108,7 +108,7 @@ function html_sanitize(s) {
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 -->
 <script type="text/javascript" src="https://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/domain-gadget-directory-manager/gdata-core.js"></script>
-<script type="text/javascript" src="https://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/domain-gadget-directory-manager/code.js"></script>
+<script type="text/javascript" src="https://google-feedserver.googlecode.com/svn/trunk/resources/gadgets/domain-gadget-directory-manager/code.js"></script> 
 
 <div id="tab-private" style="display:none">
   <div class="instruction right-container">
@@ -134,14 +134,11 @@ function html_sanitize(s) {
 
 <div id="tab-preview" style="display:none">
   <div class="right-container button-bar">
-    <input name="preview-directory" type="radio" onchange="showDirectoryPreview('public')">Public
     <input name="preview-directory" type="radio" onchange="showDirectoryPreview('private')">Private
     <button id="directory-preview-refresh" style="display:none"
         onclick="refreshDirectoryPreview()">Refresh</button>
-    <div class="right" id="public-directory-preview-spinner" style="display:none"></div>
     <div class="right" id="private-directory-preview-spinner" style="display:none"></div>
   </div>
-  <div id="public-directory-preview" class="list" style="display:none"></div>
   <div id="private-directory-preview" class="list" style="display:none"></div>
 </div>
 
